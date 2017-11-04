@@ -1,0 +1,33 @@
+{
+    "parent": "item/handheld",
+    "textures": {
+        "layer0": "hinasch.unsaga:items/knife_1",
+		"layer1": "hinasch.unsaga:items/knife_2"
+    },
+	"overrides": [
+		{
+            "predicate": {
+                "dragonHeart": 1
+            },
+            "model": "hinasch.unsaga:item/knife.rapier"
+        },
+		{
+            "predicate": {
+                "sivaQueen": 1
+            },
+            "model": "hinasch.unsaga:item/knife.rapier"
+        },
+		{
+            "predicate": {
+                "meteorite": 1
+            },
+            "model": "hinasch.unsaga:item/knife.psy"
+        },
+		{
+            "predicate": {
+                "meteoricIron": 1
+            },
+            "model": "hinasch.unsaga:item/knife.psy"
+        }
+    ]
+}

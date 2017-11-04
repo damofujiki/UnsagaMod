@@ -1,0 +1,7 @@
+{
+    "parent": "item/handheld",
+    "textures": {
+        "layer0": "hinasch.unsaga:items/staff_head_alt",
+        "layer1": "hinasch.unsaga:items/staff_handle_alt"
+    }
+}

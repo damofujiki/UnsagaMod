@@ -1,0 +1,6 @@
+{
+    "parent": "hinasch.unsaga:item/bow",
+    "textures": {
+        "layer0": "hinasch.unsaga:items/boots_leather"
+    }
+}

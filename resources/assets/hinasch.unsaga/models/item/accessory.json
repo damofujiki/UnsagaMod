@@ -1,0 +1,70 @@
+{
+    "parent": "item/handheld",
+    "textures": {
+        "layer0": "hinasch.unsaga:items/accessory_bracelet"
+    },
+	"overrides": [
+
+		{
+            "predicate": {
+                "failed": 1
+            },
+            "model": "hinasch.unsaga:item/accessory.failed"
+        },
+		{
+            "predicate": {
+                "feather": 1
+            },
+            "model": "hinasch.unsaga:item/accessory.feather"
+        },
+		{
+            "predicate": {
+                "tusks": 1
+            },
+            "model": "hinasch.unsaga:item/accessory.tusk"
+        },
+		{
+            "predicate": {
+                "scales": 1
+            },
+            "model": "hinasch.unsaga:item/accessory.amulet"
+        },
+		{
+            "predicate": {
+                "woods": 1
+            },
+            "model": "hinasch.unsaga:item/accessory.wood"
+        },
+
+		{
+            "predicate": {
+                "diamond": 1
+            },
+            "model": "hinasch.unsaga:item/accessory.ring"
+        },
+		{
+            "predicate": {
+                "lightStone": 1
+            },
+            "model": "hinasch.unsaga:item/accessory.ring"
+        },
+		{
+            "predicate": {
+                "darkStone": 1
+            },
+            "model": "hinasch.unsaga:item/accessory.ring"
+        },
+		{
+            "predicate": {
+                "corundums": 1
+            },
+            "model": "hinasch.unsaga:item/accessory.ring"
+        },
+		{
+            "predicate": {
+                "bones": 1
+            },
+            "model": "hinasch.unsaga:item/accessory.bone"
+        }
+    ]
+}

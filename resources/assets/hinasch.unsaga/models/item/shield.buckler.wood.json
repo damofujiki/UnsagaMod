@@ -1,0 +1,49 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "hinasch.unsaga:items/shield_buckler_wood"
+    },
+	"display": {
+        "thirdperson_righthand": {
+            "rotation": [ 0, -40, 55 ],
+            "translation": [ 0, 4.0, -1.2 ],
+            "scale": [ 0.85, 0.85, 0.85 ]
+        },
+        "thirdperson_lefthand": {
+            "rotation": [ 0, 120, -55 ],
+            "translation": [ 0, 1.0, -2.5 ],
+            "scale": [ 0.85, 0.85, 0.85 ]
+        },
+        "firstperson_righthand": {
+            "rotation": [ 0, -10, 25 ],
+            "translation": [ 1.13, 1.2, 1.13 ],
+            "scale": [ 0.68, 0.68, 0.68 ]
+        },
+        "firstperson_lefthand": {
+            "rotation": [ 0, -10, -15 ],
+            "translation": [ 1.13, -1.2, 1.13 ],
+            "scale": [ 0.68, 0.68, 0.68 ]
+        }
+    },
+	"overrides": [
+        {
+            "predicate": {
+                "blocking": 1
+            },
+            "model": "hinasch.unsaga:item/shield.blocking"
+        },
+        {
+            "predicate": {
+            	"scales":1,
+                "blocking": 1
+            },
+            "model": "hinasch.unsaga:item/shield.scale.blocking"
+        },
+        {
+            "predicate": {
+            	"scales":1
+            },
+            "model": "hinasch.unsaga:item/shield.scale"
+        }
+    ]
+}

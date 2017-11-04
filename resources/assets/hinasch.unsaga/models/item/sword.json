@@ -1,0 +1,82 @@
+{
+    "parent": "item/handheld",
+    "textures": {
+        "layer0": "hinasch.unsaga:items/sword_blade",
+		"layer1": "hinasch.unsaga:items/sword_hilt"
+    },
+	"overrides": [
+        {
+            "predicate": {
+                "woods": 1
+            },
+            "model": "hinasch.unsaga:item/sword.wood"
+        },
+        {
+            "predicate": {
+                "failed": 1
+            },
+            "model": "hinasch.unsaga:item/sword.failed"
+        },
+        {
+            "predicate": {
+                "metals": 1
+            },
+            "model": "hinasch.unsaga:item/sword.metal"
+        },
+        {
+            "predicate": {
+                "bones": 1
+            },
+            "model": "hinasch.unsaga:item/sword.bone"
+        },
+        {
+            "predicate": {
+                "dragonHeart": 1
+            },
+            "model": "hinasch.unsaga:item/sword.ice"
+        },
+        {
+            "predicate": {
+                "sivaQueen": 1
+            },
+            "model": "hinasch.unsaga:item/sword.ice"
+        },
+        {
+            "predicate": {
+                "scales": 1
+            },
+            "model": "hinasch.unsaga:item/sword.scale"
+        },
+        {
+            "predicate": {
+                "meteorite": 1
+            },
+            "model": "hinasch.unsaga:item/sword.power"
+        },
+        {
+            "predicate": {
+                "meteoricIron": 1
+            },
+            "model": "hinasch.unsaga:item/sword.power"
+        },
+        {
+            "predicate": {
+                "obsidian": 1
+            },
+            "model": "hinasch.unsaga:item/sword.obsidian"
+        },
+        {
+            "predicate": {
+                "meteoricIron": 1
+            },
+            "model": "hinasch.unsaga:item/sword.power"
+        },
+        {
+            "predicate": {
+                "meteorite": 1
+            },
+            "model": "hinasch.unsaga:item/sword.power"
+        }
+    ]
+
+}

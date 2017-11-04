@@ -1,0 +1,38 @@
+{
+    "parent": "item/handheld",
+    "textures": {
+        "layer0": "hinasch.unsaga:items/armor"
+    },
+	"overrides": [
+		{
+            "predicate": {
+                "metals": 1
+            },
+            "model": "hinasch.unsaga:item/armor.chain"
+        },
+		{
+            "predicate": {
+                "clothes": 1
+            },
+            "model": "hinasch.unsaga:item/armor.cloth"
+        },
+		{
+            "predicate": {
+                "steels": 1
+            },
+            "model": "hinasch.unsaga:item/armor.chain"
+        },
+		{
+            "predicate": {
+                "woods": 1
+            },
+            "model": "hinasch.unsaga:item/armor.wood"
+        },
+		{
+            "predicate": {
+                "scales": 1
+            },
+            "model": "hinasch.unsaga:item/armor.scale"
+        }
+    ]
+}

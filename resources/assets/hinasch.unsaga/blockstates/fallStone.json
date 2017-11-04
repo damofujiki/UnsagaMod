@@ -1,0 +1,7 @@
+{
+    "variants": {
+        "variant=cobblestone":  { "model": "cobblestone" },
+        "variant=dirt":  { "model": "dirt" },
+        "variant=netherrack":  { "model": "netherrack" }
+    }
+}

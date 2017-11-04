@@ -1,0 +1,88 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "hinasch.unsaga:blocks/stone_serpentine"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "serpentine": 1
+      },
+      "textures": {
+        "all": "hinasch.unsaga:blocks/stone_serpentine"
+      }
+    },
+    {
+      "predicate": {
+        "serpentine_smooth": 1
+      },
+      "textures": {
+        "all": "hinasch.unsaga:blocks/polished_serpentine"
+      }
+    },
+    {
+      "predicate": {
+        "lead": 1
+      },
+      "textures": {
+        "all": "hinasch.unsaga:blocks/cube_lead"
+      }
+    },
+    {
+      "predicate": {
+        "meteoric_iron": 1
+      },
+      "textures": {
+        "all": "hinasch.unsaga:blocks/cube_meteoric_iron"
+      }
+    },
+    {
+      "predicate": {
+        "damascus": 1
+      },
+      "textures": {
+        "all": "hinasch.unsaga:blocks/cube_damascus"
+      }
+    },
+    {
+      "predicate": {
+        "silver": 1
+      },
+      "textures": {
+        "all": "hinasch.unsaga:blocks/cube_silver"
+      }
+    },
+    {
+      "predicate": {
+        "faerie_silver": 1
+      },
+      "textures": {
+        "all": "hinasch.unsaga:blocks/cube_faerie_silver"
+      }
+    },
+    {
+      "predicate": {
+        "steel": 1
+      },
+      "textures": {
+        "all": "hinasch.unsaga:blocks/cube_steel"
+      }
+    },
+    {
+      "predicate": {
+        "steel2": 1
+      },
+      "textures": {
+        "all": "hinasch.unsaga:blocks/cube_steel"
+      }
+    },
+    {
+      "predicate": {
+        "meteorite": 1
+      },
+      "textures": {
+        "all": "hinasch.unsaga:blocks/stone_meteorite"
+      }
+    }
+  ]
+}

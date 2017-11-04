@@ -1,0 +1,14 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "hinasch.unsaga:items/icon_spell"
+    },
+	"overrides": [
+        {
+            "predicate": {
+                "selected": 1
+            },
+            "model": "hinasch.unsaga:item/spellIcon.selected"
+        }
+    ]
+}

@@ -1,0 +1,6 @@
+{
+    "parent": "hinasch.unsaga:item/bow.metal",
+    "textures": {
+        "layer0": "hinasch.unsaga:items/bow_metal_pulling_2"
+    }
+}

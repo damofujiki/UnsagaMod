@@ -1,0 +1,7 @@
+{
+    "parent": "item/handheld",
+    "textures": {
+        "layer0": "hinasch.unsaga:items/amulet_body",
+        "layer1": "hinasch.unsaga:items/amulet_string"
+    }
+}

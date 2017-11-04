@@ -1,0 +1,45 @@
+{
+    "parent": "item/handheld",
+    "textures": {
+        "layer0": "hinasch.unsaga:items/staff_head",
+		"layer1": "hinasch.unsaga:items/staff_handle"
+    },
+	"overrides": [
+        {
+            "predicate": {
+                "woods": 1
+            },
+            "model": "hinasch.unsaga:item/staff.wood"
+        },
+		{
+            "predicate": {
+                "failed": 1
+            },
+            "model": "hinasch.unsaga:item/staff.failed"
+        },
+		{
+            "predicate": {
+                "metals": 1
+            },
+            "model": "hinasch.unsaga:item/staff.normal"
+        },
+		{
+            "predicate": {
+                "bones": 1
+            },
+            "model": "hinasch.unsaga:item/staff.bone"
+        },
+		{
+            "predicate": {
+                "sivaQueen": 1
+            },
+            "model": "hinasch.unsaga:item/staff.alt"
+        },
+		{
+            "predicate": {
+                "corundums": 1
+            },
+            "model": "hinasch.unsaga:item/staff.alt"
+        }
+    ]
+}

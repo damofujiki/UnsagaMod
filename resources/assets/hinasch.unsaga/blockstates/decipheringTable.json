@@ -1,0 +1,12 @@
+{
+    "variants": {
+		"facing=north,tablet=true":  { "model": "hinasch.unsaga:decipheringTableOn" ,"y":90 },
+		"facing=south,tablet=true":  { "model": "hinasch.unsaga:decipheringTableOn" ,"y":90 },
+		"facing=east,tablet=true":  { "model": "hinasch.unsaga:decipheringTableOn" },
+		"facing=west,tablet=true":  { "model": "hinasch.unsaga:decipheringTableOn" },
+		"facing=north,tablet=false":  { "model": "hinasch.unsaga:decipheringTableOff" ,"y":90},
+		"facing=south,tablet=false":  { "model": "hinasch.unsaga:decipheringTableOff" ,"y":90 },
+		"facing=east,tablet=false":  { "model": "hinasch.unsaga:decipheringTableOff"  },
+		"facing=west,tablet=false":  { "model": "hinasch.unsaga:decipheringTableOff"  }
+    }
+}

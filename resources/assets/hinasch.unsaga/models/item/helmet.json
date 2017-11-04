@@ -1,0 +1,81 @@
+{
+    "parent": "item/handheld",
+    "textures": {
+        "layer0": "hinasch.unsaga:items/helmet"
+    },
+	"overrides": [
+		{
+            "predicate": {
+                "clothes": 1
+            },
+            "model": "hinasch.unsaga:item/helmet.bandana"
+        },
+		{
+            "predicate": {
+                "metals": 1
+            },
+            "model": "hinasch.unsaga:item/helmet.metal"
+        },
+		{
+            "predicate": {
+                "steels": 1
+            },
+            "model": "hinasch.unsaga:item/helmet.metal"
+        },
+		{
+            "predicate": {
+                "bones": 1
+            },
+            "model": "hinasch.unsaga:item/helmet.bone"
+        },
+		{
+			"predicate": {
+			"leathers":1
+			},
+			"model": "hinasch.unsaga:item/helmet.headband"
+		},
+		{
+            "predicate": {
+                "feather": 1
+            },
+            "model": "item/feather"
+        },
+		{
+            "predicate": {
+                "faerieSilver": 1
+            },
+            "model": "hinasch.unsaga:item/helmet.ring"
+        },
+		{
+            "predicate": {
+                "silver": 1
+            },
+            "model": "hinasch.unsaga:item/helmet.ring"
+        },
+		{
+            "predicate": {
+                "corundums": 1
+            },
+            "model": "hinasch.unsaga:item/helmet.ring.alt"
+        },
+		{
+            "predicate": {
+                "diamond": 1
+            },
+            "model": "hinasch.unsaga:item/helmet.ring.alt"
+        },
+		{
+            "predicate": {
+                "scales": 1
+            },
+            "model": "hinasch.unsaga:item/helmet.scale"
+        },
+		{
+            "predicate": {
+                "fur": 1
+            },
+            "model": "hinasch.unsaga:item/helmet.fur"
+        }
+    ]
+
+}

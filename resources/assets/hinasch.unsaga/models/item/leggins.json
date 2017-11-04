@@ -1,0 +1,15 @@
+{
+    "parent": "item/handheld",
+    "textures": {
+        "layer0": "hinasch.unsaga:items/leggins"
+    },
+	"overrides": [
+		{
+            "predicate": {
+                "clothes": 1
+            },
+            "model": "hinasch.unsaga:item/leggins.socks"
+        }
+    ]
+
+}

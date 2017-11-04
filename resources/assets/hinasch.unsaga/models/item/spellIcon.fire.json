@@ -1,0 +1,7 @@
+{
+    "parent": "builtin/generated",
+    "textures": {
+        "layer0": "hinasch.unsaga:items/book_spell",
+	"layer1": "hinasch.unsaga:items/fireicon"
+    }
+}

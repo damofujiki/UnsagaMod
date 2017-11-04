@@ -1,0 +1,97 @@
+[
+  {
+    "name": "crimsonFlare",
+    "base": "fireArrow",
+    "table": "4,1,1,0,1,5"
+  },
+  {
+    "name": "crimsonFlare",
+    "base": "fireStorm",
+    "table": "5,2,2,0,0,3"
+  },
+  {
+    "name": "superPower",
+    "base": "buildUp",
+    "table": "2,3,2,0,0,0"
+  },
+  {
+    "name": "fear",
+    "base": "sleep",
+    "table": "0,3,0,0,0,5"
+  },
+  {
+    "name": "stoneShower",
+    "base": "boulder",
+    "table": "0,4,0,0,0,6"
+  },
+  {
+    "name": "detectTreasure",
+    "base": "detectGold",
+    "table": "0,0,5,2,0,2"
+  },
+  {
+    "name": "sharpness",
+    "base": "weaponBless",
+    "table": "0,2,4,2,0,2"
+  },
+  {
+    "name": "goldFinger",
+    "base": "detectGold",
+    "table": "0,0,5,0,0,4"
+  },
+  {
+    "name": "goldFinger",
+    "base": "magicLock",
+    "table": "2,0,4,0,0,3"
+  },
+  {
+    "name": "thunderCrap",
+    "base": "cloudCall",
+    "table": "0,2,2,3,2,2"
+  },
+  {
+    "name": "thunderCrap",
+    "base": "bubbleBlow",
+    "table": "0,0,3,3,3,0"
+  },
+  {
+    "name": "reflesh",
+    "base": "purify",
+    "table": "0,0,0,4,5,0"
+  },
+  {
+    "name": "iceNine",
+    "base": "iceNeedle",
+    "table": "0,4,0,4,0,4"
+  },
+  {
+    "name": "simulacrum",
+    "base": "iceNeedle",
+    "table": "0,0,3,5,0,3"
+  },
+  {
+    "name": "leafShield",
+    "base": "missileGuard",
+    "table": "0,2,0,2,3,0"
+  },
+  {
+    "name": "restlation",
+    "base": "overGrowth",
+    "table": "0,3,0,2,4,0"
+  },
+  {
+    "name": "restlation",
+    "base": "lifeBoost",
+    "table": "3,0,0,2,4,0"
+  },
+  {
+    "name": "restlation",
+    "base": "meditation",
+    "table": "2,2,0,2,3,0"
+  },
+  {
+    "name": "godThunder",
+    "base": "callThunder",
+    "table": "0,0,0,5,5,0"
+  }
+]

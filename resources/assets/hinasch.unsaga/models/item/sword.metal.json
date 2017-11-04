@@ -1,0 +1,7 @@
+{
+    "parent": "item/handheld",
+    "textures": {
+        "layer0": "hinasch.unsaga:items/sword_blade",
+        "layer1": "hinasch.unsaga:items/sword_hilt_metal"
+    }
+}

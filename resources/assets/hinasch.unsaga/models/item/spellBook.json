@@ -1,0 +1,44 @@
+{
+    "parent": "item/handheld",
+    "textures": {
+        "layer0": "hinasch.unsaga:items/book_spell"
+    },
+	"overrides": [
+        {
+            "predicate": {
+                "fire": 1
+            },
+            "model": "hinasch.unsaga:item/spellBook.fire"
+        },
+        {
+            "predicate": {
+                "wood": 1
+            },
+            "model": "hinasch.unsaga:item/spellBook.wood"
+        },
+        {
+            "predicate": {
+                "metal": 1
+            },
+            "model": "hinasch.unsaga:item/spellBook.metal"
+        },
+		        {
+            "predicate": {
+                "water": 1
+            },
+            "model": "hinasch.unsaga:item/spellBook.water"
+        },
+		{
+            "predicate": {
+                "forbidden": 1
+            },
+            "model": "hinasch.unsaga:item/spellBook.forbidden"
+        },
+		{
+            "predicate": {
+                "earth": 1
+            },
+            "model": "hinasch.unsaga:item/spellBook.earth"
+        }
+    ]
+}

@@ -1,0 +1,7 @@
+{
+    "parent": "item/handheld",
+    "textures": {
+        "layer0": "hinasch.unsaga:items/knife_psy_handle",
+		"layer1": "hinasch.unsaga:items/knife_psy_edge"
+    }
+}

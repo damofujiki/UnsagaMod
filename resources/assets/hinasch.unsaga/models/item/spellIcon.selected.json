@@ -1,0 +1,6 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "hinasch.unsaga:items/icon_spell_selected"
+    }
+}

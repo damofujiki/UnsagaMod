@@ -1,0 +1,51 @@
+{
+	"parent": "builtin/generated",
+	"textures": {
+		"layer0": "hinasch.unsaga:items/panel_base"
+	},
+	"overrides": [
+	              {
+	            	  "predicate": {
+	            		  "key": 1
+	            	  },
+	            	  "model": "hinasch.unsaga:item/skillPanel.key"
+	              },
+	              {
+	            	  "predicate": {
+	            		  "melee": 1
+	            	  },
+	            	  "model": "hinasch.unsaga:item/skillPanel.melee"
+	              },
+	              {
+	            	  "predicate": {
+	            		  "roll": 1
+	            	  },
+	            	  "model": "hinasch.unsaga:item/skillPanel.roll"
+	              },
+	              {
+	            	  "predicate": {
+	            		  "communication": 1
+	            	  },
+	            	  "model": "hinasch.unsaga:item/skillPanel.communication"
+	              },
+	              {
+	            	  "predicate": {
+	            		  "negative": 1
+	            	  },
+	            	  "model": "hinasch.unsaga:item/skillPanel.negative"
+	              },
+	              {
+	            	  "predicate": {
+	            		  "protect": 1
+	            	  },
+	            	  "model": "hinasch.unsaga:item/skillPanel.protect"
+	              },
+	              {
+	            	  "predicate": {
+	            		  "familiar": 1
+	            	  },
+	            	  "model": "hinasch.unsaga:item/skillPanel.familiar"
+	              }
+	              ]
+
+}

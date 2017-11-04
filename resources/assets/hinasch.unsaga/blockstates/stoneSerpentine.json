@@ -1,0 +1,55 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "cube_all"
+  },
+  "variants": {
+    "variant": {
+      "serpentine": {
+        "textures": {
+          "all": "hinasch.unsaga:blocks/stone_serpentine"
+        }
+      },
+      "serpentine_smooth": {
+        "textures": {
+          "all": "hinasch.unsaga:blocks/polished_serpentine"
+        }
+      },
+      "lead": {
+        "textures": {
+          "all": "hinasch.unsaga:blocks/cube_lead"
+        }
+      },
+      "meteoric_iron": {
+        "textures": {
+          "all": "hinasch.unsaga:blocks/cube_meteoric_iron"
+        }
+      },
+      "damascus": {
+        "textures": {
+          "all": "hinasch.unsaga:blocks/cube_damascus"
+        }
+      },
+      "silver": {
+        "textures": {
+          "all": "hinasch.unsaga:blocks/cube_silver"
+        }
+      },
+      "faerie_silver": {
+        "textures": {
+          "all": "hinasch.unsaga:blocks/cube_faerie_silver"
+        }
+      },
+	  "copper": {
+        "textures": {
+          "all": "hinasch.unsaga:blocks/cube_copper"
+        }
+      },
+	  "steel": {
+        "textures": {
+          "all": "hinasch.unsaga:blocks/cube_steel"
+        }
+      }
+    }
+  }
+}

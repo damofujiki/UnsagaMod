@@ -1,0 +1,7 @@
+{
+    "parent": "item/handheld",
+    "textures": {
+        "layer0": "hinasch.unsaga:items/axe_head",
+		"layer1": "hinasch.unsaga:items/axe_handle_power"
+    }
+}

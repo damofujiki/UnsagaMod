@@ -1,0 +1,63 @@
+{
+    "parent": "item/handheld",
+    "textures": {
+        "layer0": "hinasch.unsaga:items/axe_head",
+		"layer1": "hinasch.unsaga:items/axe_handle"
+    },
+	"overrides": [
+		{
+            "predicate": {
+                "failed": 1
+            },
+            "model": "hinasch.unsaga:item/axe.failed"
+        },
+		{
+            "predicate": {
+                "scales": 1
+            },
+            "model": "hinasch.unsaga:item/axe.scale"
+        },
+		{
+            "predicate": {
+                "rocks": 1
+            },
+            "model": "hinasch.unsaga:item/axe.stone"
+        },
+		{
+            "predicate": {
+                "meteoricIron": 1
+            },
+            "model": "hinasch.unsaga:item/axe.alt"
+        },
+		{
+            "predicate": {
+                "silver": 1
+            },
+            "model": "hinasch.unsaga:item/axe.alt"
+        },
+		{
+            "predicate": {
+                "dragonHeart": 1
+            },
+            "model": "hinasch.unsaga:item/axe.alt"
+        },
+		{
+            "predicate": {
+                "sivaQueen": 1
+            },
+            "model": "hinasch.unsaga:item/axe.bilkis"
+        },
+		{
+            "predicate": {
+                "dragonHeart": 1
+            },
+            "model": "hinasch.unsaga:item/axe.vorpal"
+        },
+		{
+            "predicate": {
+                "faerieSilver": 1
+            },
+            "model": "hinasch.unsaga:item/axe.alt"
+        }
+    ]
+}
