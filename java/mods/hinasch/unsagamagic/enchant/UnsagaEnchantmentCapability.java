@@ -2,7 +2,11 @@ package mods.hinasch.unsagamagic.enchant;
 
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ArrayBlockingQueue;
+
+import javax.annotation.Nullable;
 
 import com.google.common.collect.Maps;
 
@@ -10,9 +14,13 @@ import mods.hinasch.lib.capability.CapabilityAdapterFactory.ICapabilityAdapterPl
 import mods.hinasch.lib.capability.CapabilityAdapterFrame;
 import mods.hinasch.lib.capability.CapabilityStorage;
 import mods.hinasch.lib.capability.ComponentCapabilityAdapterItem;
+import mods.hinasch.lib.iface.INBTWritable;
 import mods.hinasch.lib.util.UtilNBT;
+import mods.hinasch.lib.util.UtilNBT.RestoreFunc;
 import mods.hinasch.unsaga.UnsagaMod;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
@@ -64,7 +72,7 @@ public class UnsagaEnchantmentCapability {
 
 	public static class DefaultImpl implements IUnsagaEnchantable{
 
-		Map<UnsagaEnchantment,Integer> remainings = Maps.newHashMap();
+		Map<EnchantmentProperty,EnchantmentState> remainings = Maps.newHashMap();
 		boolean init = false;
 
 		public void init(){
@@ -74,13 +82,13 @@ public class UnsagaEnchantmentCapability {
 			this.setInitialized(true);
 		}
 		@Override
-		public int getEnchantmentRemaining(UnsagaEnchantment enchant) {
+		public @Nullable EnchantmentState getEnchantment(EnchantmentProperty enchant) {
 			// TODO 自動生成されたメソッド・スタブ
-			return this.remainings.get(enchant) !=null ? this.remainings.get(enchant) : 0;
+			return this.remainings.get(enchant);
 		}
 
 		@Override
-		public void setEnchantmentRemaining(UnsagaEnchantment enchant,int remaining) {
+		public void setEnchantment(EnchantmentProperty enchant,EnchantmentState remaining) {
 			this.remainings.put(enchant, remaining);
 
 		}
@@ -95,47 +103,57 @@ public class UnsagaEnchantmentCapability {
 			this.init = par1;
 		}
 		@Override
-		public Set<Entry<UnsagaEnchantment,Integer>> getEntries() {
+		public Set<Entry<EnchantmentProperty,EnchantmentState>> getEntries() {
 			// TODO 自動生成されたメソッド・スタブ
 			return this.remainings.entrySet();
 		}
 		@Override
-		public void setMap(Map<UnsagaEnchantment, Integer> map) {
+		public void setMap(Map<EnchantmentProperty, EnchantmentState> map) {
 			map.entrySet().stream().forEach(in ->{
 				this.remainings.put(in.getKey(), in.getValue());
 			});
 		}
 
 		@Override
-		public void reduceRemainings(UnsagaEnchantment e) {
-			UnsagaMod.logger.trace(this.getClass().getName(), e.getName(),"called");
-			int remain = this.getEnchantmentRemaining(e);
-			remain --;
-			if(remain<=0){
-				remain = 0;
-				this.remainings.remove(e);
-			}else{
-				UnsagaMod.logger.trace(this.getClass().getName(), e.getName(),remain);
-				this.setEnchantmentRemaining(e, remain);
-			}
-
-		}
-		@Override
-		public void onAttack() {
-			// TODO 自動生成されたメソッド・スタブ
-			this.reduceRemainings(UnsagaEnchantmentRegistry.instance().weaponBless);
-			this.reduceRemainings(UnsagaEnchantmentRegistry.instance().sharpness);
-		}
-		@Override
-		public void onHurt() {
-			// TODO 自動生成されたメソッド・スタブ
-			this.reduceRemainings(UnsagaEnchantmentRegistry.instance().armorBless);
-		}
-		@Override
 		public boolean isEmpty() {
 			// TODO 自動生成されたメソッド・スタブ
 			return this.remainings.isEmpty();
 		}
+		@Override
+		public boolean hasEnchant(EnchantmentProperty e) {
+			// TODO 自動生成されたメソッド・スタブ
+			return this.remainings.containsKey(e);
+		}
+
+		public void remove(EntityLivingBase living,EnchantmentProperty p){
+			this.remainings.remove(p);
+			UnsagaEnchantmentEvent.refleshApplyEnchantment(living);
+		}
+		@Override
+		public void checkExpireTime(EntityLivingBase living,long totalWorldTime) {
+			Queue<EnchantmentProperty> queue = new ArrayBlockingQueue(10);
+			for(EnchantmentProperty en:this.remainings.keySet()){
+				if(this.remainings.get(en).getExpireTime()<totalWorldTime){
+					queue.offer(en);
+				}
+			}
+
+			for(int i=0;i<queue.size();i++){
+				EnchantmentProperty p = queue.poll();
+				this.remainings.remove(p);
+			}
+		}
+		@Override
+		public float getBowModifier() {
+			for(EnchantmentProperty prop:this.remainings.keySet()){
+				if(prop instanceof EnchantmentWeapon){
+					EnchantmentState state = this.getEnchantment(prop);
+					return ((EnchantmentWeapon)prop).getAttackModifier(state.getLevel());
+				}
+			}
+			return 0;
+		}
+
 
 
 	}
@@ -147,10 +165,10 @@ public class UnsagaEnchantmentCapability {
 				IUnsagaEnchantable instance, EnumFacing side) {
 			if(!instance.isEmpty()){
 				NBTTagList tagList = UtilNBT.newTagList();
-				for(Entry<UnsagaEnchantment,Integer> entry:instance.getEntries()){
+				for(Entry<EnchantmentProperty,EnchantmentState> entry:instance.getEntries()){
 					NBTTagCompound child = UtilNBT.compound();
 					child.setString("key",entry.getKey().getKey().getResourcePath());
-					child.setInteger("remain", entry.getValue());
+					entry.getValue().writeToNBT(child);
 					tagList.appendTag(child);
 				}
 
@@ -168,15 +186,15 @@ public class UnsagaEnchantmentCapability {
 				EnumFacing side) {
 			if(comp.hasKey("enchants")){
 				NBTTagList tagList = UtilNBT.getTagList(comp, "enchants");
-				Map<UnsagaEnchantment,Integer> map = Maps.newHashMap();
+				Map<EnchantmentProperty,EnchantmentState> map = Maps.newHashMap();
 				for(int i=0;i<tagList.tagCount();i++){
 					NBTTagCompound child = tagList.getCompoundTagAt(i);
 					UnsagaMod.logger.trace("ロード", child);
 					String key = child.getString("key");
-					UnsagaEnchantment enchant = UnsagaEnchantmentRegistry.instance().get(key);
-					int remain = child.getInteger("remain");
-					UnsagaMod.logger.trace("ロード", key,remain);
-					map.put(enchant, remain);
+					EnchantmentProperty enchant = UnsagaEnchantmentRegistry.instance().get(key);
+					EnchantmentState expire = EnchantmentState.RESTORE.apply(child);
+					UnsagaMod.logger.trace("ロード", key,expire);
+					map.put(enchant, expire);
 				}
 				instance.setMap(map);
 			}
@@ -193,5 +211,37 @@ public class UnsagaEnchantmentCapability {
 
 	public static void registerEvents(){
 		adapter.registerAttachEvent();
+	}
+
+	public static boolean hasCapability(ItemStack entity){
+		return adapter.hasCapability(entity);
+	}
+	public static class EnchantmentState implements INBTWritable{
+		public EnchantmentState(long expireTime, int level) {
+			super();
+			this.expireTime = expireTime;
+			this.level = level;
+		}
+		final long expireTime;
+		final int level;
+		public long getExpireTime() {
+			return expireTime;
+		}
+		public int getLevel() {
+			return level;
+		}
+		@Override
+		public void writeToNBT(NBTTagCompound stream) {
+			// TODO 自動生成されたメソッド・スタブ
+			stream.setLong("expire", this.expireTime);
+			stream.setInteger("level", level);
+		}
+
+		public static RestoreFunc<EnchantmentState> RESTORE = input -> {
+			long expire = input.getLong("expire");
+			int level = input.getInteger("level");
+			return new EnchantmentState(expire,level);
+		};
+
 	}
 }

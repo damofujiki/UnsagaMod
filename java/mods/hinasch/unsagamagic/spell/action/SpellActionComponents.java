@@ -1,14 +1,13 @@
 package mods.hinasch.unsagamagic.spell.action;
 
 import java.util.Random;
-import java.util.function.BiPredicate;
 import java.util.function.UnaryOperator;
 
 import javax.annotation.Nullable;
 
 import com.google.common.collect.Lists;
 
-import mods.hinasch.lib.entity.RangedHelper;
+import mods.hinasch.lib.entity.RangedHelper.RangedSelector;
 import mods.hinasch.lib.particle.ParticleHelper;
 import mods.hinasch.lib.world.WorldHelper;
 import mods.hinasch.lib.world.XYZPos;
@@ -20,11 +19,10 @@ import mods.hinasch.unsaga.common.specialaction.ActionRangedAttack;
 import mods.hinasch.unsaga.common.specialaction.ActionTargettable;
 import mods.hinasch.unsaga.common.specialaction.ActionWorld;
 import mods.hinasch.unsaga.common.specialaction.IActionPerformer.TargetType;
-import mods.hinasch.unsaga.core.entity.StatePropertyArrow.StateArrow;
 import mods.hinasch.unsaga.core.entity.projectile.EntityBlaster;
 import mods.hinasch.unsaga.core.entity.projectile.EntityBoulder;
 import mods.hinasch.unsaga.core.entity.projectile.EntityBubbleBlow;
-import mods.hinasch.unsaga.core.entity.projectile.EntityCustomArrow;
+import mods.hinasch.unsaga.core.entity.projectile.EntityFireArrow;
 import mods.hinasch.unsaga.core.net.packet.PacketClientScanner;
 import mods.hinasch.unsaga.core.potion.UnsagaPotions;
 import mods.hinasch.unsagamagic.spell.SpellRegistry;
@@ -33,7 +31,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.entity.projectile.EntityArrow.PickupStatus;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
@@ -45,6 +42,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumParticleTypes;
 
 public class SpellActionComponents {
+
 
 
 	public static final IAction<SpellCaster> SHOCK_EFFECT = self ->{
@@ -152,16 +150,16 @@ public class SpellActionComponents {
 			if(in.getPerformer().isInWater()){
 				return null;
 			}
-			EntityCustomArrow arrow = new EntityCustomArrow(in.getWorld(),in.getPerformer());
+			EntityFireArrow arrow = new EntityFireArrow(in.getWorld(),in.getPerformer());
 			arrow.setFire(65535);
-			arrow.setArrowType(StateArrow.Type.MAGIC_ARROW);
-			arrow.pickupStatus = PickupStatus.DISALLOWED;
-			arrow.setAim(in.getPerformer(), in.getPerformer().rotationPitch, in.getPerformer().rotationYaw, 0.0F, 2.0F, 1.0F);
+//			arrow.setArrowType(StateArrow.Type.MAGIC_ARROW);
+//			arrow.pickupStatus = PickupStatus.DISALLOWED;
+			arrow.setHeadingFromThrower(in.getPerformer(), in.getPerformer().rotationPitch, in.getPerformer().rotationYaw, 0.0F, 2.0F, 1.0F);
 			arrow.setDamage(in.getEffectModifiedStrength().hp());
-			if(in.getAmplify()>=1.5F){
-				arrow.setIsCritical(true);
-			}
-			UnsagaMod.logger.trace("firearrow", arrow);
+//			if(in.getAmplify()>=1.5F){
+//				arrow.setIsCritical(true);
+//			}
+//			UnsagaMod.logger.trace("firearrow", arrow);
 			return arrow;
 		}).setShootSound(SoundEvents.ENTITY_GHAST_SHOOT));
 		return fireArrowBase;
@@ -203,12 +201,13 @@ public class SpellActionComponents {
 		base.addAction(new ActionTargettable<SpellCaster>(targetted));
 		return base;
 	}
-	public static SpellActionBase createRangedDebuffSpell(boolean isDebuff,double range,@Nullable BiPredicate<RangedHelper<SpellCaster>,EntityLivingBase> selector,Potion... potions){
+	public static SpellActionBase createRangedDebuffSpell(boolean isDebuff,double range,@Nullable RangedSelector<SpellCaster,EntityLivingBase> selector,Potion... potions){
 		SpellActionBase base = new SpellActionBase();
 		ActionRangedAttack<SpellCaster> ranged = new ActionRangedAttack().setAttackFlag(false);
 		ranged.setDebuffSetter(new SpellActionStatusEffect(isDebuff,potions)).setBoundingBoxFunction(in ->{
 			return Lists.newArrayList(in.getPerformer().getEntityBoundingBox().expand(range, range, range));
 		});
+
 		if(selector==null){
 			base.addAction(ranged);
 		}else{

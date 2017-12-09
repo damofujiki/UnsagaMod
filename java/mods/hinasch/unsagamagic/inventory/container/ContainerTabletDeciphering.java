@@ -18,19 +18,20 @@ import mods.hinasch.lib.world.WorldHelper;
 import mods.hinasch.lib.world.XYZPos;
 import mods.hinasch.unsaga.UnsagaMod;
 import mods.hinasch.unsaga.core.net.packet.PacketGuiButtonUnsaga;
+import mods.hinasch.unsaga.core.stats.UnsagaAchievementRegistry;
 import mods.hinasch.unsaga.init.UnsagaGui;
 import mods.hinasch.unsaga.status.UnsagaXPCapability;
 import mods.hinasch.unsagamagic.client.gui.GuiTabletDeciphering;
 import mods.hinasch.unsagamagic.inventory.InventoryTabletDeciphering;
 import mods.hinasch.unsagamagic.inventory.slot.SlotBook;
 import mods.hinasch.unsagamagic.inventory.slot.SlotTabletDeciphering;
+import mods.hinasch.unsagamagic.item.ItemIconSpellNew;
+import mods.hinasch.unsagamagic.item.ItemTablet;
 import mods.hinasch.unsagamagic.item.UnsagaMagicItems;
-import mods.hinasch.unsagamagic.item.newitem.ItemIconSpellNew;
-import mods.hinasch.unsagamagic.item.newitem.ItemTablet;
 import mods.hinasch.unsagamagic.spell.Spell;
-import mods.hinasch.unsagamagic.spell.SpellBookCapability;
-import mods.hinasch.unsagamagic.spell.MagicTablet;
-import mods.hinasch.unsagamagic.spell.TabletCapability;
+import mods.hinasch.unsagamagic.spell.spellbook.SpellBookCapability;
+import mods.hinasch.unsagamagic.spell.tablet.MagicTablet;
+import mods.hinasch.unsagamagic.spell.tablet.TabletCapability;
 import mods.hinasch.unsagamagic.tileentity.TileEntityDecipheringTable;
 import mods.hinasch.unsagamagic.util.HelperDecipherProcess;
 import net.minecraft.entity.player.EntityPlayer;
@@ -68,6 +69,7 @@ public class ContainerTabletDeciphering extends ContainerBase{
 
 		table.setUser(ep);
 
+		ep.addStat(UnsagaAchievementRegistry.instance().firstDecipher);
 
 		int j = 10;
 		for(int i=0;i<2;i++){
@@ -213,6 +215,9 @@ public class ContainerTabletDeciphering extends ContainerBase{
 
 	@Override
 	public void onPacketData() {
+		if(this.buttonID==GuiTabletDeciphering.BUTTON_CLEAR){
+			this.onPushClearButton();
+		}
 		if(this.getSelectedSlot().isPresent()){
 			int slotnum = this.getSelectedSlot().getAsInt();
 			ItemStack icon = this.invSpells.getStackInSlot(slotnum);
@@ -226,9 +231,6 @@ public class ContainerTabletDeciphering extends ContainerBase{
 					break;
 				case GuiTabletDeciphering.BUTTON_WRITE:
 					this.onPushWritingButton(spell, slotnum);
-					break;
-				case GuiTabletDeciphering.BUTTON_CLEAR:
-					this.onPushClearButton(spell, slotnum);
 					break;
 				}
 			}
@@ -247,7 +249,7 @@ public class ContainerTabletDeciphering extends ContainerBase{
 		return this.inv.getStackInSlot(0);
 	}
 
-	public void onPushClearButton(Spell spell,int slotnum){
+	public void onPushClearButton(){
 		if(this.getBookSlot()!=null && SpellBookCapability.adapter.hasCapability(getBookSlot())){
 			SpellBookCapability.adapter.getCapability(getBookSlot()).clear();
 		}
@@ -261,7 +263,7 @@ public class ContainerTabletDeciphering extends ContainerBase{
 	public void onPushWritingButton(Spell spell,int slotnum){
 		if(this.getBookSlot()!=null && SpellBookCapability.adapter.hasCapability(getBookSlot())){
 			if(TabletCapability.adapter.hasCapability(getTabletSlot())){
-				if(TabletCapability.adapter.getCapability(getTabletSlot()).getProgress(spell)>=100){
+				if(TabletCapability.adapter.getCapability(getTabletSlot()).getProgress(spell)>=100 || ep.isCreative()){
 					SpellBookCapability.adapter.getCapability(this.getBookSlot()).addSpell(spell);
 				}
 			}
@@ -314,6 +316,7 @@ public class ContainerTabletDeciphering extends ContainerBase{
 				int progress_post = progress_pre + progress;
 
 				progress_post = MathHelper.clamp_int(progress_post, 0, 100);
+
 				ItemIconSpellNew.adapter.getCapability(this.invSpells.getStackInSlot(slotnum)).setDecipheringProgress(progress_post);
 				if(TabletCapability.adapter.hasCapability(tablet)){
 					TabletCapability.adapter.getCapability(tablet).progressDecipher(spell, progress);

@@ -1,4 +1,4 @@
-package mods.hinasch.unsagamagic.spell;
+package mods.hinasch.unsagamagic.spell.spellbook;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +14,9 @@ import mods.hinasch.lib.item.ItemUtil;
 import mods.hinasch.lib.network.PacketSyncCapability;
 import mods.hinasch.lib.util.UtilNBT;
 import mods.hinasch.unsaga.UnsagaMod;
-import mods.hinasch.unsagamagic.item.newitem.ItemSpellBook;
+import mods.hinasch.unsagamagic.item.ItemSpellBook;
+import mods.hinasch.unsagamagic.spell.Spell;
+import mods.hinasch.unsagamagic.spell.SpellComponent;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -70,6 +72,7 @@ public class SpellBookCapability {
 
 		int size = 0;
 		int index = 0;
+		float acceleration = 1.0F;
 		List<SpellComponent> list = Lists.newArrayList();
 		@Override
 		public int getCapacity() {
@@ -211,6 +214,18 @@ public class SpellBookCapability {
 			return this.getRawSpells().stream().map(in -> in.getSpell()).collect(Collectors.toList());
 		}
 
+		@Override
+		public float getAcceleration() {
+			// TODO 自動生成されたメソッド・スタブ
+			return this.acceleration;
+		}
+
+		@Override
+		public void setAcceleration(float accel) {
+			// TODO 自動生成されたメソッド・スタブ
+			this.acceleration = accel;
+		}
+
 	}
 
 	public static void changeSpell(ItemStack stack){
@@ -230,6 +245,7 @@ public class SpellBookCapability {
 			// TODO 自動生成されたメソッド・スタブ
 			comp.setByte("index",(byte)instance.getIndex());
 			comp.setByte("size", (byte)instance.getCapacity());
+			comp.setFloat("accel", instance.getAcceleration());
 			UtilNBT.writeListToNBT(instance.getRawSpells(), comp, "spells");
 		}
 
@@ -244,6 +260,9 @@ public class SpellBookCapability {
 			}
 			if(comp.hasKey("spells")){
 				instance.setSpells(UtilNBT.readListFromNBT(comp, "spells", SpellComponent.RESTORE));
+			}
+			if(comp.hasKey("accel")){
+				instance.setAcceleration(comp.getFloat("accel"));
 			}
 		}
 

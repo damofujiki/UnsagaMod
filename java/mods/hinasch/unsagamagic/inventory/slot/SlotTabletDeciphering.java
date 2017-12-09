@@ -1,6 +1,6 @@
 package mods.hinasch.unsagamagic.inventory.slot;
 
-import mods.hinasch.unsagamagic.item.newitem.ItemTablet;
+import mods.hinasch.unsagamagic.item.ItemTablet;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;

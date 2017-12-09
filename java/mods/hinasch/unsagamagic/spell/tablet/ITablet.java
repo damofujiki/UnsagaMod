@@ -1,10 +1,11 @@
-package mods.hinasch.unsagamagic.spell;
+package mods.hinasch.unsagamagic.spell.tablet;
 
 import java.util.List;
 import java.util.Map;
 
 import mods.hinasch.lib.iface.IRequireInitializing;
-import mods.hinasch.unsagamagic.item.newitem.ItemTablet.DecipheringPair;
+import mods.hinasch.unsagamagic.item.ItemTablet.DecipheringPair;
+import mods.hinasch.unsagamagic.spell.Spell;
 
 
 public interface ITablet extends IRequireInitializing{

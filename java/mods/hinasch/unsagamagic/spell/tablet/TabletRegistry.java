@@ -1,4 +1,4 @@
-package mods.hinasch.unsagamagic.spell;
+package mods.hinasch.unsagamagic.spell.tablet;
 
 import java.util.List;
 import java.util.Random;
@@ -8,6 +8,8 @@ import com.google.common.collect.Lists;
 import mods.hinasch.lib.item.WeightedRandomItem;
 import mods.hinasch.lib.registry.PropertyRegistry;
 import mods.hinasch.unsaga.element.FiveElements;
+import mods.hinasch.unsagamagic.spell.Spell;
+import mods.hinasch.unsagamagic.spell.SpellRegistry;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.WeightedRandom;
 
@@ -137,7 +139,7 @@ public class TabletRegistry extends PropertyRegistry<MagicTablet>{
 	public void validate(){
 		for(MagicTablet tablet:this.getProperties()){
 			for(Spell spell:tablet.getSpellList()){
-				com.google.common.base.Preconditions.checkNotNull(SpellRegistry.instance().get(spell.getKey().getResourcePath()),spell.getName());
+				com.google.common.base.Preconditions.checkNotNull(SpellRegistry.instance().get(spell.getKey().getResourcePath()),spell.getPropertyName());
 			}
 		}
 	}

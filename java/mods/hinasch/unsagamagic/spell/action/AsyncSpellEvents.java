@@ -1,5 +1,8 @@
 package mods.hinasch.unsagamagic.spell.action;
 
+import java.util.Collections;
+import java.util.List;
+
 import mods.hinasch.lib.entity.RangedHelper;
 import mods.hinasch.lib.particle.ParticleHelper;
 import mods.hinasch.lib.sync.AsyncUpdateEvent;
@@ -9,6 +12,7 @@ import mods.hinasch.lib.world.WorldHelper;
 import mods.hinasch.lib.world.XYZPos;
 import mods.hinasch.unsaga.UnsagaMod;
 import mods.hinasch.unsaga.core.entity.projectile.EntityBoulder;
+import mods.hinasch.unsaga.core.entity.projectile.EntityIceNeedle;
 import mods.hinasch.unsaga.core.entity.projectile.EntitySolutionLiquid;
 import mods.hinasch.unsaga.damage.DamageSourceUnsaga;
 import mods.hinasch.unsaga.damage.DamageTypeUnsaga.General;
@@ -31,7 +35,7 @@ public class AsyncSpellEvents {
 		final int expireTime;
 		int time = 0;
 		int count = 0;
-		int threshold = 20;
+		int threshold = 1;
 
 
 		public AsyncSpellEvent(World world,EntityLivingBase caster,int expire){
@@ -39,7 +43,7 @@ public class AsyncSpellEvents {
 			this.world = world;
 			this.caster = caster;
 			this.expireTime = expire;
-			this.setThreshold(500);
+//			this.setThreshold(1);
 		}
 
 		public AsyncUpdateEvent setThreshold(int th){
@@ -56,12 +60,12 @@ public class AsyncSpellEvents {
 		public void loop() {
 
 
-			if(count==0 || count%(threshold * 10)==0){
+//			if(count==0 || count%(threshold)==0){
 //				this.count = 0;
 				this.loopLoose();
 				UnsagaMod.logger.trace("tick", time);
 				time ++;
-			}
+//			}
 			count ++;
 		}
 
@@ -76,7 +80,7 @@ public class AsyncSpellEvents {
 			super(world, caster, expire);
 			this.target = target;
 			this.damage = damage;
-			this.setThreshold(300);
+			this.setThreshold(3);
 		}
 
 		@Override
@@ -104,6 +108,65 @@ public class AsyncSpellEvents {
 				}
 				this.target.attackEntityFrom(DamageSourceUnsaga.create(this.caster, SpellRegistry.instance().crimsonFlare.getEffectStrength().lp(), General.MAGIC), (float) damage);
 				this.damageCount ++;
+			}
+
+		}
+
+	}
+	public static class IceNeedle extends AsyncSpellEvent{
+
+
+		final XYZPos position;
+		final float damage;
+
+		public IceNeedle(World world, EntityLivingBase caster, XYZPos pos,int expire,float dm) {
+			super(world, caster, expire);
+			this.damage = dm;
+			this.position = pos;
+			// TODO 自動生成されたコンストラクター・スタブ
+		}
+
+
+		@Override
+		public void loop() {
+			super.loop();
+
+
+
+		}
+
+
+		@Override
+		public void loopLoose() {
+
+			if(this.time % 4 ==0){
+				SoundAndSFX.playSound(world, XYZPos.createFrom(caster), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F, false);
+			}
+			if(this.time % 2 ==0){
+
+				BlockPos pos = this.caster.getPosition();
+
+				EntityIceNeedle needle = new EntityIceNeedle(this.world,this.caster);
+
+				List<EntityLivingBase> list = this.world.getEntitiesWithinAABB(EntityLivingBase.class, HSLibs.getBounding(position, 10, 10),RangedHelper.getTargetSelectorFromEntityType(caster));
+				if(list.isEmpty()){
+					double x = this.position.dx + world.rand.nextInt(30)-15;
+					double z = this.position.dz + world.rand.nextInt(30)-15;
+					double y = this.position.dy + 10;
+					needle.setPosition(x, y, z);
+				}else{
+					Collections.shuffle(list);
+					EntityLivingBase target = list.get(0);
+					double x = target.posX - 0.5D + world.rand.nextDouble();
+					double y = target.posY+10;
+					double z = target.posZ- 0.5D + world.rand.nextDouble();
+					needle.setPosition(x, y, z);
+				}
+
+
+
+				needle.setDamage(this.damage);
+				WorldHelper.safeSpawn(world, needle);
 			}
 
 		}
@@ -164,13 +227,16 @@ public class AsyncSpellEvents {
 		@Override
 		public void loopLoose() {
 
-			EntitySolutionLiquid liquid = new EntitySolutionLiquid(world, caster);
-			liquid.setThunderCrap();
-			liquid.setDamage(this.context.getModifiedStrength().hp(), this.context.getModifiedStrength().lp());
-			context.playSound(XYZPos.createFrom(caster), SoundEvents.ENTITY_EGG_THROW, false);
-//			ChatHandler.sendChatToPlayer((EntityPlayer) sender, String.valueOf(caster.rotationPitch));
-			liquid.setHeadingFromThrower(caster, caster.cameraPitch, caster.rotationYaw, 0, 1.0F, 0.9F);
-			WorldHelper.safeSpawn(world, liquid);
+			if(this.time % 4 ==0){
+				EntitySolutionLiquid liquid = new EntitySolutionLiquid(world, caster);
+				liquid.setThunderCrap();
+				liquid.setDamage(this.context.getModifiedStrength().hp(), this.context.getModifiedStrength().lp());
+				context.playSound(XYZPos.createFrom(caster), SoundEvents.ENTITY_EGG_THROW, false);
+//				ChatHandler.sendChatToPlayer((EntityPlayer) sender, String.valueOf(caster.rotationPitch));
+				liquid.setHeadingFromThrower(caster, caster.cameraPitch, caster.rotationYaw, 0, 1.0F, 0.9F);
+				WorldHelper.safeSpawn(world, liquid);
+			}
+
 		}
 
 	}

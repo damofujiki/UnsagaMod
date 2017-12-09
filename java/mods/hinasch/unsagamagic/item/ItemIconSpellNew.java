@@ -1,4 +1,4 @@
-package mods.hinasch.unsagamagic.item.newitem;
+package mods.hinasch.unsagamagic.item;
 
 import java.util.List;
 
@@ -8,7 +8,6 @@ import mods.hinasch.lib.capability.CapabilityStorage;
 import mods.hinasch.lib.capability.ComponentCapabilityAdapterItem;
 import mods.hinasch.lib.iface.IIconItem;
 import mods.hinasch.unsaga.UnsagaMod;
-import mods.hinasch.unsagamagic.item.UnsagaMagicItems;
 import mods.hinasch.unsagamagic.spell.Spell;
 import mods.hinasch.unsagamagic.spell.SpellRegistry;
 import net.minecraft.entity.EntityLivingBase;

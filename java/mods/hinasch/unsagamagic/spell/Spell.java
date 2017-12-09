@@ -82,11 +82,12 @@ public class Spell extends PropertyElementBase implements INBTWritable,Comparabl
 		super(new ResourceLocation(name), name);
 		this.element = type;
 	}
-
+	/** 秒単位*/
 	public Spell setDuration(int duration){
 		this.baseDuration = duration;
 		return this;
 	}
+
 
 	public int getDuration(){
 		return this.baseDuration;
@@ -127,7 +128,7 @@ public class Spell extends PropertyElementBase implements INBTWritable,Comparabl
 		return this;
 	}
 	public String getLocalized(){
-		return HSLibs.translateKey("spell."+this.getName());
+		return HSLibs.translateKey("spell."+this.getPropertyName());
 	}
 
 	/*: 消費MP、属性も含む*/
@@ -189,9 +190,12 @@ public class Spell extends PropertyElementBase implements INBTWritable,Comparabl
 
 	}
 
+	public int getTier(){
+		return 1;
+	}
 	@Override
 	public int compareTo(Spell o) {
-		return this.getElement().compareTo(o.getElement());
+		return Integer.compare(this.getElement().getMeta()*100+this.getTier(), o.getElement().getMeta()*100+o.getTier());
 	}
 
 	@Override
@@ -201,6 +205,7 @@ public class Spell extends PropertyElementBase implements INBTWritable,Comparabl
 		this.mixTable = parser.mix;
 		UnsagaMod.logger.trace(name, " successfully applied:"+this.ampTable+"/"+this.costTable+"/"+this.mixTable);
 	}
+
 
 
 }

@@ -5,16 +5,18 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import mods.hinasch.lib.iface.IRequireInitializing;
+import mods.hinasch.unsagamagic.enchant.UnsagaEnchantmentCapability.EnchantmentState;
+import net.minecraft.entity.EntityLivingBase;
 
 public interface IUnsagaEnchantable extends IRequireInitializing{
 
 	public void init();
-	public int getEnchantmentRemaining(UnsagaEnchantment e);
-	public void setEnchantmentRemaining(UnsagaEnchantment e,int r);
-	public Set<Entry<UnsagaEnchantment,Integer>> getEntries();
-	public void setMap(Map<UnsagaEnchantment,Integer> map);
-	public void reduceRemainings(UnsagaEnchantment e);
-	public void onAttack();
-	public void onHurt();
+	public EnchantmentState getEnchantment(EnchantmentProperty e);
+	public void setEnchantment(EnchantmentProperty e,EnchantmentState time);
+	public Set<Entry<EnchantmentProperty,EnchantmentState>> getEntries();
+	public void setMap(Map<EnchantmentProperty,EnchantmentState> map);
 	public boolean isEmpty();
+	public boolean hasEnchant(EnchantmentProperty e);
+	public void checkExpireTime(EntityLivingBase living,long totalWorldTime);
+	public float getBowModifier();
 }

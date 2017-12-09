@@ -1,4 +1,4 @@
-package mods.hinasch.unsagamagic.spell;
+package mods.hinasch.unsagamagic.spell.tablet;
 
 import java.util.List;
 
@@ -8,6 +8,7 @@ import mods.hinasch.lib.registry.PropertyElementBase;
 import mods.hinasch.lib.util.HSLibs;
 import mods.hinasch.unsaga.element.FiveElements;
 import mods.hinasch.unsagamagic.item.UnsagaMagicItems;
+import mods.hinasch.unsagamagic.spell.Spell;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
@@ -47,7 +48,7 @@ public class MagicTablet extends PropertyElementBase implements Comparable<Magic
 	}
 
 	public String getLocalized(){
-		return HSLibs.translateKey("tablet."+this.getName());
+		return HSLibs.translateKey("tablet."+this.getPropertyName());
 	}
 
 	public ItemStack getStack(int amount){

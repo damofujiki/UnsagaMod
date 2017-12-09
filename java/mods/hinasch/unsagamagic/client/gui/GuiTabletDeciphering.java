@@ -33,7 +33,7 @@ public class GuiTabletDeciphering extends GuiContainerBase{
 		this.addIcon(new IconButton(BUTTON_WRITE, startX+20, 10, 16, 168, true));
 		this.addIcon(new IconButton(BUTTON_CLEAR, startX+40, 10, 32, 168, true));
 
-		this.addIcon(ICON_XP, 185, 24, 0, 184, true);
+		this.addIcon(ICON_XP, -55, 24, 0, 184, true);
 	}
 
 
@@ -45,7 +45,8 @@ public class GuiTabletDeciphering extends GuiContainerBase{
 	protected void drawGuiContainerForegroundLayer(int par1,int par2)
 	{
 		super.drawGuiContainerForegroundLayer(par1, par2);
-		UnsagaXPCapability.displayAdditionalXP(ep, fontRendererObj, EnumSet.of(UnsagaXPCapability.Type.DECIPHER),210,24,0xffffff);
+		UnsagaXPCapability.displayAdditionalXP(ep, fontRendererObj, EnumSet.of(UnsagaXPCapability.Type.DECIPHER),-30,24,0xffffff);
+//		UnsagaXPCapability.displayAdditionalXP(ep, fontRendererObj, EnumSet.of(UnsagaXPCapability.Type.DECIPHER),210,24,0xffffff);
 	}
 	@Override
 	public String getGuiName(){

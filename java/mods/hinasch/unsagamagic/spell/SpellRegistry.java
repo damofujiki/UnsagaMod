@@ -2,7 +2,6 @@ package mods.hinasch.unsagamagic.spell;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiPredicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
@@ -10,11 +9,10 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.Maps;
 
-import mods.hinasch.lib.entity.RangedHelper;
+import mods.hinasch.lib.entity.RangedHelper.RangedSelector;
 import mods.hinasch.lib.item.ItemUtil;
 import mods.hinasch.lib.misc.JsonHelper;
 import mods.hinasch.lib.registry.PropertyRegistry;
-import mods.hinasch.lib.sync.SafeSpawner;
 import mods.hinasch.lib.world.WorldHelper;
 import mods.hinasch.lib.world.XYZPos;
 import mods.hinasch.unsaga.UnsagaMod;
@@ -28,11 +26,14 @@ import mods.hinasch.unsaga.common.specialaction.ActionItem.SpellActionRepair;
 import mods.hinasch.unsaga.common.specialaction.ActionList;
 import mods.hinasch.unsaga.common.specialaction.ActionRangedAttack;
 import mods.hinasch.unsaga.common.specialaction.ActionRangedAttack.PlayerBoundingBox;
+import mods.hinasch.unsaga.common.specialaction.ActionSummon;
 import mods.hinasch.unsaga.common.specialaction.ActionTargettable;
 import mods.hinasch.unsaga.common.specialaction.ActionThunder;
 import mods.hinasch.unsaga.common.specialaction.ActionWorld;
 import mods.hinasch.unsaga.common.specialaction.ISpecialActionBase;
 import mods.hinasch.unsaga.core.entity.mob.EntityRuffleTree;
+import mods.hinasch.unsaga.core.entity.passive.EntityFireWall;
+import mods.hinasch.unsaga.core.entity.passive.EntityShadow;
 import mods.hinasch.unsaga.core.item.newitem.combat.ItemStaffUnsaga;
 import mods.hinasch.unsaga.core.potion.UnsagaPotions;
 import mods.hinasch.unsaga.damage.DamageTypeUnsaga.General;
@@ -54,6 +55,7 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumActionResult;
@@ -85,7 +87,7 @@ public class SpellRegistry extends PropertyRegistry<Spell>{
 	public Spell fireArrow = new Spell("fireArrow",FiveElements.Type.FIRE).setDifficulty(15).setBaseCastingTime(25).setCost(3).setStrength(5.0F, 1.0F);
 	public Spell selfBurning = new Spell("selfBurning",FiveElements.Type.FIRE).setTipsType(TipsType.TARGETTABLE).setDifficulty(45).setBaseCastingTime(25).setCost(5);
 	public Spell heroism = new Spell("heroism",FiveElements.Type.FIRE).setTipsType(TipsType.TARGETTABLE).setDifficulty(60).setBaseCastingTime(50).setCost(8);
-	public Spell firewall = new Spell("fireWall",FiveElements.Type.FIRE).setTipsType(TipsType.POINT).setDifficulty(75).setBaseCastingTime(75).setCost(10);
+	public Spell firewall = new Spell("fireWall",FiveElements.Type.FIRE).setTipsType(TipsType.POINT).setDifficulty(75).setBaseCastingTime(30).setCost(10).setStrength(3.0F, 0.5F).setRequireCoordinate(true);
 	public Spell fireStorm = new Spell("fireStorm",FiveElements.Type.FIRE).setTipsType(TipsType.TARGETTABLE).setDifficulty(120).setBaseCastingTime(70).setCost(20).setStrength(5.0F, 1.5F);
 	public Spell holySeal = new Spell("holySeal",FiveElements.Type.FIRE).setTipsType(TipsType.TARGETTABLE).setDifficulty(75).setBaseCastingTime(70).setCost(12);
 	public Spell crimsonFlare = new SpellBlend("crimsonFlare",FiveElements.Type.FIRE).setTipsType(TipsType.TARGETTABLE).setBaseCastingTime(100).setBaseCastingTime(30).setStrength(5.0F, 1.5F).setCost(30);
@@ -96,7 +98,7 @@ public class SpellRegistry extends PropertyRegistry<Spell>{
 	public Spell boulder = new Spell("boulder",FiveElements.Type.EARTH).setDifficulty(30).setBaseCastingTime(25).setCost(3).setStrength(5.0F, 1.0F);
 	public Spell buildUp = new Spell("buildUp",FiveElements.Type.EARTH).setTipsType(TipsType.TARGETTABLE).setDifficulty(60).setBaseCastingTime(75).setCost(10);
 	public Spell sleep = new Spell("sleep",FiveElements.Type.EARTH).setTipsType(TipsType.TARGETTABLE).setDifficulty(40).setBaseCastingTime(50).setCost(8);
-	public Spell removeFear = new Spell("removeFear",FiveElements.Type.EARTH).setTipsType(TipsType.TARGETTABLE).setDifficulty(60).setBaseCastingTime(25).setCost(8);
+	public Spell removeFear = new Spell("removeFear",FiveElements.Type.EARTH).setTipsType(TipsType.TARGETTABLE).setDifficulty(60).setBaseCastingTime(15).setCost(3);
 	public Spell animalCharm = new Spell("animalCharm",FiveElements.Type.EARTH).setTipsType(TipsType.TARGETTABLE).setDifficulty(100).setBaseCastingTime(70).setCost(10);
 	public Spell aegisShield = new Spell("aegisShield",FiveElements.Type.EARTH).setTipsType(TipsType.TARGETTABLE).setDifficulty(120).setBaseCastingTime(65).setCost(12);
 	public Spell superPower = new SpellBlend("superPower",FiveElements.Type.EARTH).setBaseCastingTime(70).setCost(30);
@@ -109,11 +111,11 @@ public class SpellRegistry extends PropertyRegistry<Spell>{
 	public Spell magicLock = new Spell("magicLock",FiveElements.Type.METAL).setTipsType(TipsType.TARGETTABLE).setDifficulty(15).setBaseCastingTime(70).setCost(8);
 	public Spell shock = new Spell("shock",FiveElements.Type.METAL).setDifficulty(60).setBaseCastingTime(35).setCost(8).setStrength(4, 0.5F);
 	public Spell gravity = new Spell("gravity",FiveElements.Type.METAL).setTipsType(TipsType.TARGETTABLE).setDifficulty(60).setBaseCastingTime(50).setCost(8);
-	public Spell armorBless = new Spell("armorBless",FiveElements.Type.METAL).setTipsType(TipsType.ITEM).setDifficulty(60).setBaseCastingTime(70).setCost(10);
-	public Spell weaponBless = new Spell("weaponBless",FiveElements.Type.METAL).setTipsType(TipsType.ITEM).setDifficulty(60).setBaseCastingTime(70).setCost(10);
+	public Spell armorBless = new Spell("armorBless",FiveElements.Type.METAL).setTipsType(TipsType.ITEM).setDifficulty(60).setBaseCastingTime(70).setCost(10).setDuration(60);
+	public Spell weaponBless = new Spell("weaponBless",FiveElements.Type.METAL).setTipsType(TipsType.ITEM).setDifficulty(60).setBaseCastingTime(70).setCost(10).setDuration(30);
 	public Spell superSonic = new Spell("superSonic",FiveElements.Type.METAL).setDifficulty(90).setBaseCastingTime(50).setCost(12).setStrength(8, 0.5F);
 	public Spell detectTreasure = new SpellBlend("detectTreasure",FiveElements.Type.METAL).setBaseCastingTime(80).setCost(15);
-	public Spell sharpness = new SpellBlend("sharpness",FiveElements.Type.METAL).setTipsType(TipsType.ITEM).setBaseCastingTime(70).setCost(12);
+	public Spell sharpness = new SpellBlend("sharpness",FiveElements.Type.METAL).setTipsType(TipsType.ITEM).setBaseCastingTime(70).setCost(12).setDuration(60);
 	public Spell goldFinger = new SpellBlend("goldFinger",FiveElements.Type.METAL).setTipsType(TipsType.TARGETTABLE).setBaseCastingTime(75).setCost(15);
 
 	//Water
@@ -123,7 +125,7 @@ public class SpellRegistry extends PropertyRegistry<Spell>{
 	public Spell purify = new Spell("purify",FiveElements.Type.WATER).setTipsType(TipsType.TARGETTABLE).setDifficulty(30).setCost(10).setStrength(2, 0).setBaseCastingTime(50).setGrowth(1.1F);
 	public Spell bubbleBlow = new Spell("bubbleBlow",FiveElements.Type.WATER).setDifficulty(60).setCost(3).setBaseCastingTime(25).setStrength(5.0F, 0.2F);
 	public Spell waterShield = new Spell("waterShield",FiveElements.Type.WATER).setTipsType(TipsType.TARGETTABLE).setDifficulty(60).setCost(8).setBaseCastingTime(70);
-	public Spell iceNeedle = new Spell("iceNeedle",FiveElements.Type.WATER).setDifficulty(90).setCost(12).setBaseCastingTime(90);
+	public Spell iceNeedle = new Spell("iceNeedle",FiveElements.Type.WATER).setDifficulty(90).setCost(12).setBaseCastingTime(50).setStrength(3.0F, 0.2F);
 	public Spell slowStream = new Spell("slowStream",FiveElements.Type.WATER).setDifficulty(135).setCost(12).setBaseCastingTime(90);
 	public Spell thunderCrap = new SpellBlend("thunderCrap",FiveElements.Type.WATER).setBaseCastingTime(90).setCost(18).setStrength(3.0F, 1.5F);
 	public Spell reflesh = new SpellBlend("reflesh",FiveElements.Type.WATER).setTipsType(TipsType.TARGETTABLE).setBaseCastingTime(80).setCost(14).setStrength(5, 0);
@@ -147,11 +149,11 @@ public class SpellRegistry extends PropertyRegistry<Spell>{
 	public Spell detectBlood = new Spell("detectBlood",FiveElements.Type.FORBIDDEN).setDifficulty(120).setBaseCastingTime(30).setCost(6).setDuration(30);
 	public Spell darkSeal = new Spell("darkSeal",FiveElements.Type.FORBIDDEN).setTipsType(TipsType.TARGETTABLE).setDifficulty(150).setBaseCastingTime(50).setCost(12);
 	public Spell weakness = new Spell("weakness",FiveElements.Type.FORBIDDEN).setTipsType(TipsType.TARGETTABLE).setDifficulty(150).setBaseCastingTime(45).setCost(5);
-	public Spell spellMagnet = new Spell("spellMagnet",FiveElements.Type.FORBIDDEN).setTipsType(TipsType.TARGETTABLE).setDifficulty(150).setBaseCastingTime(70).setCost(10);
+	public Spell spellMagnet = new Spell("spellMagnet",FiveElements.Type.FORBIDDEN).setTipsType(TipsType.TARGETTABLE).setDifficulty(150).setBaseCastingTime(70).setCost(10).setDuration(60);
 	public Spell spoil = new Spell("spoil",FiveElements.Type.FORBIDDEN).setTipsType(TipsType.TARGETTABLE).setDifficulty(150).setBaseCastingTime(55).setCost(8).setDuration(45);
 	public Spell deadlyDrive = new Spell("deadlyDrive",FiveElements.Type.FORBIDDEN).setDifficulty(150).setBaseCastingTime(90).setCost(20);
 	public Spell blaster = new Spell("blaster",FiveElements.Type.FORBIDDEN).setDifficulty(240).setBaseCastingTime(35).setCost(15).setStrength(6.0F, 1.0F);
-	public Spell shadowServant = new Spell("shadowServant",FiveElements.Type.FORBIDDEN).setTipsType(TipsType.TARGETTABLE).setDifficulty(250).setBaseCastingTime(100).setCost(30);
+	public Spell shadowServant = new Spell("shadowServant",FiveElements.Type.FORBIDDEN).setTipsType(TipsType.TARGETTABLE).setDifficulty(250).setBaseCastingTime(100).setCost(30).setRequireCoordinate(true);
 
 	@Override
 	public void init() {
@@ -259,15 +261,16 @@ public class SpellRegistry extends PropertyRegistry<Spell>{
 		this.actionAssociation.put(lifeBoost, createBuffSpell(false,up.lifeBoost));
 		this.actionAssociation.put(heroism, createBuffSpell(false,MobEffects.STRENGTH));
 		this.actionAssociation.put(buildUp, createBuffSpell(false,MobEffects.HASTE,up.upVit));
-		SpellActionBase superPowerBase = this.createTargettableSpell(list ->{
+		SpellActionBase superPowerBase = (SpellActionBase) this.createTargettableSpell(list ->{
 			list.addAction(new ActionCure(up.statusDownDebuffs));
 			list.addAction(new SpellActionStatusEffect(false,MobEffects.STRENGTH,MobEffects.HEALTH_BOOST,MobEffects.JUMP_BOOST));
 			return list;
-		});
+		}).setBenefical(true);
 		this.actionAssociation.put(superPower, superPowerBase);
-		this.actionAssociation.put(shadowServant, createBuffSpell(false,up.shadowServant));
 		this.actionAssociation.put(holySeal, createBuffSpell(false,up.holySeal));
 		this.actionAssociation.put(darkSeal, createBuffSpell(false,up.darkSeal));
+		this.actionAssociation.put(goldFinger, createBuffSpell(false,up.goldFinger));
+		this.actionAssociation.put(spellMagnet, createBuffSpell(false,up.spellMagnet));
 
 		//盾系
 		this.actionAssociation.put(selfBurning, createBuffSpell(false,up.selfBurning));
@@ -306,9 +309,21 @@ public class SpellRegistry extends PropertyRegistry<Spell>{
 		stoneShowerBase.addAction(asyncStoneShower);
 		this.actionAssociation.put(stoneShower, stoneShowerBase);
 
-		ActionAsyncEvent<SpellCaster> asyncThunderCrap = new ActionAsyncEvent<SpellCaster>().setEventFactory(context ->{
-			return new AsyncSpellEvents.ThunderCrap(context.getWorld(), context.getPerformer(), 10, context).setThreshold(50);
+		ActionAsyncEvent<SpellCaster> asyncNeedle = new ActionAsyncEvent<SpellCaster>().setEventFactory(context ->{
+			return new AsyncSpellEvents.IceNeedle(context.getWorld(), context.getPerformer(), XYZPos.createFrom(context.getTarget().get()), 30, context.getEffectModifiedStrength().hp()).setThreshold(50);
 		});
+		SpellActionBase iceNeedleBase = this.createTargettableSpell(in ->{
+			in.addAction(asyncNeedle);
+			return in;
+		});
+
+		this.actionAssociation.put(this.iceNeedle, iceNeedleBase);
+
+		ActionAsyncEvent<SpellCaster> asyncThunderCrap = new ActionAsyncEvent<SpellCaster>().setEventFactory(context ->{
+			return new AsyncSpellEvents.ThunderCrap(context.getWorld(), context.getPerformer(), 4*10, context).setThreshold(50);
+		});
+
+
 		SpellActionBase thunderCrapBase = new SpellActionBase();
 		thunderCrapBase.addAction(asyncThunderCrap);
 		this.actionAssociation.put(thunderCrap, thunderCrapBase);
@@ -361,7 +376,8 @@ public class SpellRegistry extends PropertyRegistry<Spell>{
 		});
 
 
-		this.actionAssociation.put(purify, purifyBase);
+
+		this.actionAssociation.put(purify, purifyBase.setBenefical(true));
 		SpellActionBase meditationBase = this.createTargettableSpell(list ->{
 			list.addAction(healSound);
 			list.addAction(new ActionHealing());
@@ -369,22 +385,28 @@ public class SpellRegistry extends PropertyRegistry<Spell>{
 			list.addAction(new SpellActionStatusEffect(false,up.upInt,up.upMental));
 			return list;
 		});
-		this.actionAssociation.put(meditation, meditationBase);
+		this.actionAssociation.put(meditation, meditationBase.setBenefical(true));
 		SpellActionBase restingBase = this.createTargettableSpell(list ->{
 			list.addAction(healSound);
 			list.addAction(new ActionHealing());
 			list.addAction(new ActionCure(up.mentalDebuffs));
 			return list;
 		});
-		this.actionAssociation.put(resting, restingBase);
+		this.actionAssociation.put(resting, restingBase.setBenefical(true));
 		SpellActionBase refleshBase = this.createTargettableSpell(list ->{
 			list.addAction(healSound);
 			list.addAction(new ActionHealing());
 			list.addAction(new ActionCure());
 			return list;
 		});
-		this.actionAssociation.put(reflesh, refleshBase);
 
+		this.actionAssociation.put(reflesh, refleshBase.setBenefical(true));
+		SpellActionBase removeFearBase = this.createTargettableSpell(list ->{
+			list.addAction(healSound);
+			list.addAction(new ActionCure(up.mentalDebuffs));
+			return list;
+		});
+		this.actionAssociation.put(removeFear, removeFearBase.setBenefical(true));
 		//デテクト系
 		int duration = ItemUtil.getPotionTime(15);
 		ActionRangedAttack<SpellCaster> rangedDebuff = new ActionRangedAttack().setAttackFlag(false);
@@ -419,18 +441,20 @@ public class SpellRegistry extends PropertyRegistry<Spell>{
 
 		SpellActionBase superSonicBase = new SpellActionBase();
 		superSonicBase.addAction(SpellActionComponents.SHOCK_EFFECT);
-		superSonicBase.addAction(new ActionRangedAttack<SpellCaster>(General.MAGIC).setBoundingBoxFunction(new PlayerBoundingBox(10.0D)).setSubDamageType(Sub.SHOCK)
-				.setSubBehavior((self,target)->{
-					if(target.getCreatureAttribute()==EnumCreatureAttribute.ARTHROPOD){
-						target.addPotionEffect(new PotionEffect(up.sleep,ItemUtil.getPotionTime(15),0));
-					}
-				}
-		));
+		ActionRangedAttack<SpellCaster> rangedAttacSuperSonic = new ActionRangedAttack<SpellCaster>(General.MAGIC);
+		rangedAttacSuperSonic.setBoundingBoxFunction(new PlayerBoundingBox(10.0D)).setSubDamageType(Sub.SHOCK);
+		rangedAttacSuperSonic.setSubBehavior((self,target)->{
+			if(target.getCreatureAttribute()==EnumCreatureAttribute.ARTHROPOD){
+				target.addPotionEffect(new PotionEffect(up.sleep,ItemUtil.getPotionTime(15),0));
+			}
+		});
+		superSonicBase.addAction(rangedAttacSuperSonic);
 		this.actionAssociation.put(superSonic, superSonicBase);
 //		this.actionAssociation.put(shock, (new SpellRanged(5.0D)).addHurtBehavior(EnumSet.of(DamageTypeUnsaga.General.MAGIC),EnumSet.of(DamageTypeUnsaga.Sub.ELECTRIC)).setPrePerform(effect));
 //		this.actionAssociation.put(superSonic, (new SpellRanged(8.0D)).addHurtBehavior(EnumSet.of(DamageTypeUnsaga.General.MAGIC),EnumSet.of(DamageTypeUnsaga.Sub.SHOCK))
 //				.addDebuffBehavior(in -> in.getCreatureAttribute()==EnumCreatureAttribute.ARTHROPOD,up.sleep).setPrePerform(effect));
 		//デバフ系
+		this.actionAssociation.put(fear, this.createBuffSpell(true,UnsagaPotions.instance().fear));
 		this.actionAssociation.put(sleep, this.createBuffSpell(true,UnsagaPotions.instance().sleep));
 		this.actionAssociation.put(slowStream, this.createRangedDebuffSpell(true,20.0D,null,MobEffects.SLOWNESS));
 		SpellActionBase deadlyDriveBase = this.createRangedDebuffSpell(true,12.0D,null,MobEffects.SLOWNESS,MobEffects.WEAKNESS,up.downDex,up.downInt,up.downVit);
@@ -452,27 +476,28 @@ public class SpellRegistry extends PropertyRegistry<Spell>{
 			return in;
 
 		}));
-		this.actionAssociation.put(simulacrum, new SpellActionBase().addAction(context->{
-			if(context.getTargetCoordinate().isPresent()){
-				context.playSound(new XYZPos(context.getTargetCoordinate().get()), SoundEvents.ENTITY_SHULKER_SHOOT, false);
-				BlockPos pos = context.getTargetCoordinate().get().up();
-				EntitySnowman snowman = new EntitySnowman(context.getWorld());
-				snowman.setPosition(pos.getX(),pos.getY(),pos.getZ());
-				if(WorldHelper.isServer(context.getWorld())){
-					SafeSpawner spawner = new SafeSpawner(context.getWorld(), snowman);
-					WorldHelper.getWorldServer(context.getWorld()).addScheduledTask(spawner);
-				}
-				return EnumActionResult.SUCCESS;
-			}
-			return EnumActionResult.PASS;
-		}));
+
+		//召喚系
+		SpellActionBase simulacrumBase = new SpellActionBase();
+		ActionSummon<SpellCaster> snowmanSummon = new ActionSummon<SpellCaster>(in ->new EntitySnowman(in.getWorld()));
+		simulacrumBase.addAction(snowmanSummon);
+		this.actionAssociation.put(simulacrum, simulacrumBase);
+		SpellActionBase shadowServantBase = new SpellActionBase();
+		ActionSummon<SpellCaster> shadowSummon = new ActionSummon<SpellCaster>(in ->{
+			ItemStack held = in.getPerformer().getHeldItemOffhand();
+			EntityShadow shadow = new EntityShadow(in.getWorld(),in.getPerformer(),held);
+			return shadow;
+		});
+		shadowServantBase.addAction(shadowSummon);
+		this.actionAssociation.put(shadowServant, shadowServantBase);
+
 		//アイテム系
 		this.actionAssociation.put(recycle, new SpellActionBase().addAction(new SpellActionRepair(in -> in.getItem() instanceof Item)));
 		this.actionAssociation.put(weaponBless, new SpellActionBase().addAction(new SpellActionBless(UnsagaEnchantmentRegistry.instance().weaponBless
 				,in -> in.getItem() instanceof Item)));
 		this.actionAssociation.put(armorBless, new SpellActionBase().addAction(new SpellActionBless(UnsagaEnchantmentRegistry.instance().armorBless
 				,in -> in.getItem() instanceof ItemArmor)));
-		this.actionAssociation.put(armorBless, new SpellActionBase().addAction(new SpellActionBless(UnsagaEnchantmentRegistry.instance().sharpness
+		this.actionAssociation.put(sharpness, new SpellActionBase().addAction(new SpellActionBless(UnsagaEnchantmentRegistry.instance().sharpness
 				,in ->!(in.getItem() instanceof ItemStaffUnsaga))));
 
 		//ワールド系
@@ -512,16 +537,38 @@ public class SpellRegistry extends PropertyRegistry<Spell>{
 		this.actionAssociation.put(blaster,SpellActionComponents.blaster() );
 		this.actionAssociation.put(boulder, SpellActionComponents.boulder());
 		this.actionAssociation.put(bubbleBlow, SpellActionComponents.bubbleBlow());
+
+
+		SpellActionBase baseFireWall = new SpellActionBase();
+		IAction<SpellCaster> actionFireWall = new IAction<SpellCaster>(){
+
+			@Override
+			public EnumActionResult apply(SpellCaster t) {
+				if(t.getTargetCoordinate().isPresent()){
+//					UnsagaMod.logger.trace(this.getClass().getName(), "callteed");
+
+					EntityFireWall fireWall = new EntityFireWall(t.getWorld(),t.getPerformer(),t.getEffectModifiedStrength().hp());
+					XYZPos pos = new XYZPos(t.getTargetCoordinate().get());
+					t.playSound(pos, SoundEvents.ENTITY_ZOMBIE_VILLAGER_CURE, false);
+					fireWall.setPositionAndRotation(pos.dx+0.5F,pos.dy+1.0F,pos.dz+0.5F,t.getPerformer().rotationYaw,t.getPerformer().rotationPitch);
+					WorldHelper.safeSpawn(t.getWorld(), fireWall);
+					return EnumActionResult.SUCCESS;
+				}
+				return EnumActionResult.PASS;
+			}
+		};
+		baseFireWall.addAction(actionFireWall);
+		this.actionAssociation.put(firewall, baseFireWall);
 	}
 
 	public List<SpellBlend> getBlendSpells(){
 		return this.getProperties().stream().filter(in -> in instanceof SpellBlend).map(in -> (SpellBlend)in).collect(Collectors.toList());
 	}
-	private SpellActionBase createRangedDebuffSpell(boolean isDebuff,double range,@Nullable BiPredicate<RangedHelper<SpellCaster>,EntityLivingBase> selector,Potion... potions){
-		return SpellActionComponents.createRangedDebuffSpell(isDebuff, range, selector, potions);
+	private SpellActionBase createRangedDebuffSpell(boolean isDebuff,double range,@Nullable RangedSelector<SpellCaster,EntityLivingBase> selector,Potion... potions){
+		return (SpellActionBase) SpellActionComponents.createRangedDebuffSpell(isDebuff, range, selector, potions).setBenefical(!isDebuff);
 	}
 	private SpellActionBase createBuffSpell(boolean isDebuff,Potion... potions){
-		return SpellActionComponents.createBuffSpell(isDebuff, potions);
+		return (SpellActionBase) SpellActionComponents.createBuffSpell(isDebuff, potions).setBenefical(!isDebuff);
 	}
 	private SpellActionBase createTargettableSpell(UnaryOperator<ActionList> uo){
 		return SpellActionComponents.createTargettableSpell(uo);

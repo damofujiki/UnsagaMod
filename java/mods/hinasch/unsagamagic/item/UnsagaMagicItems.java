@@ -3,8 +3,6 @@ package mods.hinasch.unsagamagic.item;
 import mods.hinasch.lib.registry.BlockItemRegistry;
 import mods.hinasch.unsaga.UnsagaMod;
 import mods.hinasch.unsagamagic.UnsagaMagic;
-import mods.hinasch.unsagamagic.item.newitem.ItemIconSpellNew;
-import mods.hinasch.unsagamagic.item.newitem.ItemTablet;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 
@@ -32,7 +30,7 @@ public class UnsagaMagicItems extends BlockItemRegistry<Item>{
 		CreativeTabs tab = UnsagaMagic.instance().tabMagic;
 		this.setUnlocalizedNamePrefix("unsaga");
 		this.tablet = put(new ItemTablet(),"magicTablet",tab);
-		this.spellBook = put(new mods.hinasch.unsagamagic.item.newitem.ItemSpellBook(),"spellBook",tab);
+		this.spellBook = put(new ItemSpellBook(),"spellBook",tab);
 		this.iconSpell = put(new ItemIconSpellNew(),"spellIcon",null);
 //		this.knowledgeBook = put(new ItemKnowledgeBook(),"knowledgeBook",tab);
 		//バグありのためタブに入れない

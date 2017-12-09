@@ -6,12 +6,13 @@ import mods.hinasch.unsagamagic.block.UnsagaMagicBlocks;
 import mods.hinasch.unsagamagic.enchant.UnsagaEnchantmentCapability;
 import mods.hinasch.unsagamagic.enchant.UnsagaEnchantmentEvent;
 import mods.hinasch.unsagamagic.enchant.UnsagaEnchantmentRegistry;
+import mods.hinasch.unsagamagic.item.ItemIconSpellNew;
 import mods.hinasch.unsagamagic.item.UnsagaMagicItems;
-import mods.hinasch.unsagamagic.item.newitem.ItemIconSpellNew;
-import mods.hinasch.unsagamagic.spell.SpellBookCapability;
 import mods.hinasch.unsagamagic.spell.StatePropertySpellCast;
-import mods.hinasch.unsagamagic.spell.TabletCapability;
-import mods.hinasch.unsagamagic.spell.TabletRegistry;
+import mods.hinasch.unsagamagic.spell.spellbook.SpellBookCapability;
+import mods.hinasch.unsagamagic.spell.spellbook.SpellBookTypeRegistry;
+import mods.hinasch.unsagamagic.spell.tablet.TabletCapability;
+import mods.hinasch.unsagamagic.spell.tablet.TabletRegistry;
 import net.minecraft.creativetab.CreativeTabs;
 
 public class UnsagaMagic {
@@ -32,7 +33,8 @@ public class UnsagaMagic {
 	public final UnsagaMagicBlocks blocks = UnsagaMagicBlocks.instance();
 
 
-	public mods.hinasch.unsagamagic.spell.TabletRegistry tabletsNew;
+	public SpellBookTypeRegistry spellBookTypes;
+	public mods.hinasch.unsagamagic.spell.tablet.TabletRegistry tabletsNew;
 	public mods.hinasch.unsagamagic.spell.SpellRegistry spellsNew;
 	public final CreativeTabs tabMagic = SimpleCreativeTab.createSimpleTab("unsaga.magic");
 	public UnsagaEnchantmentRegistry enchantments;
@@ -50,6 +52,8 @@ public class UnsagaMagic {
 		this.tabletsNew.preInit();
 		this.enchantments = UnsagaEnchantmentRegistry.instance();
 		this.enchantments.preInit();
+		this.spellBookTypes = SpellBookTypeRegistry.instance();
+		this.spellBookTypes.preInit();
 //		this.tablets = Tablets.instance();
 //		this.tablets.preInit();
 //		HSLibs.registerCapability(ITablet.class, new StorageITablet(), DefaultITablet.class);
@@ -82,11 +86,15 @@ public class UnsagaMagic {
 		this.spellsNew.init();
 		this.tabletsNew.init();
 		this.enchantments.init();
+
 		SimpleCreativeTab.setIconItemToTab(tabMagic, UnsagaMagicItems.instance().tablet);
 
 		this.registerCapabilityAttachEvents();
 		UnsagaEnchantmentEvent.registerEvent();
 		StatePropertySpellCast.register();
+
+		this.spellBookTypes.init();
+		this.blocks.registerRecipes();
 //		SpellBookHelper.adapter.registerAttachEvent();
 //		TabletHelper.adapter.registerAttachEvent();
 //		CapabilityInventory.predicates.put(ev -> ev.getItem() instanceof ItemSpellBookBinder, ItemSpellBookBinder.MAX_BINDER);

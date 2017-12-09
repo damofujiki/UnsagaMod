@@ -21,11 +21,11 @@ import mods.hinasch.unsaga.element.FiveElements;
 import mods.hinasch.unsaga.element.newele.ElementTable;
 import mods.hinasch.unsaga.util.UnsagaTextFormatting;
 import mods.hinasch.unsagamagic.inventory.container.ContainerBlender;
-import mods.hinasch.unsagamagic.item.newitem.ItemSpellBook;
+import mods.hinasch.unsagamagic.item.ItemSpellBook;
 import mods.hinasch.unsagamagic.spell.Spell;
 import mods.hinasch.unsagamagic.spell.SpellBlend;
-import mods.hinasch.unsagamagic.spell.SpellBookCapability;
 import mods.hinasch.unsagamagic.spell.SpellRegistry;
+import mods.hinasch.unsagamagic.spell.spellbook.SpellBookCapability;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
@@ -343,6 +343,9 @@ public class GuiBlender extends GuiContainerBase
 			list.add(HSLibs.translateKey("gui.unsaga.blender.clear"));
 		}
 		if(icon instanceof IconSpellBlendQueue){
+			if(icon.id==BLENDS){
+				list.add("Base Spell");
+			}
 			if(((IconSpellBlendQueue) icon).getSpell(this).isPresent()){
 				list.add(((IconSpellBlendQueue) icon).getSpell(this).get().getLocalized());
 			}

@@ -1,4 +1,4 @@
-package mods.hinasch.unsagamagic.item.newitem;
+package mods.hinasch.unsagamagic.item;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -7,12 +7,11 @@ import com.mojang.realmsclient.util.Pair;
 
 import mods.hinasch.lib.iface.INBTWritable;
 import mods.hinasch.lib.util.UtilNBT.RestoreFunc;
-import mods.hinasch.unsagamagic.item.UnsagaMagicItems;
 import mods.hinasch.unsagamagic.spell.Spell;
 import mods.hinasch.unsagamagic.spell.SpellRegistry;
-import mods.hinasch.unsagamagic.spell.MagicTablet;
-import mods.hinasch.unsagamagic.spell.TabletCapability;
-import mods.hinasch.unsagamagic.spell.TabletRegistry;
+import mods.hinasch.unsagamagic.spell.tablet.MagicTablet;
+import mods.hinasch.unsagamagic.spell.tablet.TabletCapability;
+import mods.hinasch.unsagamagic.spell.tablet.TabletRegistry;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;

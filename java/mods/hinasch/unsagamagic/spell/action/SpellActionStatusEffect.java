@@ -5,6 +5,7 @@ import java.util.List;
 import mods.hinasch.lib.item.ItemUtil;
 import mods.hinasch.lib.world.XYZPos;
 import mods.hinasch.unsaga.common.specialaction.ActionStatusEffect;
+import mods.hinasch.unsaga.status.AdditionalStatus;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.EnumActionResult;
@@ -41,7 +42,9 @@ public class SpellActionStatusEffect extends ActionStatusEffect<SpellCaster>{
 	@Override
 	public int decideEffectDuration(SpellCaster context){
 		int sec = ItemUtil.getPotionTime((int)(context.getActionProperty().getDuration() * context.getAmplify()));
-		return sec;
+		double intel = context.getPerformer().getEntityAttribute(AdditionalStatus.INTELLIGENCE).getAttributeValue();
+
+		return (int)((double)sec * intel);
 	}
 
 //	public static SpellActionBase of(boolean isDebuff,Potion... potion){

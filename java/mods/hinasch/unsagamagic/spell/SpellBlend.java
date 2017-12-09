@@ -32,6 +32,10 @@ public class SpellBlend extends Spell{
 		return this.getRequireElementTable().containsKey(spell);
 	}
 
+	@Override
+	public int getTier(){
+		return 10;
+	}
 	public boolean canChange(Spell base,ElementTable other){
 		if(this.containsBaseSpell(base)){
 			ElementTable table = this.getRequireElementTable().get(base);
@@ -44,6 +48,6 @@ public class SpellBlend extends Spell{
 	public void applyJson(JsonParserSpell p) {
 		JsonParserSpell.Blend parser = (JsonParserSpell.Blend)p;
 		this.requireMix.put(parser.spell, parser.mix);
-		UnsagaMod.logger.trace(this.getName(), "applied:"+parser.spell+":"+parser.mix);
+		UnsagaMod.logger.trace(this.getPropertyName(), "applied:"+parser.spell+":"+parser.mix);
 	}
 }

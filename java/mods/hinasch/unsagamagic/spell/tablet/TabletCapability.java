@@ -1,4 +1,4 @@
-package mods.hinasch.unsagamagic.spell;
+package mods.hinasch.unsagamagic.spell.tablet;
 
 import java.util.List;
 import java.util.Map;
@@ -12,8 +12,9 @@ import mods.hinasch.lib.capability.CapabilityStorage;
 import mods.hinasch.lib.capability.ComponentCapabilityAdapterItem;
 import mods.hinasch.lib.util.UtilNBT;
 import mods.hinasch.unsaga.UnsagaMod;
-import mods.hinasch.unsagamagic.item.newitem.ItemTablet;
-import mods.hinasch.unsagamagic.item.newitem.ItemTablet.DecipheringPair;
+import mods.hinasch.unsagamagic.item.ItemTablet;
+import mods.hinasch.unsagamagic.item.ItemTablet.DecipheringPair;
+import mods.hinasch.unsagamagic.spell.Spell;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;

@@ -1,6 +1,7 @@
 package mods.hinasch.unsagamagic.spell.action;
 
 import mods.hinasch.lib.world.XYZPos;
+import mods.hinasch.unsaga.UnsagaMod;
 import mods.hinasch.unsaga.common.specialaction.ActionPerformerBase;
 import mods.hinasch.unsaga.common.specialaction.IActionPerformer;
 import mods.hinasch.unsaga.common.specialaction.ISpecialActionBase;
@@ -114,6 +115,7 @@ public class SpellCaster extends ActionPerformerBase<Spell,ISpecialActionBase<Sp
 	}
 
 	public void cast(){
+		UnsagaMod.logger.trace(this.getClass().getName(),this.getCastType());
 		if(this.canCast()){
 			if(this.getAction()!=null){
 //				if(this.getAction().getCastSound().isPresent()){
