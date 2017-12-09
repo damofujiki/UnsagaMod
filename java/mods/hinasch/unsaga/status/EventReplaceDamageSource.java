@@ -24,6 +24,7 @@ public class EventReplaceDamageSource extends LivingHurtEventBase{
 		return "Replace DamageSource";
 	}
 
+
 	@Override
 	public DamageSource process(LivingHurtEvent e, DamageSource ds) {
 

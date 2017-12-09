@@ -15,12 +15,13 @@ import mods.hinasch.unsaga.core.net.CommonProxy;
 import mods.hinasch.unsaga.core.net.packet.PacketAddExhaution;
 import mods.hinasch.unsaga.core.net.packet.PacketClientScanner;
 import mods.hinasch.unsaga.core.net.packet.PacketClientThunder;
+import mods.hinasch.unsaga.core.net.packet.PacketDebugPos;
 import mods.hinasch.unsaga.core.net.packet.PacketGuiButtonUnsaga;
 import mods.hinasch.unsaga.core.net.packet.PacketLP;
 import mods.hinasch.unsaga.core.net.packet.PacketLP.PacketLPHandler;
+import mods.hinasch.unsaga.core.net.packet.PacketSyncActionPerform;
 import mods.hinasch.unsaga.core.net.packet.PacketSyncServerTargetHolder;
-import mods.hinasch.unsaga.core.net.packet.newpacket.PacketDebugPos;
-import mods.hinasch.unsaga.core.net.packet.newpacket.PacketSyncSkillPanel;
+import mods.hinasch.unsaga.core.net.packet.PacketSyncSkillPanel;
 import mods.hinasch.unsaga.init.UnsagaConfigHandler;
 import mods.hinasch.unsaga.init.UnsagaGui;
 import mods.hinasch.unsaga.plugin.UnsagaPluginIntegration;
@@ -41,17 +42,17 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
-@Mod(modid = UnsagaMod.MODID  ,name = UnsagaMod.NAME , version= UnsagaMod.VERSION,dependencies="after:TConstruct,dcs_climate,Waila|lib;required-after:hinasch.lib")//,guiFactory="mods.hinasch.unsaga.client.ModGuiFactoryUnsaga")
+@Mod(modid = UnsagaMod.MODID  ,name = UnsagaMod.NAME , version= UnsagaMod.VERSION,dependencies="required-after:hinasch.lib",guiFactory="mods.hinasch.unsaga.core.client.ModGuiFactoryUnsaga")
 public class UnsagaMod implements IModBase{
 
-	//TODO:盾へのダメージ
+
 	@SidedProxy(modId= UnsagaMod.MODID,clientSide = "mods.hinasch.unsaga.core.client.ClientProxy", serverSide = "mods.hinasch.unsaga.core.net.CommonProxy")
 	public static CommonProxy proxy;
 	@Instance(UnsagaMod.MODID)
 	public static UnsagaMod instance;
 	public static final String MODID = "hinasch.unsaga";
 	public static final String NAME = "Unsaga Mod";
-	public static final String VERSION = "build on 17/6/21";
+	public static final String VERSION = "build on 17/12/09";
 
 	public static Configuration configFile;
 	public static final UnsagaConfigHandler configHandler = new UnsagaConfigHandler();
@@ -135,6 +136,7 @@ public class UnsagaMod implements IModBase{
 		packetDispatcher.registerMessage(PacketClientScanner.Handler.class, PacketClientScanner.class, 8, Side.CLIENT);
 		packetDispatcher.registerMessage(PacketClientThunder.Handler.class, PacketClientThunder.class, 9, Side.CLIENT);
 		packetDispatcher.registerMessage(PacketAddExhaution.Handler.class, PacketAddExhaution.class, 10, Side.SERVER);
+		packetDispatcher.registerMessage(PacketSyncActionPerform.Handler.class, PacketSyncActionPerform.class, 11, Side.SERVER);
 //		packetDispatcher.registerMessage(PacketSyncAbiltyHeldItem.Handler.class, PacketSyncAbiltyHeldItem.class, 3, Side.CLIENT);
 
 ////		packetDispatcher.registerMessage(PacketSyncEntityInfo.Handler.class, PacketSyncEntityInfo.class, 5, Side.CLIENT);

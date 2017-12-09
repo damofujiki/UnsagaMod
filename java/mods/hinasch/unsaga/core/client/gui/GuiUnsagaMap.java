@@ -2,7 +2,7 @@ package mods.hinasch.unsaga.core.client.gui;
 
 import mods.hinasch.lib.client.ClientHelper;
 import mods.hinasch.lib.client.GuiContainerBase;
-import mods.hinasch.lib.client.RenderHelper;
+import mods.hinasch.lib.client.RenderHelperHS;
 import mods.hinasch.lib.util.HSLibs;
 import mods.hinasch.unsaga.UnsagaMod;
 import mods.hinasch.unsaga.core.entity.EntityStateCapability;
@@ -86,7 +86,7 @@ public class GuiUnsagaMap extends GuiContainerBase{
 				int gray = 1118481 * v;
 
 
-				RenderHelper.drawRect(i*resolution, j*resolution, i*resolution+resolution, j*resolution+resolution, gray,255);
+				RenderHelperHS.drawRect(i*resolution, j*resolution, i*resolution+resolution, j*resolution+resolution, gray,255);
 			}
 		}
 	}
@@ -190,8 +190,8 @@ public class GuiUnsagaMap extends GuiContainerBase{
 				//				z = MathHelper.clamp_int(z, 1, 15);
 				int gray = 1118481 * z;
 
-				RenderHelper.drawRect(i*resolution, j*resolution, i*resolution+resolution, j*resolution+resolution, gray,255);
-				RenderHelper.drawRect(i*resolution, j*resolution, i*resolution+resolution, j*resolution+resolution, color.colorValue,100);
+				RenderHelperHS.drawRect(i*resolution, j*resolution, i*resolution+resolution, j*resolution+resolution, gray,255);
+				RenderHelperHS.drawRect(i*resolution, j*resolution, i*resolution+resolution, j*resolution+resolution, color.colorValue,100);
 			}
 		}
 	}

@@ -17,9 +17,9 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureAttribute;
 import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIFindEntityNearestPlayer;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAILookIdle;
+import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
@@ -49,13 +49,6 @@ public class EntityRuffleTree extends EntityMob implements IRangedAttackMob,ISpe
 
 	}
 
-	@Override
-    protected void entityInit()
-    {
-        super.entityInit();
-        this.dataManager.register(AI_SPELL, new String(""));
-        this.dataManager.register(AI_TARGET, Integer.valueOf(-1));
-    }
 
     @Override
     protected void initEntityAI()
@@ -63,13 +56,14 @@ public class EntityRuffleTree extends EntityMob implements IRangedAttackMob,ISpe
 
     	SpellRegistry spells = SpellRegistry.instance();
     	List<SpellAIData> spellList = Lists.newArrayList();
-    	spellList.add(new SpellAIData(spells.sleep,30.0F,0.0F,3));
-    	spellList.add(new SpellAIData(spells.superSonic,50.0F,10.0F,4));
+    	spellList.add(new SpellAIData(spells.sleep,30.0F,0.0F,60));
+    	spellList.add(new SpellAIData(spells.superSonic,50.0F,10.0F,30));
+    	spellList.add(new SpellAIData(spells.spoil,50.0F,10.0F,30));
         this.tasks.addTask(1, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
         this.tasks.addTask(6, new EntityAILookIdle(this));
-		this.targetTasks.addTask(4, new EntityAIArrowAttack(this,0.01D,60,15.0F));
-        this.targetTasks.addTask(2, new EntityAIFindEntityNearestPlayer(this));
-		this.targetTasks.addTask(3, new EntityAISpell(this,spellList,1.0D,200,15.0F));
+		this.targetTasks.addTask(3, new EntityAIArrowAttack(this,0.01D,60,15.0F));
+        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
+		this.targetTasks.addTask(4, new EntityAISpell(this,spellList,1.0D,100,15.0F,10));
         this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false, new Class[0]));
     }
 
@@ -84,6 +78,7 @@ public class EntityRuffleTree extends EntityMob implements IRangedAttackMob,ISpe
 		super.applyEntityAttributes();
 		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(70.0F);
 		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(5.0F);
+        this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.01D);
     }
 
 	@Override
@@ -93,6 +88,7 @@ public class EntityRuffleTree extends EntityMob implements IRangedAttackMob,ISpe
 		if(this.getEntityWorld().rand.nextInt(3)==0){
 			liquid.setPoison();
 		}
+		liquid.setDamage((float)this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue(),0.3F);
 		VecUtil.setThrowableToTarget(this, target, liquid);
 		this.playSound(SoundEvents.ENTITY_GENERIC_SWIM, 1.0F, 1.0F);
 		if(WorldHelper.isServer(getEntityWorld())){

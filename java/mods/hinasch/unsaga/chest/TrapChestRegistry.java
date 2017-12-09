@@ -96,9 +96,9 @@ public class TrapChestRegistry {
 				EntityLiving var11 = slime instanceof EntityLiving ? (EntityLiving)slime : null;
 				slime.setLocationAndAngles(var5, var7, var9, ep.getEntityWorld().rand.nextFloat() * 360.0F, 0.0F);
 				//if(var11.getCanSpawnHere()){
-				UnsagaMod.logger.trace(this.getName(), var11);
-				UnsagaMod.logger.trace(this.getName(), ep.getEntityWorld());
-				UnsagaMod.logger.trace(this.getName(), ep.getEntityWorld());
+				UnsagaMod.logger.trace(this.getPropertyName(), var11);
+				UnsagaMod.logger.trace(this.getPropertyName(), ep.getEntityWorld());
+				UnsagaMod.logger.trace(this.getPropertyName(), ep.getEntityWorld());
 				WorldHelper.safeSpawn(ep.worldObj, slime);
 
 				//}

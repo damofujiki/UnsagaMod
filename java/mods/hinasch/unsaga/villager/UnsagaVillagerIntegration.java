@@ -51,5 +51,6 @@ public class UnsagaVillagerIntegration {
 
 		DisplayPriceEvent.register();
 		HSLibs.registerEvent(new DisplaySmithInfoEvent());
+		HSLibs.registerEvent(new EventVillagerBirth());
 	}
 }

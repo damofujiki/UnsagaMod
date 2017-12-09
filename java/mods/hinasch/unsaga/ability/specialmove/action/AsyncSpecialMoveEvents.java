@@ -5,10 +5,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.OptionalDouble;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import javax.annotation.Nullable;
 
@@ -31,14 +31,15 @@ import mods.hinasch.lib.world.XYZPos;
 import mods.hinasch.unsaga.UnsagaMod;
 import mods.hinasch.unsaga.ability.specialmove.SpecialMoveInvoker;
 import mods.hinasch.unsaga.ability.specialmove.action.StatePropertySpecialMove.StateSpecialMove;
+import mods.hinasch.unsaga.common.specialaction.ActionAsyncEvent.AsyncEventFactory;
 import mods.hinasch.unsaga.common.specialaction.ISimpleMelee;
 import mods.hinasch.unsaga.core.entity.EntityStateCapability;
 import mods.hinasch.unsaga.core.entity.StateRegistry;
 import mods.hinasch.unsaga.damage.DamageSourceUnsaga;
 import mods.hinasch.unsaga.damage.DamageTypeUnsaga.General;
 import mods.hinasch.unsaga.damage.DamageTypeUnsaga.Sub;
-import mods.hinasch.unsaga.material.UnsagaMaterialTool;
-import mods.hinasch.unsaga.util.ConnectedBlocksBreaker;
+import mods.hinasch.unsaga.material.UnsagaMaterialCapability;
+import mods.hinasch.unsaga.util.AsyncConnectedBlocksBreaker;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -56,8 +57,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class AsyncSpecialMoveEvents {
-	public static class CrashConnected implements Function<SpecialMoveInvoker,AsyncUpdateEvent>{
+	public static class CrashConnected implements AsyncEventFactory<SpecialMoveInvoker>{
 
+		Set<Block> blackList = Sets.newHashSet(Blocks.COBBLESTONE,Blocks.STONE,Blocks.SANDSTONE);
 		String toolClass;
 		public CrashConnected(String clazz){
 			this.toolClass = clazz;
@@ -69,8 +71,11 @@ public class AsyncSpecialMoveEvents {
 			}
 			IBlockState state = t.getWorld().getBlockState(t.getTargetCoordinate().get());
 			if(HSLibs.canBreakAndEffectiveBlock(t.getWorld(), t.getPerformer(), toolClass, t.getTargetCoordinate().get())){
-				ConnectedBlocksBreaker scannerBreak = new ConnectedBlocksBreaker(t.getWorld(),5,Sets.newHashSet(state), t.getTargetCoordinate().get(), t.getPerformer());
-				return scannerBreak;
+				if(!blackList.contains(state.getBlock())){
+					AsyncConnectedBlocksBreaker scannerBreak = new AsyncConnectedBlocksBreaker(t.getWorld(),5,Sets.newHashSet(state), t.getTargetCoordinate().get(), t.getPerformer());
+					return scannerBreak;
+				}
+
 			}
 			return null;
 		}
@@ -78,11 +83,11 @@ public class AsyncSpecialMoveEvents {
 	}
 
 
-	public static class GrandSlam implements Function<SpecialMoveInvoker,AsyncUpdateEvent>{
+	public static class GrandSlam implements AsyncEventFactory<SpecialMoveInvoker>{
 
 		@Override
 		public AsyncUpdateEvent apply(SpecialMoveInvoker context) {
-			boolean heavy = context.getArticle().isPresent() && UnsagaMaterialTool.adapter.hasCapability(context.getArticle().get()) && UnsagaMaterialTool.adapter.getCapability(context.getArticle().get()).getWeight()>10;
+			boolean heavy = context.getArticle().isPresent() && UnsagaMaterialCapability.adapter.hasCapability(context.getArticle().get()) && UnsagaMaterialCapability.adapter.getCapability(context.getArticle().get()).getWeight()>10;
 			List<BlockPos> expos = Lists.newArrayList();
 			AxisAlignedBB bb = context.getPerformer().getEntityBoundingBox().expand(8.0D, 3.0D, 8.0D);
 			RangedHelper<SpecialMoveInvoker> helper = RangedHelper.create(context.getWorld(), context.getPerformer(),Lists.newArrayList(bb));
@@ -98,7 +103,7 @@ public class AsyncSpecialMoveEvents {
 		}
 
 	}
-	public static class Pulverizer implements Function<SpecialMoveInvoker,AsyncUpdateEvent>{
+	public static class Pulverizer implements AsyncEventFactory<SpecialMoveInvoker>{
 
 		@Override
 		public AsyncUpdateEvent apply(SpecialMoveInvoker t) {
@@ -171,7 +176,7 @@ public class AsyncSpecialMoveEvents {
 		@Override
 		public int getIntervalThresold() {
 			// TODO 自動生成されたメソッド・スタブ
-			return 3;
+			return 0;
 		}
 
 		@Override
@@ -217,7 +222,7 @@ public class AsyncSpecialMoveEvents {
 		@Override
 		public int getIntervalThresold() {
 			// TODO 自動生成されたメソッド・スタブ
-			return 1000;
+			return 2;
 		}
 
 		@Override
@@ -315,7 +320,7 @@ public class AsyncSpecialMoveEvents {
 		@Override
 		public int getIntervalThresold() {
 			// TODO 自動生成されたメソッド・スタブ
-			return 4;
+			return 1;
 		}
 
 		public MovingAttack setCancelFall(boolean par1){
@@ -338,8 +343,13 @@ public class AsyncSpecialMoveEvents {
 				this.sender.fallDistance = 0;
 			}
 			if(x.isPresent()){
+				if(x.getAsDouble()==0 && z.getAsDouble()==0){
+					sender.setVelocity(0, sender.motionY, 0);
+				}else{
+					sender.addVelocity(x.getAsDouble(), 0, 0);
+				}
 //				sender.motionX += x.getAsDouble();
-				sender.addVelocity(x.getAsDouble(), 0, 0);
+
 			}
 			if(y.isPresent()){
 //				sender.motionY += y.getAsDouble();
@@ -380,6 +390,7 @@ public class AsyncSpecialMoveEvents {
 			}
 
 			time ++;
+			UnsagaMod.logger.trace("time", time);
 		}
 
 		@Override

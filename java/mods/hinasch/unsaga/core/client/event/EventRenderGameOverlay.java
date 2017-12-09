@@ -1,9 +1,7 @@
 package mods.hinasch.unsaga.core.client.event;
 
-import java.util.function.BiConsumer;
-
 import mods.hinasch.lib.client.ClientHelper;
-import mods.hinasch.lib.client.RenderHelper;
+import mods.hinasch.lib.client.RenderHelperHS;
 import mods.hinasch.lib.entity.RangedHelper;
 import mods.hinasch.lib.util.HSLibs;
 import mods.hinasch.lib.world.XYZPos;
@@ -22,7 +20,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -62,7 +59,7 @@ public class EventRenderGameOverlay {
 
 		protected void renderTarget(RenderLivingEvent.Post e,XYZPos pos){
 			FontRenderer fontRenderer = e.getRenderer().getFontRendererFromRenderManager();
-			RenderHelper renderHelper = RenderHelper.create(fontRenderer, renderManager);
+			RenderHelperHS renderHelper = RenderHelperHS.create(fontRenderer, renderManager);
 
 			if(e.getEntity().getEntityId()==UnsagaMod.proxy.getKeyBindings().getClientTargetSelector().getCurrentIndex()){
 				String str = "Target";
@@ -85,7 +82,7 @@ public class EventRenderGameOverlay {
 		}
 		protected void renderLivingLPDamage(RenderLivingEvent.Post e,XYZPos pos){
 			FontRenderer fontRenderer = e.getRenderer().getFontRendererFromRenderManager();
-			RenderHelper renderHelper = RenderHelper.create(fontRenderer, renderManager);
+			RenderHelperHS renderHelper = RenderHelperHS.create(fontRenderer, renderManager);
 
 //			//敵がdetectデバフがあるか、もしくはwatchingOutスキルがあるか（範囲制限あり）
 			if(e.getEntity().isPotionActive(UnsagaPotions.instance().detected)|| this.canDetectEntityWithSkill(e.getEntity())){
@@ -165,7 +162,7 @@ public class EventRenderGameOverlay {
 
 
 			if(this.fontRenderer==null){
-				this.fontRenderer = ClientHelper.getFontRendererFromMCInstance();
+				this.fontRenderer = ClientHelper.fontRenderer();
 			}
 
 
@@ -216,23 +213,23 @@ public class EventRenderGameOverlay {
 				return ((EntityLivingBase)in).isPotionActive(UnsagaPotions.instance().detected);
 			});
 
-			r.setConsumer(new BiConsumer<RangedHelper,EntityLivingBase>(){
-
-				@Override
-				public void accept(RangedHelper t, EntityLivingBase u) {
-					if(u.isPotionActive(UnsagaPotions.instance().detected)){
-						int dur = u.getActivePotionEffect(UnsagaPotions.instance().detected).getDuration();
-						if(dur<=0){
-							u.removePotionEffect(UnsagaPotions.instance().detected);
-						}
-					}
-
-					BlockPos pos = ClientHelper.getPlayer().getPosition().subtract(u.getPosition());
-					fontRenderer.drawString("e", 50+pos.getX(), 50+pos.getZ(), 0xffffff);
-					fontRenderer.drawString("P", 50, 50, 0xffffff);
-				}}
-			);
-			r.invoke();
+//			r.setConsumer(new BiConsumer<RangedHelper,EntityLivingBase>(){
+//
+//				@Override
+//				public void accept(RangedHelper t, EntityLivingBase u) {
+//					if(u.isPotionActive(UnsagaPotions.instance().detected)){
+//						int dur = u.getActivePotionEffect(UnsagaPotions.instance().detected).getDuration();
+//						if(dur<=0){
+//							u.removePotionEffect(UnsagaPotions.instance().detected);
+//						}
+//					}
+//
+//					BlockPos pos = ClientHelper.getPlayer().getPosition().subtract(u.getPosition());
+//					fontRenderer.drawString("e", 50+pos.getX(), 50+pos.getZ(), 0xffffff);
+//					fontRenderer.drawString("P", 50, 50, 0xffffff);
+//				}}
+//			);
+//			r.invoke();
 
 //			if(ClientHelper.getPlayer().isPotionActive(UnsagaPotions.instance().detectPlant)){
 //				PotionEffect p = ClientHelper.getPlayer().getActivePotionEffect(UnsagaPotions.instance().detectPlant);

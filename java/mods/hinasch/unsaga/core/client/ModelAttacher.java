@@ -63,7 +63,7 @@ public class ModelAttacher {
 		.attach();
 
 		UnsagaModCore.instance().oreBlocks.getProperties()
-		.forEach(ore -> modelAgent.registerModelMesher(ore.getBlockAsItem(), 0,modelAgent.getNewModelResource(ore.getName(), "inventory")));
+		.forEach(ore -> modelAgent.registerModelMesher(ore.getBlockAsItem(), 0,modelAgent.getNewModelResource(ore.getPropertyName(), "inventory")));
 
 //		modelAgent.registerModelMesher(this.itemsNew.iconCondition, 1,"icon.condition");
 	}

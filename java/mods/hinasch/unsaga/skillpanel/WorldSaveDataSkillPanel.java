@@ -18,7 +18,7 @@ import mods.hinasch.lib.world.WorldHelper;
 import mods.hinasch.unsaga.UnsagaMod;
 import mods.hinasch.unsaga.core.inventory.InventorySkillPanel;
 import mods.hinasch.unsaga.core.inventory.container.MatrixAdapterItemStack;
-import mods.hinasch.unsaga.core.net.packet.newpacket.PacketSyncSkillPanel;
+import mods.hinasch.unsaga.core.net.packet.PacketSyncSkillPanel;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;

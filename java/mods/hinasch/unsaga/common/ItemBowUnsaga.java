@@ -251,7 +251,7 @@ public class ItemBowUnsaga extends ItemBow implements IItemColor,IAbilitySelecto
 	}
 	@Override
 	public int getMaxAbilitySize(){
-		return 2;
+		return 4;
 	}
 
 	@Override

@@ -20,7 +20,7 @@ import mods.hinasch.unsaga.core.item.newitem.combat.ItemShieldUnsaga;
 import mods.hinasch.unsaga.material.IUnsagaForgeableTool;
 import mods.hinasch.unsaga.material.SuitableLists;
 import mods.hinasch.unsaga.material.UnsagaMaterial;
-import mods.hinasch.unsaga.material.UnsagaMaterialTool;
+import mods.hinasch.unsaga.material.UnsagaMaterialCapability;
 import mods.hinasch.unsaga.material.UnsagaMaterials;
 import mods.hinasch.unsaga.material.UnsagaWeightType;
 import mods.hinasch.unsaga.util.ToolCategory;
@@ -63,15 +63,15 @@ public class ComponentUnsagaWeapon {
 	public static final double SPEED_MODIFIER = 20.0D;
 	public List<IComponentDisplayInfo> displayInfoComponents = Lists.newArrayList();
 
-	public final IComponentDisplayInfo displayMaterialWeight = new ComponentDisplayInfo(3,(is,ep,list,sw)-> is!=null && UnsagaMaterialTool.adapter.hasCapability(is)){
+	public final IComponentDisplayInfo displayMaterialWeight = new ComponentDisplayInfo(3,(is,ep,list,sw)-> is!=null && UnsagaMaterialCapability.adapter.hasCapability(is)){
 
 
 		@Override
 		public void addInfo(ItemStack is, EntityPlayer ep, List dispList, boolean par4) {
-			UnsagaMaterial m = UnsagaMaterialTool.adapter.getCapability(is).getMaterial();
-			int weight = UnsagaMaterialTool.adapter.getCapability(is).getWeight();
+			UnsagaMaterial m = UnsagaMaterialCapability.adapter.getCapability(is).getMaterial();
+			int weight = UnsagaMaterialCapability.adapter.getCapability(is).getWeight();
 			UnsagaWeightType weightType = UnsagaWeightType.fromWeight(weight);
-			String str = HSLibs.translateKey("tooltip.unsaga.material")+":"+HSLibs.translateKey("material."+m.getName());
+			String str = HSLibs.translateKey("tooltip.unsaga.material")+":"+HSLibs.translateKey("material."+m.getPropertyName());
 			dispList.add(str);
 
 			String weightString = HSLibs.translateKey("word.weight") + ":" + weight;
@@ -90,8 +90,8 @@ public class ComponentUnsagaWeapon {
 		//		}
 
 		public Tuple<UnsagaMaterial,Integer> getMaterialFromCapability(ItemStack is) {
-			if(UnsagaMaterialTool.adapter.hasCapability(is)){
-				return new  Tuple(UnsagaMaterialTool.adapter.getCapability(is).getMaterial(),UnsagaMaterialTool.adapter.getCapability(is).getWeight());
+			if(UnsagaMaterialCapability.adapter.hasCapability(is)){
+				return new  Tuple(UnsagaMaterialCapability.adapter.getCapability(is).getMaterial(),UnsagaMaterialCapability.adapter.getCapability(is).getWeight());
 			}
 			return new Tuple(UnsagaMod.core.materialsNew.stone,1);
 
@@ -114,7 +114,7 @@ public class ComponentUnsagaWeapon {
 
 		@Override
 		public void addInfo(ItemStack is, EntityPlayer ep, List dispList, boolean par4) {
-			UnsagaMaterial m = UnsagaMaterialTool.adapter.getCapability(is).getMaterial();
+			UnsagaMaterial m = UnsagaMaterialCapability.adapter.getCapability(is).getMaterial();
 			String abilityNames  = AbilityAPI.getApplicableAbilities(is).stream().map(in -> in.getLocalized())
 					.collect(Collectors.joining("/"));
 
@@ -123,11 +123,11 @@ public class ComponentUnsagaWeapon {
 		}
 
 	};
-	public final IComponentDisplayInfo debugDisplay = new ComponentDisplayInfo(6,(is,ep,list,sw)->is!=null && HSLib.configHandler.isDebug() &&UnsagaMaterialTool.adapter.hasCapability(is)){
+	public final IComponentDisplayInfo debugDisplay = new ComponentDisplayInfo(6,(is,ep,list,sw)->is!=null && HSLib.configHandler.isDebug() &&UnsagaMaterialCapability.adapter.hasCapability(is)){
 
 		@Override
 		public void addInfo(ItemStack is, EntityPlayer ep, List dispList, boolean par4) {
-			UnsagaMaterial m = UnsagaMaterialTool.adapter.getCapability(is).getMaterial();
+			UnsagaMaterial m = UnsagaMaterialCapability.adapter.getCapability(is).getMaterial();
 			dispList.add("Tool Material:"+m.getToolMaterial().name());
 			dispList.add("Armor Material:"+m.getArmorMaterial());
 			float multiply = 1.0F;
@@ -137,11 +137,11 @@ public class ComponentUnsagaWeapon {
 			dispList.add("Max Uses:"+getMaxDamage(is) * multiply);
 		}
 	};
-	public final IComponentDisplayInfo shieldDisplay = new ComponentDisplayInfo(1,(is,ep,list,sw)->is!=null&& is.getItem() instanceof ItemShieldUnsaga &&UnsagaMaterialTool.adapter.hasCapability(is)){
+	public final IComponentDisplayInfo shieldDisplay = new ComponentDisplayInfo(1,(is,ep,list,sw)->is!=null&& is.getItem() instanceof ItemShieldUnsaga &&UnsagaMaterialCapability.adapter.hasCapability(is)){
 
 		@Override
 		public void addInfo(ItemStack is, EntityPlayer ep, List dispList, boolean par4) {
-			UnsagaMaterial m = UnsagaMaterialTool.adapter.getCapability(is).getMaterial();
+			UnsagaMaterial m = UnsagaMaterialCapability.adapter.getCapability(is).getMaterial();
 			dispList.add(UnsagaTextFormatting.POSITIVE+"Blocking Power +"+String.valueOf(m.getShieldPower())+"%");
 		}
 	};
@@ -180,8 +180,8 @@ public class ComponentUnsagaWeapon {
 
 			@Override
 			public float apply(ItemStack stack, World worldIn, EntityLivingBase entityIn) {
-				if(UnsagaMaterialTool.adapter.hasCapability(stack)){
-					if(!SuitableLists.getSuitableList(toolCategory).contain(UnsagaMaterialTool.adapter.getCapability(stack).getMaterial())){
+				if(UnsagaMaterialCapability.adapter.hasCapability(stack)){
+					if(!SuitableLists.getSuitableList(toolCategory).contain(UnsagaMaterialCapability.adapter.getCapability(stack).getMaterial())){
 						return 1.0F;
 					}
 				}
@@ -200,8 +200,8 @@ public class ComponentUnsagaWeapon {
 		@Override
 		public float apply(ItemStack stack, World worldIn, EntityLivingBase entityIn) {
 
-			if(UnsagaMaterialTool.adapter.hasCapability(stack)){
-				UnsagaMaterial mat = UnsagaMaterialTool.adapter.getCapability(stack).getMaterial();
+			if(UnsagaMaterialCapability.adapter.hasCapability(stack)){
+				UnsagaMaterial mat = UnsagaMaterialCapability.adapter.getCapability(stack).getMaterial();
 				if(mat.getSubIconGetter().isPresent()){
 					if(mat.getSubIconGetter().get().equals(this.sub)){
 						return 1.0F;
@@ -231,8 +231,8 @@ public class ComponentUnsagaWeapon {
 	}
 
 	public float getAppliedAttackDamage(float base,ItemStack is){
-		if(UnsagaMaterialTool.adapter.hasCapability(is)){
-			UnsagaMaterial m = UnsagaMaterialTool.adapter.getCapability(is).getMaterial();
+		if(UnsagaMaterialCapability.adapter.hasCapability(is)){
+			UnsagaMaterial m = UnsagaMaterialCapability.adapter.getCapability(is).getMaterial();
 			return base + m.getToolMaterial().getDamageVsEntity();
 		}
 		return base;
@@ -247,8 +247,8 @@ public class ComponentUnsagaWeapon {
 			multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getAttributeUnlocalizedName(), new AttributeModifier(uuids.getFirst(), "Weapon modifier", (double)at, 0));
 			multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getAttributeUnlocalizedName(), new AttributeModifier(uuids.getSecond(),"Weapon modifier", basespeed, 0));
 
-			if(UnsagaMaterialTool.adapter.hasCapability(is)){
-				int weight = UnsagaMaterialTool.adapter.getCapability(is).getWeight();
+			if(UnsagaMaterialCapability.adapter.hasCapability(is)){
+				int weight = UnsagaMaterialCapability.adapter.getCapability(is).getWeight();
 				if(weight>0){
 					double mod = getSpeedModifierFromWeight(weight);
 					multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getAttributeUnlocalizedName(), new AttributeModifier(WEIGHT_EFFECTED_SPEED, "Weapon modifier", mod, 0));
@@ -285,8 +285,8 @@ public class ComponentUnsagaWeapon {
 	{
 		ICapabilityProvider provider = new ICapabilitySerializable<NBTBase>(){
 
-			IUnsagaForgeableTool def = UnsagaMaterialTool.CAPA.getDefaultInstance();
-			Capability<IUnsagaForgeableTool> capa = UnsagaMaterialTool.CAPA;
+			IUnsagaForgeableTool def = UnsagaMaterialCapability.CAPA.getDefaultInstance();
+			Capability<IUnsagaForgeableTool> capa = UnsagaMaterialCapability.CAPA;
 			@Override
 			public void deserializeNBT(NBTBase nbt) {
 				// TODO 自動生成されたメソッド・スタブ
@@ -345,8 +345,8 @@ public class ComponentUnsagaWeapon {
 		if(this.isFailed(stack)){
 			return FAILED.getMaxUses();
 		}
-		if(UnsagaMaterialTool.adapter.hasCapability(stack)){
-			UnsagaMaterial material = UnsagaMaterialTool.adapter.getCapability(stack).getMaterial();
+		if(UnsagaMaterialCapability.adapter.hasCapability(stack)){
+			UnsagaMaterial material = UnsagaMaterialCapability.adapter.getCapability(stack).getMaterial();
 			if(ToolCategory.armorSet.contains(this.toolCategory)){
 				return MAX_DAMAGE_ARRAY[this.toolCategory.getEquipmentSlot().getIndex()] * material.getArmorMaterial().getDurability(this.toolCategory.getEquipmentSlot());
 			}
@@ -367,12 +367,12 @@ public class ComponentUnsagaWeapon {
 		if(this.isFailed(par1ItemStack)){
 			return "item.unsaga." + this.toolCategory.getPrefix() + ".failed";
 		}
-		if(UnsagaMaterialTool.adapter.hasCapability(par1ItemStack)){
-			UnsagaMaterial ma = UnsagaMaterialTool.adapter.getCapability(par1ItemStack).getMaterial();
+		if(UnsagaMaterialCapability.adapter.hasCapability(par1ItemStack)){
+			UnsagaMaterial ma = UnsagaMaterialCapability.adapter.getCapability(par1ItemStack).getMaterial();
 			if(ma.getAnotherName(toolCategory).isPresent()){
 				materialName = ma.getAnotherName(this.toolCategory).get();
 			}else{
-				materialName = ma.getName();
+				materialName = ma.getPropertyName();
 			}
 
 		}

@@ -1,6 +1,7 @@
 package mods.hinasch.unsaga.core.net.packet;
 
 import io.netty.buffer.ByteBuf;
+import mods.hinasch.unsaga.UnsagaMod;
 import mods.hinasch.unsaga.status.TargetHolderCapability;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -134,6 +135,7 @@ public class PacketSyncServerTargetHolder implements IMessage{
 					if(playerMP!=null && playerMP.worldObj!=null){
 						Entity entity = worldServer.getEntityByID(message.getTargetid());
 						if(entity instanceof EntityLivingBase){
+							UnsagaMod.logger.trace("Server Target Update", entity);
 							TargetHolderCapability.adapter.getCapability(playerMP).updateTarget((EntityLivingBase) entity);
 //							holder.updateTarget(playerMP, (EntityLivingBase) entity);
 						}

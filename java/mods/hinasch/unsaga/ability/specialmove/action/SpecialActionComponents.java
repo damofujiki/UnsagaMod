@@ -13,6 +13,7 @@ import mods.hinasch.lib.entity.RangedHelper;
 import mods.hinasch.lib.item.ItemUtil;
 import mods.hinasch.lib.network.PacketUtil;
 import mods.hinasch.lib.particle.ParticleHelper.MovingType;
+import mods.hinasch.lib.sync.AsyncUpdateEvent;
 import mods.hinasch.lib.util.HSLibs;
 import mods.hinasch.lib.util.SoundAndSFX;
 import mods.hinasch.lib.util.VecUtil;
@@ -38,7 +39,7 @@ import mods.hinasch.unsaga.common.specialaction.ActionWorld;
 import mods.hinasch.unsaga.core.entity.EntityStateCapability;
 import mods.hinasch.unsaga.core.entity.StateRegistry;
 import mods.hinasch.unsaga.core.entity.mob.EntityRuffleTree;
-import mods.hinasch.unsaga.core.entity.projectile.EntityBeam;
+import mods.hinasch.unsaga.core.entity.passive.EntityBeam;
 import mods.hinasch.unsaga.core.entity.projectile.EntityFlyingAxe;
 import mods.hinasch.unsaga.core.entity.projectile.EntityThrowingKnife;
 import mods.hinasch.unsaga.core.net.packet.PacketClientThunder;
@@ -144,9 +145,11 @@ public class SpecialActionComponents {
 			@Override
 			public EnumActionResult apply(SpecialMoveInvoker t) {
 				t.playSound(XYZPos.createFrom(t.getPerformer()), SoundEvents.ENTITY_WITHER_SHOOT, false);
-				Vec3d vec = t.getPerformer().getLookVec().normalize().scale(0.03D);
+				Vec3d vec = t.getPerformer().getLookVec().normalize().scale(1.0D);
 				DamageSourceUnsaga dsu = DamageSourceUnsaga.create(t.getPerformer(), t.getStrength().lp(), General.SPEAR);
-				HSLib.core().events.scannerEventPool.addEvent(new MovingAttack(t.getPerformer(),OptionalDouble.of(vec.xCoord),OptionalDouble.empty(),OptionalDouble.of(vec.zCoord),150,2,dsu,t.getModifiedStrength().hp()));
+				AsyncUpdateEvent ev = new MovingAttack(t.getPerformer(),OptionalDouble.of(vec.xCoord),OptionalDouble.empty(),OptionalDouble.of(vec.zCoord),4,2,dsu,t.getModifiedStrength().hp());
+//				HSLib.core().events.scannerEventPool.addEvent(new MovingAttack(t.getPerformer(),OptionalDouble.of(vec.xCoord),OptionalDouble.empty(),OptionalDouble.of(vec.zCoord),150,2,dsu,t.getModifiedStrength().hp()));
+				HSLib.core().addAsyncEvent(t.getPerformer(), ev);
 				return EnumActionResult.SUCCESS;
 			}}
 				);
@@ -161,7 +164,7 @@ public class SpecialActionComponents {
 					target.hurtTime = 0;
 					target.addPotionEffect(new PotionEffect(UnsagaPotions.instance().sleep,ItemUtil.getPotionTime(3),0));
 					AsyncSpecialMoveEvents.ContinuousAttack event = new AsyncSpecialMoveEvents.ContinuousAttack(context.getPerformer(), 6,context);
-					HSLib.core().events.scannerEventPool.addEvent(event);
+					HSLib.core().addAsyncEvent(context.getPerformer(), event);
 				});
 		base.addAction(action);
 		return base;
@@ -181,8 +184,10 @@ public class SpecialActionComponents {
 						VecUtil.knockback(t.getPerformer(), target, 1.0D, 0.5D);
 						SoundAndSFX.playSound(t.getWorld(), XYZPos.createFrom(target), SoundEvents.ENTITY_IRONGOLEM_HURT, SoundCategory.HOSTILE, 1.0F, 1.0F, false);
 					}).invoke();
-					HSLib.core().events.scannerEventPool.addEvent(new MovingAttack(t.getPerformer(),OptionalDouble.of(0),OptionalDouble.empty(),OptionalDouble.of(0),500,-1,null,0));
+					AsyncUpdateEvent ev = new MovingAttack(t.getPerformer(),OptionalDouble.of(0),OptionalDouble.empty(),OptionalDouble.of(0),10,-1,null,0);
 
+//					HSLib.core().events.scannerEventPool.addEvent(new MovingAttack(t.getPerformer(),OptionalDouble.of(0),OptionalDouble.empty(),OptionalDouble.of(0),500,-1,null,0));
+					HSLib.core().addAsyncEvent(t.getPerformer(), ev);
 					return EnumActionResult.SUCCESS;
 				}
 				return EnumActionResult.PASS;
@@ -342,35 +347,37 @@ public class SpecialActionComponents {
 			@Override
 			public EnumActionResult apply(SpecialMoveInvoker t) {
 				t.playSound(XYZPos.createFrom(t.getPerformer()), SoundEvents.ENTITY_WITHER_SHOOT, false);
-				Vec3d vec = t.getPerformer().getLookVec().normalize().scale(0.015D);
+				Vec3d vec = t.getPerformer().getLookVec().normalize().scale(0.8D);
 				DamageSourceUnsaga dsu = DamageSourceUnsaga.create(t.getPerformer(), t.getStrength().lp(), General.SWORD);
-				HSLib.core().events.scannerEventPool.addEvent(new MovingAttack(t.getPerformer(),OptionalDouble.of(vec.xCoord),OptionalDouble.empty(),OptionalDouble.of(vec.zCoord),400,2,dsu,t.getModifiedStrength().hp())
-						.setPotions(UnsagaPotions.instance().downDex).setConsumer(in ->{
-							ScannerNew.create().base(in.getSender()).range(1).ready()
-							.stream().forEach(pos ->{
-								IBlockState state = in.world.getBlockState(pos);
-								if(state.getBlock() instanceof BlockLeaves || state.getBlock() instanceof BlockTallGrass || state.getBlock() instanceof BlockWeb){
-									SoundAndSFX.playBlockBreakSFX(in.world, pos, state);
-								}
+				AsyncUpdateEvent ev = new MovingAttack(t.getPerformer(),OptionalDouble.of(vec.xCoord),OptionalDouble.empty(),OptionalDouble.of(vec.zCoord),10,2,dsu,t.getModifiedStrength().hp()).setPotions(UnsagaPotions.instance().downDex).setConsumer(in ->{
+					ScannerNew.create().base(in.getSender()).range(1).ready()
+					.stream().forEach(pos ->{
+						IBlockState state = in.world.getBlockState(pos);
+						if(state.getBlock() instanceof BlockLeaves || state.getBlock() instanceof BlockTallGrass || state.getBlock() instanceof BlockWeb){
+							SoundAndSFX.playBlockBreakSFX(in.world, pos, state);
+						}
 
-							});
-						}));
+					});
+				});
+				HSLib.core().addAsyncEvent(t.getPerformer(), ev);
 				return EnumActionResult.SUCCESS;
 			}}
 				);
 		return gustBase;
 	}
 	public static SpecialMoveBase hawkBlade(){
-		SpecialMoveBase hawkBlade = new SpecialMoveBase(InvokeType.CHARGE);
+		SpecialMoveBase hawkBlade = new SpecialMoveBase(InvokeType.RIGHTCLICK);
 		hawkBlade.addAction(new IAction<SpecialMoveInvoker>(){
 
 			@Override
 			public EnumActionResult apply(SpecialMoveInvoker t) {
 				if(!t.getPerformer().onGround){
 					t.playSound(XYZPos.createFrom(t.getPerformer()), SoundEvents.ENTITY_WITHER_SHOOT, false);
-					Vec3d vec = t.getPerformer().getLookVec().normalize().scale(0.01D);
+					Vec3d vec = t.getPerformer().getLookVec().normalize().scale(0.3D);
 					DamageSourceUnsaga dsu = DamageSourceUnsaga.create(t.getPerformer(), t.getStrength().lp(), General.SWORD);
-					HSLib.core().events.scannerEventPool.addEvent(new MovingAttack(t.getPerformer(),OptionalDouble.of(vec.xCoord),OptionalDouble.of(0.002D),OptionalDouble.of(vec.zCoord),400,3,dsu,t.getModifiedStrength().hp()).setCancelFall(true));
+					AsyncUpdateEvent ev = new MovingAttack(t.getPerformer(),OptionalDouble.of(vec.xCoord),OptionalDouble.of(0.1D),OptionalDouble.of(vec.zCoord),15,3,dsu,t.getModifiedStrength().hp()).setCancelFall(true);
+					HSLib.core().addAsyncEvent(t.getPerformer(), ev);
+//					HSLib.core().events.scannerEventPool.addEvent(new MovingAttack(t.getPerformer(),OptionalDouble.of(vec.xCoord),OptionalDouble.of(0.002D),OptionalDouble.of(vec.zCoord),400,3,dsu,t.getModifiedStrength().hp()).setCancelFall(true));
 					return EnumActionResult.SUCCESS;
 				}
 				return EnumActionResult.PASS;

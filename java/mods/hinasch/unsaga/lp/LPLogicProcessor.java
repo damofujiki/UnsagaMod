@@ -41,7 +41,7 @@ public class LPLogicProcessor {
 			slope = 0.15F;
 		}
 		float lpDecrRatio = (float) ((Math.pow(damageRatio, 2))*slope + 0.03D);
-		lpDecrRatio += (-0.5D*lpResistance)+0.5D; //LP防御力を影響させる。だいたい0.1で5%影響
+		lpDecrRatio += (-0.5D*(lpResistance*1.3D))+0.5D; //LP防御力を影響させる。だいたい0.1で5%影響、後ろの係数で調整
 
 
 		if(victim.getMaxHealth()<=damageAmount){
@@ -70,6 +70,9 @@ public class LPLogicProcessor {
 			}
 		}
 
+		if(victim.getHealth()>=victim.getMaxHealth()){
+			lpDecr = 0;
+		}
 
 		UnsagaMod.logger.trace("lplogic", "lpdamage",lpDecr);
 		if(LifePoint.adapter.hasCapability(victim) && lpDecr>0){

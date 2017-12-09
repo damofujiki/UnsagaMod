@@ -13,11 +13,11 @@ import com.google.common.collect.Maps;
 
 import mods.hinasch.unsaga.core.entity.EntityStateCapability;
 import mods.hinasch.unsaga.core.entity.StatePropertyArrow.StateArrow;
+import mods.hinasch.unsaga.core.entity.StateRegistry;
 import mods.hinasch.unsaga.core.item.newitem.combat.ItemAxeUnsaga;
 import mods.hinasch.unsaga.core.item.newitem.combat.ItemKnifeUnsaga;
 import mods.hinasch.unsaga.core.item.newitem.combat.ItemSpearUnsaga;
 import mods.hinasch.unsaga.core.item.newitem.combat.ItemStaffUnsaga;
-import mods.hinasch.unsaga.core.entity.StateRegistry;
 import mods.hinasch.unsaga.damage.DamageTypeUnsaga.General;
 import mods.hinasch.unsaga.damage.DamageTypeUnsaga.Sub;
 import net.minecraft.entity.Entity;
@@ -83,6 +83,10 @@ public class DamageTypeAssociation {
 			}
 			return false;
 		},new Attribute(3,General.MAGIC,Sub.FIRE));
+
+//		if(UnsagaMod.plugin.isLoadedHAC()){
+//			UnsagaMod.plugin.hac.registerDamageSources(map3);
+//		}
 	}
 
 	public Optional<List<Attribute>> getData(ItemStack is){
@@ -108,7 +112,7 @@ public class DamageTypeAssociation {
 		Set<Sub> set =  list.stream().filter(in -> !in.subs.isEmpty()).flatMap(in -> in.subs.stream()).collect(Collectors.toSet());
 		return set.isEmpty() ? Optional.empty() :Optional.of(EnumSet.copyOf(set));
 	}
-	public class Attribute implements Comparable<Attribute>{
+	public static class Attribute implements Comparable<Attribute>{
 
 		final int priority;
 		EnumSet<General> generals = EnumSet.noneOf(General.class);

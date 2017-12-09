@@ -13,6 +13,7 @@ import mods.hinasch.lib.misc.JsonHelper;
 import mods.hinasch.lib.misc.JsonHelper.IJsonParser;
 import mods.hinasch.lib.registry.PropertyRegistry;
 import mods.hinasch.unsaga.UnsagaMod;
+import mods.hinasch.unsaga.core.item.newitem.combat.MaterialArmorTextureSetting;
 import mods.hinasch.unsaga.util.ToolCategory;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.IItemPropertyGetter;
@@ -36,8 +37,8 @@ public class UnsagaMaterials extends PropertyRegistry<UnsagaMaterial>{
 			@Override
 			public float apply(ItemStack stack, World worldIn, EntityLivingBase entityIn) {
 
-				if(UnsagaMaterialTool.adapter.hasCapability(stack)){
-					UnsagaMaterial mat = UnsagaMaterialTool.adapter.getCapability(stack).getMaterial();
+				if(UnsagaMaterialCapability.adapter.hasCapability(stack)){
+					UnsagaMaterial mat = UnsagaMaterialCapability.adapter.getCapability(stack).getMaterial();
 
 					if(mat.getParent().isPresent() && mat.getParent().get()==this.cate){
 //						UnsagaMod.logger.trace(this.getClass().getName(),this.m);
@@ -503,6 +504,7 @@ public class UnsagaMaterials extends PropertyRegistry<UnsagaMaterial>{
 		this.initShields();
 		this.initMerchandiseSettings();
 
+		MaterialArmorTextureSetting.register();
 
 	}
 

@@ -1,5 +1,6 @@
 package mods.hinasch.unsaga;
 
+import mods.hinasch.lib.capability.EquipmentCacheCapability;
 import mods.hinasch.lib.item.FuelHandlerCustom;
 import mods.hinasch.lib.item.SimpleCreativeTab;
 import mods.hinasch.unsaga.ability.AbilityCapability;
@@ -9,7 +10,6 @@ import mods.hinasch.unsaga.core.entity.EntityStateCapability;
 import mods.hinasch.unsaga.core.entity.StateRegistry;
 import mods.hinasch.unsaga.core.event.UnsagaEvents;
 import mods.hinasch.unsaga.core.inventory.AccessorySlotCapability;
-import mods.hinasch.unsaga.core.inventory.EquipmentCacheCapability;
 import mods.hinasch.unsaga.core.item.newitem.SkillPanelCapability;
 import mods.hinasch.unsaga.core.item.newitem.combat.ItemGunUnsaga;
 import mods.hinasch.unsaga.core.potion.UnsagaPotions;
@@ -21,7 +21,7 @@ import mods.hinasch.unsaga.init.UnsagaLibrary;
 import mods.hinasch.unsaga.lp.LifePoint;
 import mods.hinasch.unsaga.material.MaterialItemAssociatedRegistry;
 import mods.hinasch.unsaga.material.RawMaterialItemRegistry;
-import mods.hinasch.unsaga.material.UnsagaMaterialTool;
+import mods.hinasch.unsaga.material.UnsagaMaterialCapability;
 import mods.hinasch.unsaga.minsaga.ForgingCapability;
 import mods.hinasch.unsaga.minsaga.MinsagaForging;
 import mods.hinasch.unsaga.skillpanel.SkillPanelRegistry;
@@ -60,7 +60,7 @@ public class UnsagaModCore {
 	public BlockOrePropertyRegistry oreBlocks;
 	public MinsagaForging minsagaForging ;
 	public UnsagaEvents events = new UnsagaEvents();
-	public UnsagaAchievementRegistry achievements = new UnsagaAchievementRegistry();
+	public UnsagaAchievementRegistry achievements = UnsagaAchievementRegistry.instance();
 	public UnsagaModEvents eventsNew;
 
 //	public LivingHelper.CacheType ACCESSORY;
@@ -117,6 +117,7 @@ public class UnsagaModCore {
 		this.sparklingPoint.register();
 		this.minsagaForging.init();
 
+		this.itemsNew.registerRecipes();
 //
 //		events.init();
 //		if(e.getSide()==Side.CLIENT){
@@ -307,7 +308,7 @@ public class UnsagaModCore {
 	}
 	private void registerCapabilities(){
 		LifePoint.base.registerCapability();
-		UnsagaMaterialTool.base.registerCapability();
+		UnsagaMaterialCapability.base.registerCapability();
 		AbilityCapability.adapterBase.registerCapability();
 		AccessorySlotCapability.adapterBase.registerCapability();
 		EquipmentCacheCapability.adapterBase.registerCapability();
@@ -324,7 +325,7 @@ public class UnsagaModCore {
 	/** Capabilityのattachまたは初期化イベント*/
 	private void registerCapabilityAttachEvents(){
 		LifePoint.registerEvents();
-		UnsagaMaterialTool.register();
+		UnsagaMaterialCapability.register();
 		AbilityCapability.registerEvents();
 		EquipmentCacheCapability.registerEvents();
 		AccessorySlotCapability.registerEvents();

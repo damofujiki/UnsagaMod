@@ -3,6 +3,8 @@ package mods.hinasch.unsaga.material;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.Maps;
 
 import mods.hinasch.lib.misc.JsonHelper.IJsonApply;
@@ -10,6 +12,7 @@ import mods.hinasch.lib.registry.PropertyElementBase;
 import mods.hinasch.lib.util.HSLibs;
 import mods.hinasch.lib.util.Statics;
 import mods.hinasch.unsaga.UnsagaMod;
+import mods.hinasch.unsaga.core.item.newitem.combat.ItemArmorUnsaga.PairArmorTexture;
 import mods.hinasch.unsaga.util.ToolCategory;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.SoundEvents;
@@ -24,7 +27,7 @@ import net.minecraftforge.common.util.EnumHelper;
 public class UnsagaMaterial extends PropertyElementBase implements Comparable<UnsagaMaterial>,IJsonApply<UnsagaMaterials.JsonParserMaterial>{
 
 
-	//IDはそのままメタデータとして必要なので素材ごとに保持する
+
 
 	public static ToolMaterial TOOLMATERIAL_DEFAULT = ToolMaterial.STONE;
 	public static ArmorMaterial ARMORMATERIAL_DEFAULT = ArmorMaterial.LEATHER;
@@ -33,6 +36,7 @@ public class UnsagaMaterial extends PropertyElementBase implements Comparable<Un
 	Optional<UnsagaMaterials.Category> category = Optional.empty();
 	Map<ToolCategory,String> useAnotherNameMap = Maps.newHashMap();
 	Optional<String> subIconGetter = Optional.empty();
+	Map<ToolCategory,PairArmorTexture> specialArmorTextureMap = Maps.newHashMap();
 //	List<ToolCategory> useOriginalNameForcedList = Lists.newArrayList();
 	public int shieldPower = 1;
 	public int color = Statics.COLOR_NONE;
@@ -124,14 +128,14 @@ public class UnsagaMaterial extends PropertyElementBase implements Comparable<Un
 	}
 
 	public ToolMaterial setToolMaterial(int harvestLevel,int maxUses,float efficiency,float damage,int enchantability){
-		ToolMaterial tm = UtilUnsagaMaterial.addToolMaterial(this.getName(), harvestLevel, maxUses, efficiency, damage, enchantability);
+		ToolMaterial tm = UtilUnsagaMaterial.addToolMaterial(this.getPropertyName(), harvestLevel, maxUses, efficiency, damage, enchantability);
 		return tm;
 	}
 
 	public ArmorMaterial setArmorMaterial(int armor,int[] reduces,int enchant,int... toughIn){
 		int toughness = toughIn.length>0 ? toughIn[0] : 0;
 		ResourceLocation res = new ResourceLocation(name);
-		ArmorMaterial am = EnumHelper.addArmorMaterial(this.getName(), "testarmortex",armor, reduces, enchant,SoundEvents.ITEM_ARMOR_EQUIP_GENERIC,toughness);
+		ArmorMaterial am = EnumHelper.addArmorMaterial(this.getPropertyName(), "testarmortex",armor, reduces, enchant,SoundEvents.ITEM_ARMOR_EQUIP_GENERIC,toughness);
 		return am;
 
 	}
@@ -194,6 +198,13 @@ public class UnsagaMaterial extends PropertyElementBase implements Comparable<Un
 	}
 
 
+	public @Nullable PairArmorTexture getSpecialArmorTexture(ToolCategory cate){
+		return this.specialArmorTextureMap.get(cate);
+	}
+
+	public PairArmorTexture addSpecialArmorTexture(ToolCategory cate,PairArmorTexture textures){
+		return this.specialArmorTextureMap.put(cate,textures);
+	}
 
 
 	public class PropertyGetter implements IItemPropertyGetter{
@@ -206,8 +217,8 @@ public class UnsagaMaterial extends PropertyElementBase implements Comparable<Un
 		@Override
 		public float apply(ItemStack stack, World worldIn, EntityLivingBase entityIn) {
 
-			if(UnsagaMaterialTool.adapter.hasCapability(stack)){
-				UnsagaMaterial mat = UnsagaMaterialTool.adapter.getCapability(stack).getMaterial();
+			if(UnsagaMaterialCapability.adapter.hasCapability(stack)){
+				UnsagaMaterial mat = UnsagaMaterialCapability.adapter.getCapability(stack).getMaterial();
 
 				if(mat==this.m){
 					//					UnsagaMod.logger.trace(this.getClass().getName(),this.m);
@@ -226,11 +237,11 @@ public class UnsagaMaterial extends PropertyElementBase implements Comparable<Un
 	}
 
 	public String getLocalized(){
-		return HSLibs.translateKey("material."+this.getName());
+		return HSLibs.translateKey("material."+this.getPropertyName());
 	}
 	@Override
 	public int compareTo(UnsagaMaterial o) {
-		return this.price - o.price;
+		return Integer.compare(this.rank, o.rank);
 	}
 
 	@Override
@@ -238,7 +249,7 @@ public class UnsagaMaterial extends PropertyElementBase implements Comparable<Un
 		this.rank = parser.rank;
 		this.weight = parser.weight;
 		this.price = parser.price;
-		UnsagaMod.logger.trace("parsing...", this.getName(),this.rank,this.weight,this.price);
+		UnsagaMod.logger.trace("parsing...", this.getPropertyName(),this.rank,this.weight,this.price);
 		if(parser.harvestLevel>0){
 			this.toolMaterial = Optional.of(EnumHelper.addToolMaterial("unsaga."+this.name, parser.harvestLevel, parser.maxUses, parser.efficiency, parser.attack, parser.enchantWeapon));
 		}

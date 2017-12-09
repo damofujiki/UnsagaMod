@@ -28,7 +28,7 @@ import mods.hinasch.unsaga.core.client.gui.GuiChest;
 import mods.hinasch.unsaga.material.UnsagaMaterials;
 import mods.hinasch.unsaga.util.ToolCategory;
 import mods.hinasch.unsaga.villager.bartering.ItemFactory;
-import mods.hinasch.unsagamagic.spell.TabletRegistry;
+import mods.hinasch.unsagamagic.spell.tablet.TabletRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;

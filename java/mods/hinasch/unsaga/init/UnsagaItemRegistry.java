@@ -2,10 +2,13 @@ package mods.hinasch.unsaga.init;
 
 import mods.hinasch.lib.item.ItemCustomEntityEgg;
 import mods.hinasch.lib.item.ItemIcon;
+import mods.hinasch.lib.item.RecipeUtilNew;
 import mods.hinasch.lib.item.SimpleCreativeTab;
 import mods.hinasch.lib.registry.BlockItemRegistry;
 import mods.hinasch.unsaga.UnsagaMod;
 import mods.hinasch.unsaga.UnsagaModCore;
+import mods.hinasch.unsaga.ability.AbilityCapability;
+import mods.hinasch.unsaga.ability.AbilityRegistry;
 import mods.hinasch.unsaga.common.ItemBowUnsaga;
 import mods.hinasch.unsaga.core.item.newitem.combat.ItemAccessoryUnsaga;
 import mods.hinasch.unsaga.core.item.newitem.combat.ItemArmorUnsaga;
@@ -20,11 +23,12 @@ import mods.hinasch.unsaga.core.item.newitem.misc.ItemElementChecker;
 import mods.hinasch.unsaga.core.item.newitem.misc.ItemRawMaterial;
 import mods.hinasch.unsaga.core.item.newitem.misc.ItemSkillPanel;
 import mods.hinasch.unsaga.material.UnsagaMaterial;
-import mods.hinasch.unsaga.material.UnsagaMaterialTool;
+import mods.hinasch.unsaga.material.UnsagaMaterialCapability;
 import mods.hinasch.unsaga.material.UnsagaMaterials;
 import mods.hinasch.unsaga.util.ToolCategory;
 import mods.hinasch.unsaga.villager.UnsagaVillagerProfession;
 import net.minecraft.entity.passive.EntityVillager;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
@@ -60,7 +64,7 @@ public class UnsagaItemRegistry extends BlockItemRegistry{
 	public Item iconCondition;
 	protected UnsagaItemRegistry() {
 		super(UnsagaMod.MODID);
-		this.setUnlocalizedNamePrefix("item.unsaga");
+		this.setUnlocalizedNamePrefix("unsaga");
 	}
 	@Override
 	public void register() {
@@ -110,6 +114,10 @@ public class UnsagaItemRegistry extends BlockItemRegistry{
 		this.ammo = (Item) this.put(new Item(), "ammo", tabMisc);
 	}
 
+	public void registerRecipes(){
+		RecipeUtilNew.RecipeShaped.create().setBase("G I"," P ").addAssociation('G', Items.GUNPOWDER)
+		.addAssociation('I', Items.IRON_INGOT).addAssociation('P', Items.PAPER).setOutput(new ItemStack(ammo,4)).register();
+	}
 
 	public static ItemStack getItemStack(Item item,UnsagaMaterial mate,int meta){
 		ItemStack newStack = new ItemStack(item,1,meta);
@@ -117,9 +125,14 @@ public class UnsagaItemRegistry extends BlockItemRegistry{
 		if(item==UnsagaItemRegistry.instance().musket){
 			material = UnsagaMaterials.instance().iron;
 		}
-		if(UnsagaMaterialTool.adapter.hasCapability(newStack)){
-			UnsagaMaterialTool.adapter.getCapability(newStack).setMaterial(material);
-			UnsagaMaterialTool.adapter.getCapability(newStack).setWeight(material.getWeight());
+		if(material==UnsagaMaterials.instance().dragonHeart){
+			if(AbilityCapability.adapter.hasCapability(newStack)){
+				AbilityCapability.adapter.getCapability(newStack).setAbility(3, AbilityRegistry.instance().superHealing);
+			}
+		}
+		if(UnsagaMaterialCapability.adapter.hasCapability(newStack)){
+			UnsagaMaterialCapability.adapter.getCapability(newStack).setMaterial(material);
+			UnsagaMaterialCapability.adapter.getCapability(newStack).setWeight(material.getWeight());
 		}
 		return newStack;
 	}

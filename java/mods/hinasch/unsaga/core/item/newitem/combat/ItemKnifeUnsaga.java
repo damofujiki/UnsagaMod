@@ -4,15 +4,22 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
+import mods.hinasch.lib.util.SoundAndSFX;
 import mods.hinasch.unsaga.common.ItemWeaponUnsaga;
 import mods.hinasch.unsaga.util.ToolCategory;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.IShearable;
 
 
@@ -35,8 +42,8 @@ public class ItemKnifeUnsaga extends ItemWeaponUnsaga{
 	@Override
     public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity)
     {
-		if(entity instanceof IShearable){
-			boolean flag = Items.SHEARS.itemInteractionForEntity(stack, player, player, EnumHand.MAIN_HAND);
+		if(entity instanceof IShearable && player.isSneaking() && entity instanceof EntityLivingBase){
+			boolean flag = Items.SHEARS.itemInteractionForEntity(stack, player, (EntityLivingBase) entity, EnumHand.MAIN_HAND);
 			if(flag){
 				stack.damageItem(1, player);
 				return true;
@@ -99,6 +106,25 @@ public class ItemKnifeUnsaga extends ItemWeaponUnsaga{
 		return "knife";
 	}
 
+
+	@Override
+	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+	{
+		//サトウキビ収穫機能
+		IBlockState state = worldIn.getBlockState(pos);
+		if(state.getBlock()==Blocks.REEDS){
+			BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos(pos);
+			int len =0;
+			while(worldIn.getBlockState(p).getBlock()==Blocks.REEDS){
+				p.setPos(p.getX(), p.getY()-1, p.getZ());
+			}
+			SoundAndSFX.playBlockBreakSFX(worldIn, p.up(2), state,true);
+			stack.damageItem(1, playerIn);
+			return EnumActionResult.SUCCESS;
+		}
+
+		return super.onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
+	}
 	@Override
 	public boolean isEffectiveOn(ItemStack stack, IBlockState state) {
 		return Items.STONE_SWORD.getStrVsBlock(stack, state)>1.0F;

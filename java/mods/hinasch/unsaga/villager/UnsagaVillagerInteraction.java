@@ -18,19 +18,23 @@ public class UnsagaVillagerInteraction {
 	public void onInteract(EntityInteractSpecific e){
 		if(e.getTarget() instanceof EntityVillager && UnsagaVillagerProfession.isUnsagaVillager((EntityVillager) e.getTarget())){
 			e.setCanceled(true);
+
 			EntityVillager villager = (EntityVillager) e.getTarget();
-			if(InteractionInfoCapability.adapter.hasCapability(e.getEntityPlayer())){
-				InteractionInfoCapability.adapter.getCapability(e.getEntityPlayer()).setMerchant(Optional.of(villager));
-				if(villager.getProfessionForge()==UnsagaVillagerProfession.instance().merchant){
-					this.openGui(e, UnsagaGui.Type.BARTERING);
-				}
-				if(villager.getProfessionForge()==UnsagaVillagerProfession.instance().magicMerchant){
-					this.openGui(e, UnsagaGui.Type.BARTERING);
-				}
-				if(villager.getProfessionForge()==UnsagaVillagerProfession.instance().unsagaSmith){
-					this.openGui(e, UnsagaGui.Type.SMITH);
+			if(!villager.isChild()){
+				if(InteractionInfoCapability.adapter.hasCapability(e.getEntityPlayer())){
+					InteractionInfoCapability.adapter.getCapability(e.getEntityPlayer()).setMerchant(Optional.of(villager));
+					if(villager.getProfessionForge()==UnsagaVillagerProfession.instance().merchant){
+						this.openGui(e, UnsagaGui.Type.BARTERING);
+					}
+					if(villager.getProfessionForge()==UnsagaVillagerProfession.instance().magicMerchant){
+						this.openGui(e, UnsagaGui.Type.BARTERING);
+					}
+					if(villager.getProfessionForge()==UnsagaVillagerProfession.instance().unsagaSmith){
+						this.openGui(e, UnsagaGui.Type.SMITH);
+					}
 				}
 			}
+
 
 		}
 	}

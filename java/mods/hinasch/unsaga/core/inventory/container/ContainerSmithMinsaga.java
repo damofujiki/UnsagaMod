@@ -15,7 +15,7 @@ import mods.hinasch.unsaga.core.inventory.InventorySmithMinsaga;
 import mods.hinasch.unsaga.core.inventory.slot.SlotMinsagaSmith;
 import mods.hinasch.unsaga.core.net.packet.PacketGuiButtonUnsaga;
 import mods.hinasch.unsaga.init.UnsagaGui;
-import mods.hinasch.unsaga.material.UnsagaMaterialTool;
+import mods.hinasch.unsaga.material.UnsagaMaterialCapability;
 import mods.hinasch.unsaga.minsaga.ForgingCapability;
 import mods.hinasch.unsaga.minsaga.ForgingCapability.IMinsagaForge;
 import mods.hinasch.unsaga.minsaga.MinsagaForging;
@@ -104,8 +104,8 @@ public class ContainerSmithMinsaga extends ContainerBase{
 //			}
 
 			int weight = 0;
-			if(UnsagaMaterialTool.adapter.hasCapability(forged)){
-				weight = UnsagaMaterialTool.adapter.getCapability(forged).getWeight();
+			if(UnsagaMaterialCapability.adapter.hasCapability(forged)){
+				weight = UnsagaMaterialCapability.adapter.getCapability(forged).getWeight();
 			}
 			weight += capa.getWeightModifier();
 			ComponentUnsagaWeapon.refleshWeightModifier(forged, weight);

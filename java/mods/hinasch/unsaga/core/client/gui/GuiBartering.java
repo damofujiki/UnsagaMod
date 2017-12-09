@@ -88,7 +88,7 @@ public class GuiBartering extends GuiContainerBase{
 				list.add("Shop Level:"+this.shopLevel);
 				list.add("Distribution Level:"+this.distributionLevel);
 				list.add(String.format("Transaction Point:%d/%d",this.transactionXP,BarteringUtil.calcNextTransactionThreshold(distributionLevel)));
-				list.add("Next Stock Interval:"+this.nextStockTime);
+				list.add("Next Stock Interval:"+(24000-this.nextStockTime));
 				if(this.type!=BarteringShopType.UNKNOWN){
 					List<ToolCategory> category = Lists.newArrayList(type.getAvailableMerchandiseCategory());
 					Collections.sort(category);

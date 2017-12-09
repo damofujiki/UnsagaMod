@@ -214,7 +214,7 @@ public class ForgingCapability {
 
 		@Override
 		public void writeToNBT(NBTTagCompound stream) {
-			stream.setString("material", this.forgedMaterial.getName());
+			stream.setString("material", this.forgedMaterial.getPropertyName());
 			stream.setInteger("progress", this.getFittingProgress());
 			stream.setInteger("max", this.getMaxFittingProgress());
 

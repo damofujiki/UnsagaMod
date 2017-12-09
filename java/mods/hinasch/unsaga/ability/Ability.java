@@ -38,7 +38,7 @@ public class Ability extends AbilityBase{
 	}
 
 	public void addAssociation(ToolCategory category,UnsagaMaterials.Category materials){
-		AbilityAssociateRegistry.instance().addAssciation(category, materials, this);
+		AbilityAssociateRegistry.instance().addAssociation(category, materials, this);
 	}
 
 	public void swapAssociation(ToolCategory category,UnsagaMaterial m,Ability old){
@@ -49,7 +49,7 @@ public class Ability extends AbilityBase{
 	@Override
 	public String getLocalized() {
 		// TODO 自動生成されたメソッド・スタブ
-		return HSLibs.translateKey("ability."+this.getName());
+		return HSLibs.translateKey("ability."+this.getPropertyName());
 	}
 
 	public Ability setAttributeModifier(IAttribute attribute,double amount){

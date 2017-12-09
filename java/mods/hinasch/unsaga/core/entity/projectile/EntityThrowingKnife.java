@@ -1,7 +1,7 @@
 package mods.hinasch.unsaga.core.entity.projectile;
 
 import mods.hinasch.lib.entity.EntityThrowableItem;
-import mods.hinasch.unsaga.core.client.render.projectile.IRotation;
+import mods.hinasch.unsaga.core.client.IRotation;
 import mods.hinasch.unsaga.damage.DamageSourceUnsaga;
 import mods.hinasch.unsaga.damage.DamageTypeUnsaga.General;
 import net.minecraft.entity.Entity;

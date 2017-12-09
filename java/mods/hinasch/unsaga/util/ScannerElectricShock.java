@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import mods.hinasch.lib.util.HSLibs;
-import mods.hinasch.lib.world.AbstractConnectScanner;
+import mods.hinasch.lib.world.AbstractAsyncConnectScanner;
 import mods.hinasch.lib.world.XYZPos;
 import mods.hinasch.unsaga.damage.DamageSourceUnsaga;
 import mods.hinasch.unsaga.damage.DamageTypeUnsaga.General;
@@ -16,7 +16,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class ScannerElectricShock extends AbstractConnectScanner{
+public class ScannerElectricShock extends AbstractAsyncConnectScanner{
 
 	protected EntityLivingBase owner;
 

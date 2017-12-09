@@ -50,7 +50,7 @@ public class CommandSetAbility extends CommandBase{
 				IAbilityAttachable instance = AbilityCapability.adapter.getCapability(stack);
 				instance.setAbility(0, ability);
 				UnsagaMod.packetDispatcher.sendTo(PacketSyncCapability.create(AbilityCapability.CAPA, instance), (EntityPlayerMP) sender);
-				this.notifyCommandListener(sender, this, "command.setability.success", new Object[]{ability.getName()});
+				this.notifyCommandListener(sender, this, "command.setability.success", new Object[]{ability.getPropertyName()});
 				sender.setCommandStat(Type.AFFECTED_ITEMS, 1);
 			}
 		}

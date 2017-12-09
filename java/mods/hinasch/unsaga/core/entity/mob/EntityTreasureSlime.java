@@ -60,7 +60,7 @@ public class EntityTreasureSlime extends EntitySlime implements IRangedAttackMob
 
 
 		this.targetTasks.addTask(1, new EntityAIArrowAttack(this,1.0D,60,15.0F));
-		this.targetTasks.addTask(2, new EntityAISpell(this,this.spellList,1.0D,200,15.0F));
+		this.targetTasks.addTask(2, new EntityAISpell(this,this.spellList,1.0D,200,15.0F,10));
 		if(this.slimeLevel==-1){
 			this.slimeLevel = this.rand.nextInt(99)+1;
 		}
@@ -104,19 +104,19 @@ public class EntityTreasureSlime extends EntitySlime implements IRangedAttackMob
 
 
 		SpellRegistry spells = SpellRegistry.instance();
-		this.spellList.add(new SpellAIData(spells.purify,120.0D,0.0D,2));
+		this.spellList.add(new SpellAIData(spells.purify,120.0D,0.0D,15));
 		if(this.slimeLevel>25){
 			//this.projectileList.add(Pair.of(FIREBALL, 28.0D));
-			this.spellList.add(new SpellAIData(spells.fireArrow,120.0D,0.0D,3));
-			this.spellList.add(new SpellAIData(spells.fireVeil,120.0D,0.0D,2));
-			this.spellList.add(new SpellAIData(spells.heroism,120.0D,0.0D,2));
+			this.spellList.add(new SpellAIData(spells.fireArrow,120.0D,0.0D,10));
+			this.spellList.add(new SpellAIData(spells.fireVeil,120.0D,0.0D,10));
+			this.spellList.add(new SpellAIData(spells.heroism,120.0D,0.0D,20));
 
 		}
 		this.projectileList.add(new AttackTypeRangePair(EnumRangedAttackSelector.LIQUID, 10.0D));
 		this.projectileList.add(new AttackTypeRangePair(EnumRangedAttackSelector.ARROW, 20.0D));
 		if(this.slimeLevel>45){
-			this.spellList.add(new SpellAIData(spells.callThunder,120.0D,20.0D,8));
-			this.spellList.add(new SpellAIData(spells.fireStorm,120.0D,20.0D,15));
+			this.spellList.add(new SpellAIData(spells.callThunder,120.0D,20.0D,20));
+			this.spellList.add(new SpellAIData(spells.fireStorm,120.0D,20.0D,45));
 
 		}
 	}

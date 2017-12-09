@@ -1,5 +1,6 @@
 package mods.hinasch.unsaga.ability;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -10,6 +11,7 @@ import com.google.common.collect.Maps;
 import mods.hinasch.lib.core.HSLib;
 import mods.hinasch.lib.iface.ILivingUpdateEvent;
 import mods.hinasch.lib.registry.PropertyRegistry;
+import mods.hinasch.lib.util.HSLibs;
 import mods.hinasch.unsaga.ability.specialmove.SpecialMoveRegistry;
 import mods.hinasch.unsaga.core.potion.UnsagaPotions;
 import mods.hinasch.unsaga.damage.DamageTypeUnsaga.General;
@@ -82,7 +84,7 @@ public class AbilityRegistry extends PropertyRegistry<IAbility>{
 	public Ability mindProtection = new Ability("mindProtection");
 	public Ability intelligenceProtection = new Ability("intProtection");
 	public Ability vitalityProtection = new Ability("vitProtection");
-
+	public Ability superHealing = new Ability("superHealing");
 
 	Map<IAbility,Integer> healAmountMap;
 	public SpecialMoveRegistry specialArts;
@@ -135,10 +137,10 @@ public class AbilityRegistry extends PropertyRegistry<IAbility>{
 		this.baseModifierMap.put(AdditionalStatus.GENERALS.get(General.PUNCH), new AttributeModifier(UUID.fromString("fe95abf1-1c68-4bd1-9ff7-7469ad9f4402"),"ability.armorPunch",0,0));
 		this.baseModifierMap.put(AdditionalStatus.GENERALS.get(General.SPEAR), new AttributeModifier(UUID.fromString("945ec805-fe23-4353-9882-0e7901bd0348"),"ability.armorSpear",0,0));
 		this.baseModifierMap.put(AdditionalStatus.GENERALS.get(General.MAGIC), new AttributeModifier(UUID.fromString("878cdefc-5a6b-4f58-bb3a-ae1069044675"),"ability.armorMagic",0,0));
-		this.baseModifierMap.put(AdditionalStatus.GENERALS.get(Sub.FIRE), new AttributeModifier(UUID.fromString("6cad0b49-b6f0-4847-8c21-716a9d5c390f"),"ability.armorFire",0,0));
-		this.baseModifierMap.put(AdditionalStatus.GENERALS.get(Sub.FREEZE), new AttributeModifier(UUID.fromString("28cdddf3-e062-48a8-9ba5-f30e2c90a86d"),"ability.armorFreeze",0,0));
-		this.baseModifierMap.put(AdditionalStatus.GENERALS.get(Sub.ELECTRIC), new AttributeModifier(UUID.fromString("470b75f4-aded-4ee0-86bc-91f2feba5b7a"),"ability.armorElectric",0,0));
-		this.baseModifierMap.put(AdditionalStatus.GENERALS.get(Sub.SHOCK), new AttributeModifier(UUID.fromString("2891b53b-7ed9-4424-a80d-0726c505ad74"),"ability.armorShock",0,0));
+		this.baseModifierMap.put(AdditionalStatus.SUBS.get(Sub.FIRE), new AttributeModifier(UUID.fromString("6cad0b49-b6f0-4847-8c21-716a9d5c390f"),"ability.armorFire",0,0));
+		this.baseModifierMap.put(AdditionalStatus.SUBS.get(Sub.FREEZE), new AttributeModifier(UUID.fromString("28cdddf3-e062-48a8-9ba5-f30e2c90a86d"),"ability.armorFreeze",0,0));
+		this.baseModifierMap.put(AdditionalStatus.SUBS.get(Sub.ELECTRIC), new AttributeModifier(UUID.fromString("470b75f4-aded-4ee0-86bc-91f2feba5b7a"),"ability.armorElectric",0,0));
+		this.baseModifierMap.put(AdditionalStatus.SUBS.get(Sub.SHOCK), new AttributeModifier(UUID.fromString("2891b53b-7ed9-4424-a80d-0726c505ad74"),"ability.armorShock",0,0));
 		this.baseModifierMap.put(AdditionalStatus.RESISTANCE_LP_HURT, new AttributeModifier(UUID.fromString("95f178e8-97d3-48a5-9390-7187831ba7f1"),"ability.resitance.LP",0,0));
 
 		healDown1.setAttributeModifier(AdditionalStatus.NATURAL_HEAL_SPEED, -5D);
@@ -154,17 +156,17 @@ public class AbilityRegistry extends PropertyRegistry<IAbility>{
 		supportWater.setAttributeModifier(AdditionalStatus.ENTITY_ELEMENTS.get(FiveElements.Type.WATER), 5D);
 		supportWood.setAttributeModifier(AdditionalStatus.ENTITY_ELEMENTS.get(FiveElements.Type.WOOD), 5D);
 		supportForbidden.setAttributeModifier(AdditionalStatus.ENTITY_ELEMENTS.get(FiveElements.Type.FORBIDDEN), 5D);
-		armorBruiseEx.setAttributeModifier(AdditionalStatus.GENERALS.get(General.PUNCH), 0.3D);
-		armorFireEx.setAttributeModifier(AdditionalStatus.SUBS.get(Sub.FIRE), 0.3D);
-		armorColdEx.setAttributeModifier(AdditionalStatus.SUBS.get(Sub.FREEZE), 0.3D);
-		armorElectricEx.setAttributeModifier(AdditionalStatus.SUBS.get(Sub.ELECTRIC), 0.3D);
-		armorSlash.setAttributeModifier(AdditionalStatus.GENERALS.get(General.SWORD), 0.125D);
-		armorBruise.setAttributeModifier(AdditionalStatus.GENERALS.get(General.PUNCH), 0.125D);
-		armorPierce.setAttributeModifier(AdditionalStatus.GENERALS.get(General.SPEAR), 0.125D);
-		armorFire.setAttributeModifier(AdditionalStatus.SUBS.get(Sub.FIRE), 0.125D);
-		armorCold.setAttributeModifier(AdditionalStatus.SUBS.get(Sub.FREEZE), 0.125D);
-		armorElectric.setAttributeModifier(AdditionalStatus.SUBS.get(Sub.ELECTRIC), 0.125D);
-		armorLight.setAttributeModifier(AdditionalStatus.SUBS.get(Sub.SHOCK), 0.125D);
+		armorBruiseEx.setAttributeModifier(AdditionalStatus.GENERALS.get(General.PUNCH), 0.5D);
+		armorFireEx.setAttributeModifier(AdditionalStatus.SUBS.get(Sub.FIRE), 0.5D);
+		armorColdEx.setAttributeModifier(AdditionalStatus.SUBS.get(Sub.FREEZE), 0.5D);
+		armorElectricEx.setAttributeModifier(AdditionalStatus.SUBS.get(Sub.ELECTRIC), 0.5D);
+		armorSlash.setAttributeModifier(AdditionalStatus.GENERALS.get(General.SWORD), 0.3D);
+		armorBruise.setAttributeModifier(AdditionalStatus.GENERALS.get(General.PUNCH), 0.3D);
+		armorPierce.setAttributeModifier(AdditionalStatus.GENERALS.get(General.SPEAR), 0.3D);
+		armorFire.setAttributeModifier(AdditionalStatus.SUBS.get(Sub.FIRE), 0.25D);
+		armorCold.setAttributeModifier(AdditionalStatus.SUBS.get(Sub.FREEZE), 0.25D);
+		armorElectric.setAttributeModifier(AdditionalStatus.SUBS.get(Sub.ELECTRIC), 0.25D);
+		armorLight.setAttributeModifier(AdditionalStatus.SUBS.get(Sub.SHOCK), 0.25D);
 		armorPierceBad.setAttributeModifier(AdditionalStatus.GENERALS.get(General.SPEAR), -0.125D);
 		lifeProtection.setAttributeModifier(AdditionalStatus.RESISTANCE_LP_HURT, 0.1D);
 	}
@@ -187,21 +189,40 @@ public class AbilityRegistry extends PropertyRegistry<IAbility>{
 		this.healAmountMap.put(healUp2, 10);
 
 
+		HSLibs.registerEvent(new EventRefleshAbilityModifier());
 		HSLib.core().events.livingUpdate.getEvents().add(new ILivingUpdateEvent(){
 
 			@Override
 			public void update(LivingUpdateEvent e) {
-				if(e.getEntityLiving().ticksExisted % 4 ==0 && e.getEntityLiving() instanceof EntityPlayer){
-					Set<Potion> antis = AbilityAPI.getEffectiveAllPassiveAbilities(e.getEntityLiving()).stream().filter(in -> !in.getAntiEffects().isEmpty())
-							.flatMap(in -> in.getAntiEffects().stream()).collect(Collectors.toSet());
-					antis.forEach(in ->{
-						if(e.getEntityLiving().isPotionActive(in)){
-							e.getEntityLiving().removeActivePotionEffect(in);
+				if(e.getEntityLiving() instanceof EntityPlayer){
+					List<Ability> abilities = AbilityAPI.getEffectiveAllPassiveAbilities(e.getEntityLiving());
+					if(e.getEntityLiving().ticksExisted % 4 ==0){
+
+						Set<Potion> antis = abilities.stream().filter(in -> !in.getAntiEffects().isEmpty())
+								.flatMap(in -> in.getAntiEffects().stream()).collect(Collectors.toSet());
+						antis.forEach(in ->{
+							if(e.getEntityLiving().isPotionActive(in)){
+
+								e.getEntityLiving().removeActivePotionEffect(in);
+							}
+						});
+
+
+
+					}
+					if(e.getEntityLiving().ticksExisted % 10 ==0){
+						if(abilities.contains(armorDebuff)){
+							Set<Potion> antis = e.getEntityLiving().getActivePotionEffects().stream().map(in -> in.getPotion()).filter(in -> in.isBadEffect()).collect(Collectors.toSet());
+							antis.forEach(in ->{
+									e.getEntityLiving().removeActivePotionEffect(in);
+							});
 						}
-					});
-
-
+						if(AbilityAPI.getEffectiveAllAbilities(e.getEntityLiving()).contains(superHealing)){
+							e.getEntityLiving().heal(0.5F);
+						}
+					}
 				}
+
 
 			}
 
@@ -269,6 +290,7 @@ public class AbilityRegistry extends PropertyRegistry<IAbility>{
 		this.put(vitalityProtection);
 		this.put(mindProtection);
 		this.put(intelligenceProtection);
+		this.put(superHealing);
 
 		this.specialArts.getProperties().forEach(obj -> this.put(obj));
 

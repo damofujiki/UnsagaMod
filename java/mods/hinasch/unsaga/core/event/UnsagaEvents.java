@@ -13,7 +13,7 @@ import mods.hinasch.lib.util.ChatHandler;
 import mods.hinasch.lib.util.HSLibs;
 import mods.hinasch.lib.world.XYZPos;
 import mods.hinasch.unsaga.UnsagaMod;
-import mods.hinasch.unsaga.core.client.event.EventRenderFamiliar;
+import mods.hinasch.unsaga.core.client.event.EventRenderLivingEffect;
 import mods.hinasch.unsaga.core.client.event.EventRenderGameOverlay;
 import mods.hinasch.unsaga.core.event.foodstats.EventReplaceFoodStats;
 import mods.hinasch.unsaga.core.event.livinghurt.LivingHurtEventAppendable;
@@ -55,7 +55,7 @@ public class UnsagaEvents {
 		HSLibs.registerEvent(new EventReplaceFoodStats());
 //		WorldSaveDataUnsaga.registerEvents();
 //		HSLibs.registerEvent(new WorldSaveDataUnsaga());
-		HSLibs.registerEvent(new EventGetSkillPoint());
+//		HSLibs.registerEvent(new EventGetSkillPoint());
 //		HSLibs.registerEvent(new EventToolTipUnsaga());
 //		HSLibs.registerEvent(new EventLearningChance());
 //		HSLibs.registerEvent(new EventMartialArtsOnInteract());
@@ -194,7 +194,7 @@ public class UnsagaEvents {
 
 		HSLibs.registerEvent(EventRenderGameOverlay.RenderEnemyStatus.getEvent());
 		HSLibs.registerEvent(EventRenderGameOverlay.RenderPlayerStatus.getEvent());
-		HSLibs.registerEvent(new EventRenderFamiliar());
+		HSLibs.registerEvent(new EventRenderLivingEffect());
 	}
 
 	public LivingHurtEventLPProcess getLivingHurtEventLPProcess(){

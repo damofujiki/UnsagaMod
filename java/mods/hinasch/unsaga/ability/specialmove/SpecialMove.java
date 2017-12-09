@@ -46,7 +46,7 @@ public class SpecialMove extends AbilityBase{
 	}
 	@Override
 	public String getLocalized() {
-		return HSLibs.translateKey("ability."+this.getName());
+		return HSLibs.translateKey("ability."+this.getPropertyName());
 	}
 	public PairDamage getStrength(){
 		return this.str;

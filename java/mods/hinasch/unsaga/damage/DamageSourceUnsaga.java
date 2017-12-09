@@ -10,8 +10,9 @@ import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import mods.hinasch.lib.DamageTypeHelper;
+import mods.hinasch.lib.util.DamageTypeHelper;
 import mods.hinasch.lib.util.HSLibs;
+import mods.hinasch.lib.util.Statics;
 import mods.hinasch.unsaga.UnsagaMod;
 import mods.hinasch.unsaga.core.entity.EntityStateCapability;
 import mods.hinasch.unsaga.core.entity.StatePropertyArrow.StateArrow;
@@ -51,6 +52,8 @@ public class DamageSourceUnsaga extends EntityDamageSource{
 
 	protected boolean isRefrain = false;
 
+	protected int reduceOperation = Statics.OPERATION_INC_MULTIPLED;
+
 	public boolean isRefrain() {
 		return isRefrain;
 	}
@@ -60,7 +63,7 @@ public class DamageSourceUnsaga extends EntityDamageSource{
 	}
 
 	protected Entity sourceOfDamage;
-	protected Entity indirectEntity;
+
 
 	public int getNumberOfLPHurt() {
 		return numberOfLPHurt;
@@ -72,11 +75,11 @@ public class DamageSourceUnsaga extends EntityDamageSource{
 	public static DamageSourceUnsaga create(DamageTypeHelper attackerType,Entity entity,float lpHurt,DamageTypeUnsaga.General damageType){
 		return new DamageSourceUnsaga(attackerType.getString(),entity,lpHurt,damageType);
 	}
-	public static DamageSourceUnsaga create(Entity entity,float lpHurt,EnumSet<DamageTypeUnsaga.General> damageType){
+	public static DamageSourceUnsaga create(@Nullable Entity entity,float lpHurt,EnumSet<DamageTypeUnsaga.General> damageType){
 		return new DamageSourceUnsaga(DamageTypeHelper.fromEntity(entity).getString(),entity,lpHurt,damageType);
 	}
 
-	public static DamageSourceUnsaga create(Entity entity,float lpHurt,DamageTypeUnsaga.General... damageType){
+	public static DamageSourceUnsaga create(@Nullable Entity entity,float lpHurt,DamageTypeUnsaga.General... damageType){
 		return new DamageSourceUnsaga(DamageTypeHelper.fromEntity(entity).getString(),entity,lpHurt,damageType);
 	}
 
@@ -127,6 +130,11 @@ public class DamageSourceUnsaga extends EntityDamageSource{
 
 		UnsagaMod.logger.trace(this.getClass().getName(), ds.getEntity(),ds.getClass(),ds.getSourceOfDamage());
 		this.setDamageTypeUnsaga(ds.isMagicDamage() ? General.MAGIC : General.SWORD);
+
+
+//		if(ds.getEntity()==null){
+//			this.setReduceOperation(Statics.OPERATION_INCREMENT);
+//		}
 
 		if(DamageTypeAssociation.instance().getData(ds).isPresent()){
 			List<DamageTypeAssociation.Attribute> attributes = DamageTypeAssociation.instance().getData(ds).get();
@@ -212,7 +220,7 @@ public class DamageSourceUnsaga extends EntityDamageSource{
 
 		}
 		UnsagaMod.logger.trace(this.getClass().getName(), this.getDamageTypeUnsaga(),this.getSubTypes());
-		if(living.getHeldItemMainhand()==null && this.getDamageTypeUnsaga().isEmpty()){
+		if(living.getHeldItemMainhand()==null && living instanceof EntityPlayer){
 			//素手
 			this.setDamageTypeUnsaga(DamageTypeUnsaga.General.PUNCH);
 			return;
@@ -356,6 +364,12 @@ public class DamageSourceUnsaga extends EntityDamageSource{
 
 	}
 
+	public void setReduceOperation(int op){
+		this.reduceOperation = op;
+	}
+	public int getReduceOperation(){
+		return this.reduceOperation;
+	}
 	public EnumSet<DamageTypeUnsaga.General> getDamageTypeUnsaga(){
 
 		return this.damageTypeUnsaga;

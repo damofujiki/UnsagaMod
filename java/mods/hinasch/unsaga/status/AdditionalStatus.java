@@ -10,7 +10,11 @@ import java.util.function.Predicate;
 import com.google.common.collect.Maps;
 
 import mods.hinasch.lib.util.HSLibs;
+import mods.hinasch.lib.util.Statics;
 import mods.hinasch.unsaga.UnsagaMod;
+import mods.hinasch.unsaga.core.entity.mob.EntityRuffleTree;
+import mods.hinasch.unsaga.core.entity.mob.EntityStormEater;
+import mods.hinasch.unsaga.core.entity.passive.EntityUnsagaChestNew;
 import mods.hinasch.unsaga.damage.DamageTypeUnsaga;
 import mods.hinasch.unsaga.damage.DamageTypeUnsaga.IUnsagaDamageType;
 import mods.hinasch.unsaga.damage.DamageTypeUnsaga.Sub;
@@ -95,7 +99,12 @@ public class AdditionalStatus {
 		if(e.getEntity() instanceof EntityLivingBase){
 			EntityLivingBase living = (EntityLivingBase) e.getEntity();
 			registerAndSetAttribute(living,DEXTALITY,1.0D);
-			registerAndSetAttribute(living,INTELLIGENCE,1.0D);
+
+			if(e.getEntity() instanceof EntityPlayer){
+				registerAndSetAttribute(living,INTELLIGENCE,1.0D);
+			}else{
+				registerAndSetAttribute(living,INTELLIGENCE,0.5D);
+			}
 			registerAndSetAttribute(living,MENTAL,1.0D);
 			registerAndSetAttribute(living,RESISTANCE_LP_HURT,1.0D);
 
@@ -136,11 +145,13 @@ public class AdditionalStatus {
 
 	public static final double DECR_RATIO = 10.0D*-0.1D; //0.1あたりの影響（x%*-0.1D）
 	public static final double DECR_MAX = 1.0D; //0.0あたりの値（減少最大値%）
-	public static double getAppliedDamage(Set<IUnsagaDamageType> types,EntityLivingBase victim,float amount){
-		float base = amount;
+	public static double getAppliedDamage(Set<IUnsagaDamageType> types,EntityLivingBase victim,float amount, int op){
+		float base = op==Statics.OPERATION_INC_MULTIPLED ? amount : 5.0F;
 //		float modifier = 0.0F;
-		OptionalDouble opd = types.stream().mapToDouble(in -> victim.getEntityAttribute(in.getAttribute()).getAttributeValue()).min();
 
+
+		OptionalDouble opd = types.stream().mapToDouble(in -> victim.getEntityAttribute(in.getAttribute()).getAttributeValue())
+		.map(in ->MathHelper.clamp_double(in, 0, 5.0D)).average();
 		UnsagaMod.logger.trace(ID, opd.getAsDouble());
 		double df = opd.isPresent() ? opd.getAsDouble() : 1.0D;
 		double modifier = base*(-df  + 1.0D);
@@ -152,10 +163,10 @@ public class AdditionalStatus {
 //
 //		}
 
-		base += modifier;
+		double damage = amount + modifier;
 		UnsagaMod.logger.trace(ID, "加算後の攻撃力:"+base,"加算された値:"+modifier);
-		base = MathHelper.clamp_float(base, 0.0F, 65536.0F);
-		return base;
+		damage = MathHelper.clamp_float((float) damage, 0.0F, 65536.0F);
+		return damage;
 	}
 
 	public static void registerEntityStatus(Predicate<EntityLivingBase> pre,Consumer<EntityLivingBase> con){
@@ -168,7 +179,7 @@ public class AdditionalStatus {
 
 		//プレイヤーは素手のLP攻撃力は弱めに
 		registerEntityStatus(liv -> liv instanceof EntityPlayer,liv ->{
-			registerAndSetAttribute(liv,DEXTALITY,0.5D);
+			registerAndSetAttribute(liv,DEXTALITY,0.1D);
 
 		});
 		registerEntityStatus(liv -> liv instanceof EntitySkeleton,liv ->{
@@ -176,7 +187,16 @@ public class AdditionalStatus {
 			registerAndSetAttribute(liv,GENERALS.get(DamageTypeUnsaga.General.SPEAR),1.5D);
 			registerAndSetAttribute(liv,GENERALS.get(DamageTypeUnsaga.General.SWORD),1.3D);
 		});
+		registerEntityStatus(liv -> liv instanceof EntityStormEater,liv ->{
+			registerAndSetAttribute(liv,GENERALS.get(DamageTypeUnsaga.General.PUNCH),1.5D);
+			registerAndSetAttribute(liv,GENERALS.get(DamageTypeUnsaga.General.SPEAR),1.5D);
+			registerAndSetAttribute(liv,GENERALS.get(DamageTypeUnsaga.General.SWORD),1.5D);
+			registerAndSetAttribute(liv,GENERALS.get(DamageTypeUnsaga.General.MAGIC),0.5D);
+		});
 		registerEntityStatus(liv -> liv.getCreatureAttribute()==EnumCreatureAttribute.UNDEAD,liv ->{
+			registerAndSetAttribute(liv,SUBS.get(DamageTypeUnsaga.Sub.FIRE),0.5D);
+		});
+		registerEntityStatus(liv -> liv.getCreatureAttribute()==EntityRuffleTree.PLANT,liv ->{
 			registerAndSetAttribute(liv,SUBS.get(DamageTypeUnsaga.Sub.FIRE),0.5D);
 		});
 		registerEntityStatus(liv -> liv.getCreatureAttribute()==EnumCreatureAttribute.ARTHROPOD
@@ -188,12 +208,17 @@ public class AdditionalStatus {
 		registerEntityStatus(liv -> liv instanceof EntityWitch || liv instanceof EntityEnderman,liv ->{
 			registerAndSetAttribute(liv,MENTAL,2.0D);
 			registerAndSetAttribute(liv,INTELLIGENCE,2.0D);
-			registerAndSetAttribute(liv,GENERALS.get(DamageTypeUnsaga.General.MAGIC),2.0D);
+			registerAndSetAttribute(liv,GENERALS.get(DamageTypeUnsaga.General.MAGIC),0.5D);
 		});
 		registerEntityStatus(liv -> liv instanceof EntitySlime,liv ->{
-			registerAndSetAttribute(liv,GENERALS.get(DamageTypeUnsaga.General.PUNCH),100.0D);
+			registerAndSetAttribute(liv,GENERALS.get(DamageTypeUnsaga.General.PUNCH),2.0D);
 			registerAndSetAttribute(liv,GENERALS.get(DamageTypeUnsaga.General.SPEAR),0.5D);
-			registerAndSetAttribute(liv,GENERALS.get(DamageTypeUnsaga.General.MAGIC),2.0D);
+			registerAndSetAttribute(liv,GENERALS.get(DamageTypeUnsaga.General.MAGIC),0.5D);
+		});
+		registerEntityStatus(liv -> liv instanceof EntityUnsagaChestNew,liv ->{
+			registerAndSetAttribute(liv,SUBS.get(DamageTypeUnsaga.Sub.FIRE),100.0D);
+			registerAndSetAttribute(liv,SUBS.get(DamageTypeUnsaga.Sub.FREEZE),100.0D);
+
 		});
 		registerEntityStatus(liv -> liv.isImmuneToFire() || liv instanceof EntityMagmaCube || liv instanceof EntityBlaze,liv ->{
 			registerAndSetAttribute(liv,SUBS.get(DamageTypeUnsaga.Sub.FIRE),100.0D);

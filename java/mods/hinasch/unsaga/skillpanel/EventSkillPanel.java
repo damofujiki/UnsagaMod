@@ -55,10 +55,13 @@ public class EventSkillPanel {
 				EntityPlayer ep = (EntityPlayer) e.getEntityLiving();
 				SkillPanelRegistry.instance().damageAgainstSkills.stream().forEach(in ->{
 					if(in.getDamageAgainst().contains(dsu.getParentDamageSource())){
-						int level = SkillPanelAPI.getHighestPanelLevel(ep, in).getAsInt();
-						float base = e.getAmount();
-						float amount = base - (base * 0.125F * level);
-						e.setAmount(amount);
+						if(SkillPanelAPI.hasPanel(ep, in)){
+							int level = SkillPanelAPI.getHighestPanelLevel(ep, in).getAsInt();
+							float base = e.getAmount();
+							float amount = base - (base * 0.125F * level);
+							e.setAmount(amount);
+						}
+
 					}
 				});
 				return dsu;

@@ -102,7 +102,8 @@ public class SpecialMoveRapidArrow extends SpecialMoveBase{
 						}
 					}
 					ArrowKnock event = new ArrowKnock(shooter,arrows);
-					HSLib.core().events.scannerEventPool.addEvent(event);
+//					HSLib.core().events.scannerEventPool.addEvent(event);
+					HSLib.core().addAsyncEvent(shooter, event);
 					return EnumActionResult.SUCCESS;
 				}
 

@@ -14,6 +14,7 @@ import mods.hinasch.lib.item.ItemUtil;
 import mods.hinasch.lib.item.ItemUtil.ItemStackList;
 import mods.hinasch.lib.network.PacketGuiButtonBaseNew;
 import mods.hinasch.lib.network.PacketSyncCapability;
+import mods.hinasch.lib.world.WorldHelper;
 import mods.hinasch.unsaga.UnsagaMod;
 import mods.hinasch.unsaga.core.client.gui.GuiSkillPanel;
 import mods.hinasch.unsaga.core.inventory.InventorySkillPanel;
@@ -24,8 +25,8 @@ import mods.hinasch.unsaga.init.UnsagaGui;
 import mods.hinasch.unsaga.skillpanel.SkillPanel;
 import mods.hinasch.unsaga.skillpanel.SkillPanelBonus;
 import mods.hinasch.unsaga.skillpanel.SkillPanelRegistry;
-import mods.hinasch.unsaga.skillpanel.WorldSaveDataSkillPanel;
 import mods.hinasch.unsaga.skillpanel.SkillPanelRegistry.WeightedRandomPanel;
+import mods.hinasch.unsaga.skillpanel.WorldSaveDataSkillPanel;
 import mods.hinasch.unsaga.status.UnsagaXPCapability;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -243,7 +244,7 @@ public class ContainerSkillPanel extends ContainerBase{
 				int skillLevel = UnsagaXPCapability.getCapability(ep).getSkillPoint();
 				if(skillLevel>=this.expToConsume){
 					UnsagaXPCapability.getCapability(ep).addSkillPoint(-this.expToConsume);
-					if(!ep.getEntityWorld().isRemote){
+					if(WorldHelper.isServer(world)){
 						HSLib.core().getPacketDispatcher().sendTo(PacketSyncCapability.create(UnsagaXPCapability.CAPA,UnsagaXPCapability.getCapability(ep)), (EntityPlayerMP) ep);
 					}
 

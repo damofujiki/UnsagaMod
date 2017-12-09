@@ -150,8 +150,8 @@ public class SpecialMoveInvoker extends ActionPerformerBase<SpecialMove,SpecialM
 	}
 
 	public float getSkillPanelReduction(){
-		if(SkillPanelAPI.hasPanel(getPerformer(), SkillPanelRegistry.instance().weaponMaster)){
-			return 0.13F * SkillPanelAPI.getHighestPanelLevel(getPerformer(), SkillPanelRegistry.instance().weaponMaster).getAsInt();
+		if(SkillPanelAPI.hasPanel(getPerformer(), SkillPanelRegistry.instance().specialMoveMaster)){
+			return 0.13F * SkillPanelAPI.getHighestPanelLevel(getPerformer(), SkillPanelRegistry.instance().specialMoveMaster).getAsInt();
 		}
 		return 0.0F;
 	}

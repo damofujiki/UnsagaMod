@@ -1,13 +1,18 @@
 package mods.hinasch.unsaga.core.command;
 
+import mods.hinasch.lib.entity.ModifierHelper;
 import mods.hinasch.lib.util.ChatHandler;
 import mods.hinasch.unsaga.UnsagaMod;
-import mods.hinasch.unsaga.core.net.packet.newpacket.PacketDebugPos;
+import mods.hinasch.unsaga.core.net.packet.PacketDebugPos;
+import mods.hinasch.unsaga.damage.DamageTypeUnsaga.General;
+import mods.hinasch.unsaga.damage.DamageTypeUnsaga.Sub;
+import mods.hinasch.unsaga.status.AdditionalStatus;
 import mods.hinasch.unsaga.villager.UnsagaVillagerCapability;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -52,11 +57,11 @@ public class CommandUnsaga extends CommandBase{
 					});
 				}
 			}
-			if(str.equals("togglespark")){
-				boolean b = UnsagaMod.configHandler.isAlwaysSparkling();
-				UnsagaMod.configHandler.enableAlwaysSparkling(!b);
-				ChatHandler.sendChatToPlayer((EntityPlayer) sender, "Toggled Always Spark Mode.");
-			}
+//			if(str.equals("togglespark")){
+//				boolean b = UnsagaMod.configHandler.isAlwaysSparkling();
+//				UnsagaMod.configHandler.enableAlwaysSparkling(!b);
+//				ChatHandler.sendChatToPlayer((EntityPlayer) sender, "Toggled Always Spark Mode.");
+//			}
 
 			if(str.equals("pos")){
 
@@ -67,6 +72,28 @@ public class CommandUnsaga extends CommandBase{
 					BlockPos pos = new BlockPos(x,y,z);
 					UnsagaMod.packetDispatcher.sendTo(new PacketDebugPos(pos), (EntityPlayerMP) sender);
 
+			}
+			if(str.equals("status")){
+				StringBuilder builder = new StringBuilder("");
+				if(sender instanceof EntityPlayer){
+					EntityPlayer ep = (EntityPlayer) sender;
+					double strmodifier = ep.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
+					builder.append("Attack:"+strmodifier+"/");
+					ModifierHelper.dumpModifiers(SharedMonsterAttributes.ATTACK_DAMAGE, ep);
+					for(General gen:General.values()){
+						double at = ep.getEntityAttribute(AdditionalStatus.GENERALS.get(gen)).getAttributeValue();
+						builder.append(gen.getName()+":"+at+"/");
+						ModifierHelper.dumpModifiers(AdditionalStatus.GENERALS.get(gen), ep);
+					}
+					for(Sub sub:Sub.values()){
+						if(sub!=Sub.NONE){
+							double at = ep.getEntityAttribute(AdditionalStatus.SUBS.get(sub)).getAttributeValue();
+							builder.append(sub.getName()+":"+at+"/");
+						}
+						ModifierHelper.dumpModifiers(AdditionalStatus.SUBS.get(sub), ep);
+					}
+					ChatHandler.sendChatToPlayer(ep,builder.toString());
+				}
 			}
 			if(str.equals("stock")){
 				if(sender instanceof EntityPlayer){

@@ -25,7 +25,7 @@ public abstract class AbilityBase extends PropertyElementBase implements IAbilit
 
 
 	public String getUnlocalizedName(){
-		return "ability."+this.getName();
+		return "ability."+this.getPropertyName();
 	}
 	public static final RestoreFunc<IAbility> FUNC_RESTORE = new RestoreFunc<IAbility>(){
 

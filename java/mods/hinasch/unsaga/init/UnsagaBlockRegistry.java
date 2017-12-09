@@ -47,7 +47,7 @@ public class UnsagaBlockRegistry extends BlockItemRegistry<Block>{
 		// TODO 自動生成されたメソッド・スタブ
 		UnsagaModCore.instance().oreBlocks.getProperties().forEach(input ->{
 			Block block = put(new BlockOreBase(BlockOrePropertyRegistry.getOreData(input.getId()), () -> UnsagaMod.secureRandom){}
-					,input.getName(),UnsagaMod.core.tabMisc);
+					,input.getPropertyName(),UnsagaMod.core.tabMisc);
 			ores.putObject(input.getId(), block);
 		});
 

@@ -3,28 +3,37 @@ package mods.hinasch.unsaga.core.client;
 import mods.hinasch.lib.util.HSLibs;
 import mods.hinasch.unsaga.UnsagaMod;
 import mods.hinasch.unsaga.core.client.event.EventMouseClicked;
-import mods.hinasch.unsaga.core.client.event.EventRenderFamiliar;
+import mods.hinasch.unsaga.core.client.event.EventRenderLivingEffect;
 import mods.hinasch.unsaga.core.client.event.EventRenderGameOverlay;
 import mods.hinasch.unsaga.core.client.render.entity.RenderEntityChest;
+import mods.hinasch.unsaga.core.client.render.entity.RenderFireWall;
+import mods.hinasch.unsaga.core.client.render.entity.RenderRuffleTree;
 import mods.hinasch.unsaga.core.client.render.entity.RenderShadow;
+import mods.hinasch.unsaga.core.client.render.entity.RenderSignalTree;
+import mods.hinasch.unsaga.core.client.render.entity.RenderStormEater;
+import mods.hinasch.unsaga.core.client.render.entity.RenderTreasureSlime;
 import mods.hinasch.unsaga.core.client.render.projectile.RenderBeam;
 import mods.hinasch.unsaga.core.client.render.projectile.RenderBullet;
 import mods.hinasch.unsaga.core.client.render.projectile.RenderCustomArrow;
-import mods.hinasch.unsaga.core.client.render.projectile.RenderRuffleTree;
 import mods.hinasch.unsaga.core.client.render.projectile.RenderThrowable;
 import mods.hinasch.unsaga.core.client.render.projectile.RenderThrowableItemNew;
-import mods.hinasch.unsaga.core.client.render.projectile.RenderTreasureSlime;
+import mods.hinasch.unsaga.core.entity.mob.EntityPoisonEater;
 import mods.hinasch.unsaga.core.entity.mob.EntityRuffleTree;
+import mods.hinasch.unsaga.core.entity.mob.EntitySignalTree;
+import mods.hinasch.unsaga.core.entity.mob.EntityStormEater;
 import mods.hinasch.unsaga.core.entity.mob.EntityTreasureSlime;
+import mods.hinasch.unsaga.core.entity.passive.EntityBeam;
+import mods.hinasch.unsaga.core.entity.passive.EntityFireWall;
 import mods.hinasch.unsaga.core.entity.passive.EntityShadow;
 import mods.hinasch.unsaga.core.entity.passive.EntityUnsagaChestNew;
-import mods.hinasch.unsaga.core.entity.projectile.EntityBeam;
 import mods.hinasch.unsaga.core.entity.projectile.EntityBlaster;
 import mods.hinasch.unsaga.core.entity.projectile.EntityBoulder;
 import mods.hinasch.unsaga.core.entity.projectile.EntityBubbleBlow;
 import mods.hinasch.unsaga.core.entity.projectile.EntityBullet;
 import mods.hinasch.unsaga.core.entity.projectile.EntityCustomArrow;
+import mods.hinasch.unsaga.core.entity.projectile.EntityFireArrow;
 import mods.hinasch.unsaga.core.entity.projectile.EntityFlyingAxe;
+import mods.hinasch.unsaga.core.entity.projectile.EntityIceNeedle;
 import mods.hinasch.unsaga.core.entity.projectile.EntitySolutionLiquid;
 import mods.hinasch.unsaga.core.entity.projectile.EntityThrowingKnife;
 import mods.hinasch.unsaga.core.net.CommonProxy;
@@ -81,7 +90,7 @@ public class ClientProxy extends CommonProxy{
 		HSLibs.registerEvent(new EventRenderText());
 		HSLibs.registerEvent(EventRenderGameOverlay.RenderEnemyStatus.getEvent());
 		HSLibs.registerEvent(EventRenderGameOverlay.RenderPlayerStatus.getEvent());
-		HSLibs.registerEvent(new EventRenderFamiliar());
+		HSLibs.registerEvent(new EventRenderLivingEffect());
 		HSLibs.registerEvent(new EventMouseClicked());
 	}
 	@Override
@@ -107,5 +116,11 @@ public class ClientProxy extends CommonProxy{
 		RenderingRegistry.registerEntityRenderingHandler(EntityBeam.class, manager -> new RenderBeam(manager));
 		ItemStack knife = UnsagaItemRegistry.instance().getItemStack(UnsagaItemRegistry.instance().knife, UnsagaMod.core.materialsNew.iron, 0);
 		RenderingRegistry.registerEntityRenderingHandler(EntityThrowingKnife.class, manager -> new RenderThrowableItemNew(manager,knife));
+		RenderingRegistry.registerEntityRenderingHandler(EntityFireWall.class, manager -> new RenderFireWall(manager));
+		RenderingRegistry.registerEntityRenderingHandler(EntitySignalTree.class, manager -> new RenderSignalTree(manager));
+		RenderingRegistry.registerEntityRenderingHandler(EntityIceNeedle.class, manager -> new RenderThrowable("textures/entity/projectiles/needle.png",manager));
+		RenderingRegistry.registerEntityRenderingHandler(EntityFireArrow.class, manager -> new RenderThrowable("textures/entity/projectiles/fireball.png",manager));
+		RenderingRegistry.registerEntityRenderingHandler(EntityStormEater.class, manager -> new RenderStormEater(manager,EntityStormEater.class));
+		RenderingRegistry.registerEntityRenderingHandler(EntityPoisonEater.class, manager -> new RenderStormEater(manager,EntityPoisonEater.class));
 	}
 }

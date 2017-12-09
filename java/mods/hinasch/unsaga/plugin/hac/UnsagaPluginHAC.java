@@ -1,76 +1,87 @@
 package mods.hinasch.unsaga.plugin.hac;
 
+import java.util.Map;
+import java.util.function.Predicate;
+
 import defeatedcrow.hac.api.climate.ClimateAPI;
 import defeatedcrow.hac.api.climate.DCHeatTier;
 import defeatedcrow.hac.api.climate.DCHumidity;
 import defeatedcrow.hac.api.climate.IClimate;
 import defeatedcrow.hac.api.damage.DamageSourceClimate;
-import mods.hinasch.lib.core.HSLib;
-import mods.hinasch.lib.iface.LivingHurtEventBase;
-import mods.hinasch.unsaga.ability.AbilityAPI;
+import mods.hinasch.lib.util.HSLibs;
 import mods.hinasch.unsaga.ability.AbilityRegistry;
-import mods.hinasch.unsaga.core.potion.UnsagaPotions;
+import mods.hinasch.unsaga.damage.DamageTypeAssociation;
+import mods.hinasch.unsaga.damage.DamageTypeUnsaga.General;
+import mods.hinasch.unsaga.damage.DamageTypeUnsaga.Sub;
 import mods.hinasch.unsaga.element.FiveElements;
 import mods.hinasch.unsaga.element.newele.ElementTable;
-import mods.hinasch.unsaga.skillpanel.SkillPanelAPI;
-import mods.hinasch.unsaga.skillpanel.SkillPanelRegistry;
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
 public class UnsagaPluginHAC {
 
 	static AbilityRegistry abilities = AbilityRegistry.instance();
 	public void registerEvents(){
-		HSLib.core().events.livingHurt.getEventsPost().add(new LivingHurtEventBase(){
-
-			@Override
-			public boolean apply(LivingHurtEvent e, DamageSource dsu) {
-				// TODO 自動生成されたメソッド・スタブ
-				return true;
-			}
-
-			@Override
-			public String getName() {
-				// TODO 自動生成されたメソッド・スタブ
-				return "hac_climate_damage";
-			}
-
-			@Override
-			public DamageSource process(LivingHurtEvent e, DamageSource dsu) {
-				float reduce = 0.0F;
-				if(dsu==DamageSourceClimate.climateColdDamage){
-					reduce += (0.5F*AbilityAPI.getAbilityAmount(e.getEntityLiving(),abilities.armorCold));
-					reduce += (1F*AbilityAPI.getAbilityAmount(e.getEntityLiving(),abilities.armorColdEx));
-					if(e.getEntityLiving() instanceof EntityPlayer && SkillPanelAPI.hasPanel((EntityPlayer) e.getEntityLiving(), SkillPanelRegistry.instance().adaptability)){
-						reduce += (0.5F*SkillPanelAPI.getHighestPanelLevel((EntityPlayer) e.getEntityLiving(),SkillPanelRegistry.instance().adaptability).getAsInt());
-					}
-					if(e.getEntityLiving().getActivePotionEffect(UnsagaPotions.instance().selfBurning)!=null){
-						reduce += 0.5F * (1 + e.getEntityLiving().getActivePotionEffect(UnsagaPotions.instance().selfBurning).getAmplifier());
-					}
-				}
-				if(dsu==DamageSourceClimate.climateHeatDamage){
-					reduce += (0.5F*AbilityAPI.getAbilityAmount(e.getEntityLiving(),abilities.armorFire));
-					reduce += (1F*AbilityAPI.getAbilityAmount(e.getEntityLiving(),abilities.armorFireEx));
-					if(e.getEntityLiving() instanceof EntityPlayer && SkillPanelAPI.hasPanel((EntityPlayer) e.getEntityLiving(), SkillPanelRegistry.instance().adaptability)){
-						reduce += (0.5F*SkillPanelAPI.getHighestPanelLevel((EntityPlayer) e.getEntityLiving(),SkillPanelRegistry.instance().adaptability).getAsInt());
-					}
-					if(e.getEntityLiving().getActivePotionEffect(UnsagaPotions.instance().selfBurning)!=null){
-						reduce += 0.5F * (1 + e.getEntityLiving().getActivePotionEffect(UnsagaPotions.instance().selfBurning).getAmplifier());
-					}
-				}
-				float amount = MathHelper.clamp_float(e.getAmount()-reduce, 0, 65535F);
-				e.setAmount(amount);
-				return dsu;
-			}}
-		);
+		HSLibs.registerEvent(new UnsagaClimateDamageEvent());
+//		HSLib.core().events.livingHurt.getEventsPost().add(new LivingHurtEventBase(){
+//
+//			@Override
+//			public boolean apply(LivingHurtEvent e, DamageSource dsu) {
+//				// TODO 自動生成されたメソッド・スタブ
+//				return true;
+//			}
+//
+//			@Override
+//			public String getName() {
+//				// TODO 自動生成されたメソッド・スタブ
+//				return "hac_climate_damage";
+//			}
+//
+//			@Override
+//			public DamageSource process(LivingHurtEvent e, DamageSource dsu) {
+//				float reduce = 0.0F;
+//				if(dsu==DamageSourceClimate.climateColdDamage){
+//					UnsagaMod.logger.trace("called", "kiteru");
+//					reduce += (0.5F*AbilityAPI.getAbilityAmount(e.getEntityLiving(),abilities.armorCold));
+//					reduce += (1F*AbilityAPI.getAbilityAmount(e.getEntityLiving(),abilities.armorColdEx));
+//					if(e.getEntityLiving() instanceof EntityPlayer && SkillPanelAPI.hasPanel((EntityPlayer) e.getEntityLiving(), SkillPanelRegistry.instance().adaptability)){
+//						reduce += (0.5F*SkillPanelAPI.getHighestPanelLevel((EntityPlayer) e.getEntityLiving(),SkillPanelRegistry.instance().adaptability).getAsInt());
+//					}
+//					if(e.getEntityLiving().getActivePotionEffect(UnsagaPotions.instance().selfBurning)!=null){
+//						reduce += 0.5F * (1 + e.getEntityLiving().getActivePotionEffect(UnsagaPotions.instance().selfBurning).getAmplifier());
+//					}
+//
+//					if(e.getEntityLiving().isPotionActive(UnsagaPotions.instance().selfBurning)){
+//						reduce += 100F;
+//					}
+//				}
+//				if(dsu==DamageSourceClimate.climateHeatDamage){
+//					reduce += (0.5F*AbilityAPI.getAbilityAmount(e.getEntityLiving(),abilities.armorFire));
+//					reduce += (1F*AbilityAPI.getAbilityAmount(e.getEntityLiving(),abilities.armorFireEx));
+//					if(e.getEntityLiving() instanceof EntityPlayer && SkillPanelAPI.hasPanel((EntityPlayer) e.getEntityLiving(), SkillPanelRegistry.instance().adaptability)){
+//						reduce += (0.5F*SkillPanelAPI.getHighestPanelLevel((EntityPlayer) e.getEntityLiving(),SkillPanelRegistry.instance().adaptability).getAsInt());
+//					}
+//					if(e.getEntityLiving().getActivePotionEffect(UnsagaPotions.instance().selfBurning)!=null){
+//						reduce += 0.5F * (1 + e.getEntityLiving().getActivePotionEffect(UnsagaPotions.instance().selfBurning).getAmplifier());
+//					}
+//					if(e.getEntityLiving().isPotionActive(UnsagaPotions.instance().waterShield)){
+//						reduce += 100F;
+//					}
+//				}
+//				float amount = MathHelper.clamp_float(e.getAmount()-reduce, 0, 65535F);
+//				e.setAmount(amount);
+//				return dsu;
+//			}}
+//		);
 
 	}
 
+	public void registerDamageSources(Map<Predicate<DamageSource>, DamageTypeAssociation.Attribute>  registerer){
+		registerer.put(in -> in==DamageSourceClimate.climateHeatDamage, new DamageTypeAssociation.Attribute(0,General.MAGIC,Sub.FIRE));
+		registerer.put(in -> in==DamageSourceClimate.climateColdDamage, new DamageTypeAssociation.Attribute(0,General.MAGIC,Sub.FREEZE));
+	}
 	public void registerBlocks(){
 //		ClimateAPI.registerBlock.registerHeatBlock(UnsagaMagic.instance().blocks.fireWall, 32767, DCHeatTier.KILN);
 	}

@@ -132,6 +132,12 @@ public class RawMaterialItemRegistry extends PropertyRegistryItem<RawMaterial>{
 			}
 		});
 
+		OreDictionary.registerOre("gemBestial", this.carnelian.getItemStack(1));
+		OreDictionary.registerOre("gemBestial", this.lapis.getItemStack(1));
+		OreDictionary.registerOre("gemBestial", this.opal.getItemStack(1));
+		OreDictionary.registerOre("gemBestial", this.topaz.getItemStack(1));
+		OreDictionary.registerOre("gemBestial", this.ravenite.getItemStack(1));
+
 		RecipeUtilNew.RecipeShaped.create().setBase("###","PPP").addAssociation('#', "cloth")
 		.addAssociation('P', new ItemStack(Blocks.PLANKS,1,OreDictionary.WILDCARD_VALUE)).setOutput(new ItemStack(Items.BED,1))
 		.register();

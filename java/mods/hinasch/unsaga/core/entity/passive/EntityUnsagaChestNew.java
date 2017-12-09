@@ -13,6 +13,7 @@ import mods.hinasch.unsaga.UnsagaMod;
 import mods.hinasch.unsaga.chest.ChestCapability;
 import mods.hinasch.unsaga.chest.IChestBehavior;
 import mods.hinasch.unsaga.chest.IChestCapability;
+import mods.hinasch.unsaga.core.stats.UnsagaAchievementRegistry;
 import mods.hinasch.unsaga.init.UnsagaGui;
 import mods.hinasch.unsaga.villager.InteractionInfoCapability;
 import mods.hinasch.unsaga.villager.bartering.ItemFactory;
@@ -180,10 +181,12 @@ public class EntityUnsagaChestNew extends EntityLiving implements IChestBehavior
     	super.onDeath(cause);
     	if(cause.getEntity() instanceof EntityPlayer){
     		if(WorldHelper.isServer(worldObj)){
+    			EntityPlayer ep = (EntityPlayer) cause.getEntity();
+    			ep.addStat(UnsagaAchievementRegistry.instance().breakChest);
     			if(this.worldObj.rand.nextInt(2)==0){
     				this.dropTreasure();
     			}else{
-    				ChatHandler.sendChatToPlayer((EntityPlayer) cause.getEntity(),HSLibs.translateKey("gui.unsaga.chest.broken.item"));
+    				ChatHandler.sendChatToPlayer(ep,HSLibs.translateKey("gui.unsaga.chest.broken.item"));
     			}
     		}
     	}

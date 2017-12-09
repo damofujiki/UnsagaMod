@@ -26,8 +26,12 @@ public class RenderShadow extends RenderBiped<EntityShadow>{
 	@Override
     protected void preRenderCallback(EntityShadow entitylivingbaseIn, float partialTickTime)
     {
+
 		GlStateManager.enableBlend();
+		GlStateManager.enableAlpha();
+		GlStateManager.color(1, 1, 1,0.6F);
     	GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+
     }
 
 }

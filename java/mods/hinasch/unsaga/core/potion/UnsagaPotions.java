@@ -3,7 +3,6 @@ package mods.hinasch.unsaga.core.potion;
 
 
 import java.util.List;
-import java.util.function.Function;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -19,7 +18,6 @@ import mods.hinasch.lib.world.XYZPos;
 import mods.hinasch.unsaga.UnsagaMod;
 import mods.hinasch.unsaga.core.entity.EntityStateCapability;
 import mods.hinasch.unsaga.core.entity.StateRegistry;
-import mods.hinasch.unsaga.core.entity.passive.EntityShadow;
 import mods.hinasch.unsaga.core.potion.ShieldProperty.ShieldEvent;
 import mods.hinasch.unsaga.core.potion.StatePropertyPotion.StatePotion;
 import mods.hinasch.unsaga.damage.DamageSourceUnsaga;
@@ -38,8 +36,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
@@ -85,6 +81,8 @@ public class UnsagaPotions extends PropertyRegistry<PotionUnsaga>{
 	public ImmutableList<Potion> statusDownDebuffs;
 	public ImmutableList<Potion> mentalDebuffs;
 	public ImmutableList<Potion> bodyDebuffs;
+
+	public ShieldPropertyRegistry shieldProperties;
 	public List<ShieldEvent> shieldEvents = Lists.newArrayList();
 	protected static UnsagaPotions INSTANCE;
 
@@ -110,16 +108,16 @@ public class UnsagaPotions extends PropertyRegistry<PotionUnsaga>{
 	public void preInit() {
 		//		this.fear.setPotionType(new PotionType(fear.getName(),new PotionEffectFear[]{new PotionEffectFear(fear,ItemUtil.getPotionTime(30),0)}));
 		this.registerObjects();
-
+		this.shieldProperties = ShieldPropertyRegistry.instance();
 	}
 
 	@Override
 	protected void registerObjects() {
-		darkSeal = this.put(PotionUnsaga.buff("darkSeal", 250,5,1));
-		holySeal = this.put(PotionUnsaga.buff("holySeal", 250,5,1));
+		darkSeal = this.put(PotionUnsaga.buff("darkSeal", 250,4,2));
+		holySeal = this.put(PotionUnsaga.buff("holySeal", 250,4,2));
 		shadowServant = this.put(PotionUnsaga.buff("shadowServant", 250,5,1));
-		goldFinger = this.put(PotionUnsaga.buff("goldFinger", 250,5,1));
-		spellMagnet = this.put(PotionUnsaga.buff("spellMagnet", 250,5,1));
+		goldFinger = this.put(PotionUnsaga.buff("goldFinger", 250,1,2));
+		spellMagnet = this.put(PotionUnsaga.buff("spellMagnet", 250,3,2));
 		sleep = this.put(PotionUnsaga.badPotion("sleep", 250,5,1));
 		fear = this.put(PotionUnsaga.badPotion("fear", 250,0,0));
 		gravity = this.put(PotionUnsaga.badPotion("gravity", 250,8,0));
@@ -128,7 +126,7 @@ public class UnsagaPotions extends PropertyRegistry<PotionUnsaga>{
 		downInt = this.put((PotionUnsaga) PotionUnsaga.badPotion("downInt", 250,3,1).registerPotionAttributeModifier(AdditionalStatus.INTELLIGENCE, "7ce9b1ce-5b19-427a-9281-4db7c90c041b", -0.10D, Statics.OPERATION_INCREMENT));
 		lockSlime = this.put(PotionUnsaga.badPotion("lockSlime", 250,5,0));
 		detected = this.put((PotionUnsaga) PotionUnsaga.badPotion("detected", 250,8,1).registerPotionAttributeModifier(SharedMonsterAttributes.ARMOR, "ec8a8e69-80a1-4c22-ba72-94c790e5c7d5", -0.1D, Statics.OPERATION_INCREMENT));
-		coolDown = this.put(PotionUnsaga.badPotion("coolDown", 250,1,1));
+		coolDown = this.put(PotionUnsaga.badPotion("coolDown", 250,0,1));
 		waterShield = this.put(PotionUnsaga.buff("waterShield", 250,6,1));
 		selfBurning = this.put(PotionUnsaga.buff("selfBurning", 250,6,1));
 		missileGuard = this.put(PotionUnsaga.buff("missileGuard", 250,6,1));
@@ -160,7 +158,10 @@ public class UnsagaPotions extends PropertyRegistry<PotionUnsaga>{
 		for(PotionUnsaga p:potions){
 			GameRegistry.register(p,p.getKey());
 			p.initPotionType();
-			GameRegistry.register(p.getPotionType(),new ResourceLocation(UnsagaMod.MODID,p.getName()));
+//			if(HSLib.isDebug()){
+//				GameRegistry.register(p.getPotionType(),new ResourceLocation(UnsagaMod.MODID,p.getPropertyName()));
+//			}
+
 		}
 	}
 	//	@Override
@@ -193,61 +194,27 @@ public class UnsagaPotions extends PropertyRegistry<PotionUnsaga>{
 
 	@SubscribeEvent
 	public void onLivingAttack(LivingAttackEvent e){
-		if(e.getSource().getEntity() instanceof EntityLivingBase){
-			EntityLivingBase owner = (EntityLivingBase) e.getSource().getEntity();
-			if(owner.isPotionActive(instance().shadowServant)){
-				if(!e.getSource().isMagicDamage() && !e.getSource().isProjectile()){
-					EntityShadow shadow = new EntityShadow(owner.getEntityWorld(),owner,e.getEntityLiving(),25);
-					BlockPos pos = e.getEntityLiving().getPosition();
-					shadow.setPositionAndRotation(pos.getX(), pos.getY()+1.5F, pos.getZ(), owner.rotationYaw, owner.rotationPitch);
-					if(WorldHelper.isServer(owner.getEntityWorld())){
-						owner.getEntityWorld().spawnEntityInWorld(shadow);
-				}
-
-				}
-			}
-		}
+//		if(e.getSource().getEntity() instanceof EntityLivingBase){
+//			EntityLivingBase victim = e.getEntityLiving();
+//			EntityLivingBase owner = (EntityLivingBase) e.getSource().getEntity();
+//			if(owner.isPotionActive(instance().shadowServant)){
+//				if(!e.getSource().isMagicDamage() && !e.getSource().isProjectile() && !victim.isEntityInvulnerable(e.getSource())){
+//					EntityShadow shadow = new EntityShadow(owner.getEntityWorld(),owner,victim,25,e.getAmount());
+//					BlockPos pos = e.getEntityLiving().getPosition();
+//					SoundAndSFX.playSound(e.getEntityLiving().getEntityWorld(), XYZPos.createFrom(victim), SoundEvents.ENTITY_ENDERMEN_TELEPORT, SoundCategory.PLAYERS, 1.0F, 1.0F, false);
+//					Vec3d vec = victim.getLookVec().normalize().rotateYaw((float) Math.toRadians(180));
+//					shadow.setPositionAndRotation(victim.posX+vec.xCoord, victim.posY, victim.posZ+vec.zCoord, -owner.rotationYaw, -owner.rotationPitch);
+//					if(WorldHelper.isServer(owner.getEntityWorld())){
+//						owner.getEntityWorld().spawnEntityInWorld(shadow);
+//					}
+//
+//				}
+//			}
+//		}
 	}
-	public abstract static class LivingHurtEventPotion extends  LivingHurtEventUnsagaBase{
 
-		Function<UnsagaPotions,Potion> potion;
-		public LivingHurtEventPotion(Function<UnsagaPotions,Potion> potion){
-			this.potion = potion;
-		}
-		@Override
-		public boolean apply(LivingHurtEvent e, DamageSourceUnsaga dsu) {
-			// TODO 自動生成されたメソッド・スタブ
-			return e.getEntityLiving().isPotionActive(potion.apply(instance()));
-		}
-
-		@Override
-		public DamageSource process(LivingHurtEvent e, DamageSourceUnsaga dsu) {
-			int amp = 1;
-			if(e.getEntityLiving().getActivePotionEffect(instance().selfBurning)!=null){
-				amp += e.getEntityLiving().getActivePotionEffect(instance().selfBurning).getAmplifier();
-				return this.processPotion(e, dsu, amp);
-			}
-			return dsu;
-		}
-
-		/**
-		 *
-		 * @param e
-		 * @param dsu
-		 * @param amp 1～
-		 * @return
-		 */
-		public abstract DamageSource processPotion(LivingHurtEvent e, DamageSourceUnsaga dsu,int amp);
-
-		@Override
-		public String getName() {
-			// TODO 自動生成されたメソッド・スタブ
-			return potion.apply(instance()).getName();
-		}
-
-	}
 	public static void registerEvent(){
-		for(ShieldProperty shield:ShieldProperty.shields){
+		for(ShieldProperty shield:instance().shieldProperties.shields){
 			instance().shieldEvents.add(new ShieldProperty.ShieldEvent(shield));
 		}
 		HSLibs.registerEvent(UnsagaPotions.instance());
@@ -277,7 +244,7 @@ public class UnsagaPotions extends PropertyRegistry<PotionUnsaga>{
 				// TODO 自動生成されたメソッド・スタブ
 				return "potion events";
 			}}
-		);
+				);
 
 		HSLib.core().events.livingUpdate.getEvents().add(new ILivingUpdateEvent(){
 
@@ -286,32 +253,66 @@ public class UnsagaPotions extends PropertyRegistry<PotionUnsaga>{
 				//				UnsagaMod.logger.trace(this.getName(), "うｐだて");
 				if(e.getEntityLiving() instanceof EntityLiving){
 					EntityLiving living = (EntityLiving) e.getEntityLiving();
+//					this.cleanUpClientPotion(living);
+
 					if(living.isPotionActive(UnsagaPotions.instance().fear)){
 						//						UnsagaMod.logger.trace(this.getName(), "fearかかってます");
-						if(EntityStateCapability.adapter.hasCapability(living)){
-							StatePotion state = (StatePotion) EntityStateCapability.adapter.getCapability(living).getState(StateRegistry.instance().statePotion);
-							//							UnsagaMod.logger.trace(this.getName(),state);
-							if(!state.isHasAddedFearTask() && living instanceof EntityCreature){
-								state.removeTasks((EntityCreature) living);
-								state.addTask((EntityCreature) living,new EntityAIAvoidEntity((EntityCreature) living, EntityPlayer.class, 10.0F, 1.0D, 1.2D));
-								state.setHasAddedFearTask(true);
-								UnsagaMod.logger.trace(this.getName(), "AI埋め込み成功です");
-							}
-						}
+						this.modifyAI(living);
 					}else{
-						if(EntityStateCapability.adapter.hasCapability(living)){
-							StatePotion state = (StatePotion) EntityStateCapability.adapter.getCapability(living).getState(StateRegistry.instance().statePotion);
-							if(state.isHasAddedFearTask() &&  living instanceof EntityCreature){
-								state.restoreTasks((EntityCreature) living);
-								state.setHasAddedFearTask(false);
-								UnsagaMod.logger.trace(this.getName(), "AI復元成功です");
-							}
-						}
+						this.restoreAI(living);
+						this.resetFreezePos(living);
+
 					}
 
 				}
 			}
 
+//			private void cleanUpClientPotion(EntityLivingBase living){
+//				if(WorldHelper.isClient(living.getEntityWorld())){
+//
+//					for(Iterator<PotionEffect> ite=living.getActivePotionEffects().iterator();ite.hasNext();){
+//						PotionEffect effect = ite.next();
+//						if(effect.getDuration()<=0){
+//							living.removePotionEffect(effect.getPotion());
+//						}
+//					}
+//				}
+//
+//			}
+			private void resetFreezePos(EntityLivingBase living){
+				if(!living.isPotionActive(UnsagaPotions.instance().sleep)){
+					if(EntityStateCapability.adapter.hasCapability(living)){
+						StatePotion state = (StatePotion) EntityStateCapability.adapter.getCapability(living).getState(StateRegistry.instance().statePotion);
+
+						state.setStoppedPos(null);
+
+
+					}
+				}
+
+			}
+			private void restoreAI(EntityLivingBase living){
+				if(EntityStateCapability.adapter.hasCapability(living)){
+					StatePotion state = (StatePotion) EntityStateCapability.adapter.getCapability(living).getState(StateRegistry.instance().statePotion);
+					if(state.isHasAddedFearTask() &&  living instanceof EntityCreature){
+						state.restoreTasks((EntityCreature) living);
+						state.setHasAddedFearTask(false);
+						UnsagaMod.logger.trace(this.getName(), "AI復元成功です");
+					}
+				}
+			}
+			private void modifyAI(EntityLivingBase living){
+				if(EntityStateCapability.adapter.hasCapability(living)){
+					StatePotion state = (StatePotion) EntityStateCapability.adapter.getCapability(living).getState(StateRegistry.instance().statePotion);
+					//							UnsagaMod.logger.trace(this.getName(),state);
+					if(!state.isHasAddedFearTask() && living instanceof EntityCreature){
+						state.removeTasks((EntityCreature) living);
+						state.addTask((EntityCreature) living,new EntityAIAvoidEntity((EntityCreature) living, EntityPlayer.class, 10.0F, 1.0D, 1.2D));
+						state.setHasAddedFearTask(true);
+						UnsagaMod.logger.trace(this.getName(), "AI埋め込み成功です");
+					}
+				}
+			}
 			@Override
 			public String getName() {
 				// TODO 自動生成されたメソッド・スタブ

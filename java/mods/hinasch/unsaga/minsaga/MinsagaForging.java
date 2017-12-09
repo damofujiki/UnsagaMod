@@ -12,10 +12,14 @@ import mods.hinasch.lib.util.HSLibs;
 import mods.hinasch.unsaga.UnsagaMod;
 import mods.hinasch.unsaga.material.RawMaterialItemRegistry;
 import mods.hinasch.unsaga.minsaga.ForgingCapability.IStatusModifier;
+import mods.hinasch.unsaga.villager.smith.SmithMaterialRegistry;
+import mods.hinasch.unsaga.villager.smith.SmithMaterialRegistry.IGetItemStack;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.RegistrySimple;
+import net.minecraftforge.oredict.OreDictionary;
 
 public class MinsagaForging {
 
@@ -79,12 +83,15 @@ public class MinsagaForging {
 			return HSLibs.translateKey(this.getUnlocalizedName());
 		}
 		public String getUnlocalizedName(){
-			return "minsaga.material."+this.getName();
+			return "minsaga.material."+this.getPropertyName();
 		}
 		public ModifierPair getArmorModifier() {
 			return this.pairModifier;
 		}
 
+		public Predicate<ItemStack> checker(){
+			return this.predicateItem;
+		}
 
 		public float getAttackModifier() {
 			return attackModifier;
@@ -252,8 +259,12 @@ public class MinsagaForging {
 	}
 
 	private void registerMaterial(Material material){
-		UnsagaMod.logger.trace("registering minsaga material", material.getName());
-		this.allMaterials.putObject(new ResourceLocation(material.getName()),material);
+		UnsagaMod.logger.trace("registering minsaga material", material.getPropertyName());
+		this.allMaterials.putObject(new ResourceLocation(material.getPropertyName()),material);
+	}
+
+	public RegistrySimple<ResourceLocation,Material> registry(){
+		return this.allMaterials;
 	}
 	private void initDurability(){
 		silver.setDurabilityModifier(+2);
@@ -297,8 +308,8 @@ public class MinsagaForging {
 		faerieSilverPlate.setMaterialChecker(this.getOreDictChecker("ingotFaerieSilver"));
 		amber.setMaterialChecker(this.getOreDictChecker("gemAmber"));
 		devilsweedSeed.setMaterialChecker(this.getOreDictChecker("cropNetherWart"));
-		debris1.setMaterialChecker((is)->RawMaterialItemRegistry.instance().debris1.isItemStackEqual(is));
-		debris2.setMaterialChecker((is)->RawMaterialItemRegistry.instance().debris2.isItemStackEqual(is));
+		debris1.setMaterialChecker(this.getItemStackChecker(RawMaterialItemRegistry.instance().debris1.getItem(), RawMaterialItemRegistry.instance().debris1.getMeta()));
+		debris2.setMaterialChecker(this.getItemStackChecker(RawMaterialItemRegistry.instance().debris2.getItem(), RawMaterialItemRegistry.instance().debris2.getMeta()));
 	}
 
 	private void initWeight(){
@@ -385,7 +396,11 @@ public class MinsagaForging {
 
 	}
 	private Predicate<ItemStack> getOreDictChecker(String orename){
-		return new OreNameChecker(orename);
+		return new SmithMaterialRegistry.PredicateOre(orename);
+	}
+
+	private Predicate<ItemStack> getItemStackChecker(Item item,int damage){
+		return new SmithMaterialRegistry.PredicateItem(item, damage);
 	}
 
 	public Material getMaterial(String name){
@@ -395,7 +410,7 @@ public class MinsagaForging {
 		}
 		return this.debris1;
 	}
-	public static class OreNameChecker implements Predicate<ItemStack>{
+	public static class OreNameChecker implements Predicate<ItemStack>,IGetItemStack{
 
 		final String orename;
 
@@ -414,6 +429,12 @@ public class MinsagaForging {
 				return HSLibs.getOreNames(is).stream().anyMatch(in -> in.equals(this.getOreName()));
 			}
 			return false;
+		}
+
+		@Override
+		public List<ItemStack> getItemStack() {
+			// TODO 自動生成されたメソッド・スタブ
+			return OreDictionary.getOres(orename);
 		}
 
 	}

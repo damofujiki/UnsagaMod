@@ -27,7 +27,8 @@ import mods.hinasch.unsaga.core.inventory.InventoryMerchant;
 import mods.hinasch.unsaga.core.inventory.slot.SlotMerchant;
 import mods.hinasch.unsaga.core.net.packet.PacketGuiButtonUnsaga;
 import mods.hinasch.unsaga.core.net.packet.PacketSyncGui;
-import mods.hinasch.unsaga.core.net.packet.newpacket.PacketSyncSkillPanel;
+import mods.hinasch.unsaga.core.net.packet.PacketSyncSkillPanel;
+import mods.hinasch.unsaga.core.stats.UnsagaAchievementRegistry;
 import mods.hinasch.unsaga.init.UnsagaGui;
 import mods.hinasch.unsaga.skillpanel.SkillPanelAPI;
 import mods.hinasch.unsaga.skillpanel.SkillPanelRegistry;
@@ -159,7 +160,7 @@ public class ContainerBartering extends ContainerBase{
 
 				if(this.behavior.hasComeUpdateTime()){
 					this.behavior.resetDisplayedSecretMerchandise();
-					this.behavior.updateMerchandises();
+					this.behavior.updateMerchandises(this.ep);
 				}
 
 
@@ -501,6 +502,7 @@ public class ContainerBartering extends ContainerBase{
 		.forEach(in -> ItemUtil.dropItem(in, ep));
 		this.checkBox.entrySet().stream().filter(in -> in.getValue()).forEach(in -> this.invMerchant.setInventorySlotContents(in.getKey(),null));
 		InventoryHandler.create(this.invSell).fill(null, 0, 7);
+		this.ep.addStat(UnsagaAchievementRegistry.instance().bartering1);
 	}
 
 	@Deprecated

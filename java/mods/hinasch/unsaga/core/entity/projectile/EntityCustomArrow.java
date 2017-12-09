@@ -1,5 +1,9 @@
 package mods.hinasch.unsaga.core.entity.projectile;
 
+import java.util.Set;
+
+import com.google.common.collect.Sets;
+
 import mods.hinasch.lib.core.HSLib;
 import mods.hinasch.lib.entity.RangedHelper;
 import mods.hinasch.lib.item.ItemUtil;
@@ -13,9 +17,11 @@ import mods.hinasch.unsaga.UnsagaMod;
 import mods.hinasch.unsaga.core.entity.StatePropertyArrow.StateArrow;
 import mods.hinasch.unsaga.core.net.packet.PacketClientThunder;
 import mods.hinasch.unsaga.core.potion.UnsagaPotions;
+import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureAttribute;
 import net.minecraft.entity.projectile.EntityTippedArrow;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -28,6 +34,7 @@ import net.minecraft.world.World;
 
 public class EntityCustomArrow extends EntityTippedArrow{
 
+	protected static final Set<Block> DESTROYABLE = Sets.newHashSet(Blocks.VINE,Blocks.WEB);
 	private static final DataParameter<Integer> TYPE = EntityDataManager.<Integer>createKey(EntityCustomArrow.class, DataSerializers.VARINT);
 
 	ItemStack arrowStack;
@@ -114,6 +121,20 @@ public class EntityCustomArrow extends EntityTippedArrow{
                 this.spawnParticles(10);
             }
     	}
+
+
+//        Vec3d vec3d = new Vec3d(this.posX, this.posY, this.posZ);
+//        Vec3d vec3d1 = new Vec3d(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
+//        RayTraceResult raytraceresult = this.worldObj.rayTraceBlocks(vec3d, vec3d1);
+//
+//        if(raytraceresult!=null){
+//        	BlockPos pos = raytraceresult.getBlockPos();
+//        	IBlockState state = this.worldObj.getBlockState(pos);
+//        	if(DESTROYABLE.contains(state.getBlock())){
+//        		SoundAndSFX.playBlockBreakSFX(worldObj, pos, state);
+//        	}
+//        }
+
 
 //    	if(this.tickOnGround>1000){
 //    		this.setArrowType(StateArrow.Type.NONE);

@@ -13,6 +13,7 @@ public class AdditionalStatusEvents {
 		//バニラのダメージソースを入れ替え
 		HSLib.core().events.livingHurt.getEventsPre().add(new EventReplaceDamageSource());
 		HSLib.core().events.livingHurt.getEventsMiddle().add(new EventAdditionalStatusAppliedDamage());
+		HSLib.core().events.livingHurt.getEventsMiddle().add(new EventDisabledLifePoint());
 		HSLib.core().events.livingHurt.getEventsMiddle().add(new LivingHurtEventBase(){
 
 			@Override
@@ -30,37 +31,42 @@ public class AdditionalStatusEvents {
 			@Override
 			public DamageSource process(LivingHurtEvent e, DamageSource ds) {
 				DamageSourceUnsaga dsu = (DamageSourceUnsaga) ds;
-				float applied = (float) AdditionalStatus.getAppliedDamage(dsu.getAllDamageType(), e.getEntityLiving(), e.getAmount());
+				float applied = (float) AdditionalStatus.getAppliedDamage(dsu.getAllDamageType(), e.getEntityLiving(), e.getAmount(),dsu.getReduceOperation());
 				e.setAmount(applied);
+
 				return dsu;
 			}}
 		);
-		HSLib.core().events.livingHurt.getEventsPost().add(new LivingHurtEventBase(){
 
-			@Override
-			public boolean apply(LivingHurtEvent e, DamageSource dsu) {
-				// TODO 自動生成されたメソッド・スタブ
-				return dsu instanceof DamageSourceUnsaga;
-			}
+		if(HSLib.isDebug()){
+			HSLib.core().events.livingHurt.getEventsPost().add(new LivingHurtEventBase(){
 
-			@Override
-			public String getName() {
-				// TODO 自動生成されたメソッド・スタブ
-				return "Display DamageSource";
-			}
-
-			@Override
-			public DamageSource process(LivingHurtEvent e, DamageSource dsu) {
-
-				if(!HSLibs.findPlayerFromBatllers(dsu, e.getEntityLiving()).isEmpty()){
-					String m = dsu.toString();
-					String m2 = String.format("HP Damage:%.2f", e.getAmount());
-					String mes = m+m2;
-					HSLibs.broadcastToPlayers(HSLibs.findPlayerFromBatllers(dsu, e.getEntityLiving()), mes);
+				@Override
+				public boolean apply(LivingHurtEvent e, DamageSource dsu) {
+					// TODO 自動生成されたメソッド・スタブ
+					return dsu instanceof DamageSourceUnsaga;
 				}
 
-				return dsu;
-			}}
-		);
+				@Override
+				public String getName() {
+					// TODO 自動生成されたメソッド・スタブ
+					return "Display DamageSource";
+				}
+
+				@Override
+				public DamageSource process(LivingHurtEvent e, DamageSource dsu) {
+
+					if(!HSLibs.findPlayerFromBatllers(dsu, e.getEntityLiving()).isEmpty()){
+						String m = dsu.toString();
+						String m2 = String.format("HP Damage:%.2f", e.getAmount());
+						String mes = m+m2;
+						HSLibs.broadcastToPlayers(HSLibs.findPlayerFromBatllers(dsu, e.getEntityLiving()), mes);
+					}
+
+					return dsu;
+				}}
+			);
+		}
+
 	}
 }

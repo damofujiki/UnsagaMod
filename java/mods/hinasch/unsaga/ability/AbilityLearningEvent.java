@@ -13,6 +13,7 @@ import mods.hinasch.lib.util.HSLibs;
 import mods.hinasch.lib.world.WorldHelper;
 import mods.hinasch.unsaga.UnsagaMod;
 import mods.hinasch.unsaga.ability.specialmove.SparklingPointRegistry;
+import mods.hinasch.unsaga.core.stats.UnsagaAchievementRegistry;
 import mods.hinasch.unsaga.skillpanel.SkillPanelAPI;
 import mods.hinasch.unsaga.skillpanel.SkillPanelRegistry;
 import net.minecraft.entity.EntityLivingBase;
@@ -55,7 +56,7 @@ public class AbilityLearningEvent {
 		double sparkling = SparklingPointRegistry.instance().getSparklingPoint(mob);
 		sparkling += this.calcSparklingModifierBySkill(player, 0.02D);
 		float f = rand.nextFloat();
-		if(f<sparkling || UnsagaMod.configHandler.isAlwaysSparkling()){
+		if(f<sparkling ){
 
 			ItemStack weapon = player.getHeldItem(EnumHand.MAIN_HAND);
 			if(ItemUtil.isItemStackNull(weapon)){
@@ -68,6 +69,7 @@ public class AbilityLearningEvent {
 					HSLib.core().getPacketDispatcher().sendTo(PacketSound.atEntity(SoundEvents.BLOCK_ANVIL_PLACE, player), (EntityPlayerMP) player);
 					String msg = HSLibs.translateKey("ability.unsaga.sparkling.specialMove", learned.get().getLocalized());
 					ChatHandler.sendChatToPlayer(player, msg);
+					player.addStat(UnsagaAchievementRegistry.instance().learnSkillFirst);
 				}
 
 			}
@@ -94,7 +96,7 @@ public class AbilityLearningEvent {
 		sparkling += 0.1D;
 		float f = rand.nextFloat();
 		UnsagaMod.logger.trace("sparkling", f,sparkling);
-		if(f<sparkling || UnsagaMod.configHandler.isAlwaysSparkling()){
+		if(f<sparkling){
 
 			List<ItemStack> list = AbilityAPI.getAllEquippedArmors(player).stream().filter(in -> AbilityAPI.existLearnableAbility(in)).collect(Collectors.toList());
 //			List<ItemStack> list2 = list.stream().filter(in -> AbilityCapability.adapter.hasCapability(in)).collect(Collectors.toList());
@@ -106,6 +108,7 @@ public class AbilityLearningEvent {
 					HSLib.core().getPacketDispatcher().sendTo(PacketSound.atEntity(SoundEvents.BLOCK_ANVIL_PLACE, player), (EntityPlayerMP) player);
 					String msg = HSLibs.translateKey("ability.unsaga.sparkling.passive", sparkItem.getDisplayName(),learned.get().getLocalized());
 					ChatHandler.sendChatToPlayer(player, msg);
+					player.addStat(UnsagaAchievementRegistry.instance().gainAbilityFirst);
 				}
 
 			}

@@ -67,7 +67,7 @@ public class ItemSkillPanel extends Item implements IItemColor{
 		if(SkillPanelCapability.adapter.hasCapability(stack)){
 			SkillPanel panel = SkillPanelCapability.adapter.getCapability(stack).getPanel();
 			int lv = SkillPanelCapability.adapter.getCapability(stack).getLevel();
-			tooltip.add(HSLibs.translateKey("skillPanel."+panel.getName()+".name"));
+			tooltip.add(HSLibs.translateKey("skillPanel."+panel.getPropertyName()+".name"));
 			tooltip.add("Level "+lv);
 		}
 	}

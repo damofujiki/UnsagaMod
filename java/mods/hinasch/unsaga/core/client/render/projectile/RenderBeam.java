@@ -3,7 +3,7 @@ package mods.hinasch.unsaga.core.client.render.projectile;
 import org.lwjgl.opengl.GL11;
 
 import mods.hinasch.unsaga.UnsagaMod;
-import mods.hinasch.unsaga.core.entity.projectile.EntityBeam;
+import mods.hinasch.unsaga.core.entity.passive.EntityBeam;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;

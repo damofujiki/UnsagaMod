@@ -68,7 +68,8 @@ public class PacketClientThunder implements IMessage{
 					}}
 				).size()==0){
 					SafeLightningBolt event = new SafeLightningBolt(clientPlayer,pos);
-					HSLib.core().events.scannerEventPool.addEvent(event);
+					HSLib.core().addAsyncEvent(event.getSender(), event);
+//					HSLib.core().events.scannerEventPool.addEvent(event);
 //					clientPlayer.worldObj.spawnEntityInWorld(bolt);
 
 //					Unsaga.debug("PacketClient",bolt,pos);

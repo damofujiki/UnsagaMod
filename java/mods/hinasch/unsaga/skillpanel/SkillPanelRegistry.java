@@ -31,7 +31,7 @@ public class SkillPanelRegistry extends PropertyRegistry<SkillPanel>{
 
 	protected static SkillPanelRegistry INSTANCE;
 
-	public SkillPanel punch,kick,throwing,shield,weaponMaster,punchMaster;
+	public SkillPanel punch,kick,throwing,shield,specialMoveMaster,punchMaster;
 	public SkillPanel ironBody,toughness,ironWill;
 	public SkillPanel familiarFire,familiarWater,familiarEarth,familiarWood,familiarMetal;
 	public SkillPanel magicExpert,thriftSaver;
@@ -109,7 +109,7 @@ public class SkillPanelRegistry extends PropertyRegistry<SkillPanel>{
 		this.magicBlend = new SkillPanel("spellBlend").setIcon(IconType.ROLL).setRarity(RARITY_RARE);
 		this.magicExpert = new SkillPanel("magicMaster").setIcon(IconType.ROLL).setRarity(RARITY_ULTRARARE);
 		//コンバット
-		this.weaponMaster = new SkillPanel("weaponMaster").setIcon(IconType.MELEE).setRarity(RARITY_ULTRARARE);
+		this.specialMoveMaster = new SkillPanel("weaponMaster").setIcon(IconType.MELEE).setRarity(RARITY_ULTRARARE);
 		this.punch = new SkillPanel("punch").setIcon(IconType.MELEE);
 		this.ironBody = new SkillPanel("superArmor").setIcon(IconType.PROTECT).setRarity(RARITY_RARE)
 				.setAttributeModifier(SharedMonsterAttributes.ARMOR, new AttributeModifier(UUID.fromString("1a2e5ddc-08f5-491c-a5a1-9af9d30aae34"),"skillPanel.ironBody",0.25D,0));
@@ -144,7 +144,7 @@ public class SkillPanelRegistry extends PropertyRegistry<SkillPanel>{
 
 
 		//実装するか微妙
-		this.weaponMaster = new SkillPanel("weaponMaster").setIcon(IconType.MELEE).setRarity(RARITY_ULTRARARE);
+		this.specialMoveMaster = new SkillPanel("specialMoveMaster").setIcon(IconType.MELEE).setRarity(RARITY_ULTRARARE);
 		this.accessoryForge = new SkillPanel("accessoryForge").setIcon(IconType.MELEE).setRarity(RARITY_RARE);
 		this.watchingOut = new SkillPanel("watchingOut").setRarity(RARITY_RARE);
 		this.knowledgeBuildings = new SkillPanel("knowledgeBuildings").setIcon(IconType.ROLL);
@@ -162,7 +162,7 @@ public class SkillPanelRegistry extends PropertyRegistry<SkillPanel>{
 		this.put(toolCustomize,ironWill,fashionable);
 		this.put(swimming,adaptability,shield,quickFix);
 		this.put(familiarEarth,familiarFire,familiarWater,familiarMetal,familiarWood);
-		this.put(thriftSaver,eavesdrop,weaponMaster,magicExpert);
+		this.put(thriftSaver,eavesdrop,specialMoveMaster,magicExpert);
 	}
 
 	public ItemStack getItemStack(SkillPanel panel,int level){
@@ -191,7 +191,7 @@ public class SkillPanelRegistry extends PropertyRegistry<SkillPanel>{
 
 		@Override
 		public String toString(){
-			return "["+this.panel.getName()+" level:"+this.level+" weight:"+this.itemWeight+"]";
+			return "["+this.panel.getPropertyName()+" level:"+this.level+" weight:"+this.itemWeight+"]";
 		}
 	}
 

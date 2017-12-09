@@ -42,7 +42,7 @@ public class CommandTestDebuff extends CommandBase{
 					ep.addPotionEffect(potion.getPotionType().getEffects().get(0));
 				}
 
-				this.notifyCommandListener(sender, this, "command.testdebuff.success", new Object[]{potion.getName()});
+				this.notifyCommandListener(sender, this, "command.testdebuff.success", new Object[]{potion.getPropertyName()});
 			}
 		}else{
 			UnsagaMod.logger.trace("potion","ポーションが見つからない");

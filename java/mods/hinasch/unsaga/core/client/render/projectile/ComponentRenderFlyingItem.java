@@ -1,6 +1,7 @@
 package mods.hinasch.unsaga.core.client.render.projectile;
 
 import mods.hinasch.lib.client.ClientHelper;
+import mods.hinasch.unsaga.core.client.IRotation;
 import mods.hinasch.unsaga.core.entity.IItemStackable;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;

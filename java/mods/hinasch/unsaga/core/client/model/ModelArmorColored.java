@@ -11,14 +11,6 @@ import net.minecraft.item.ItemStack;
 public class ModelArmorColored extends ModelBiped{
 
 	protected ItemStack itemStackArmor;
-	public ModelBiped getParent() {
-		return parent;
-	}
-
-	public ModelArmorColored setParent(ModelBiped parent) {
-		this.parent = parent;
-		return this;
-	}
 
 	protected ModelBiped parent;
 
@@ -27,15 +19,23 @@ public class ModelArmorColored extends ModelBiped{
 		super(f);
 	}
 
-	public ModelArmorColored setItemStack(ItemStack is){
+	public void setStack(ItemStack is){
 		this.itemStackArmor = is;
-		return this;
 	}
 
+	public void setParent(ModelBiped parent){
+		this.parent = parent;
+
+	}
+
+	public ModelBiped getParent(){
+		return this.parent;
+	}
 	@Override
     public void render(Entity par1Entity, float par2, float par3, float par4, float par5, float par6, float par7)
     {
 
+//		UnsagaMod.logger.trace("armoar", "called");
         this.setLivingAnimations((EntityLivingBase) par1Entity, par2, par3, par4);
 
         Item item = this.itemStackArmor.getItem();
@@ -49,9 +49,12 @@ public class ModelArmorColored extends ModelBiped{
             GlStateManager.color(f31, f32, f33, 1.0F);
         }
 
-        if(this.parent!=null){
-        	parent.render(par1Entity, par2, par3, par4, par5, par6, par7);
-        }
+
+        super.render(par1Entity, par2, par3, par4, par5, par6, par7);
+//        if(this.parent!=null){
+////    		UnsagaMod.logger.trace("armoar", "called");
+//        	parent.render(par1Entity, par2, par3, par4, par5, par6, par7);
+//        }
 
 //        this.setRotationAngles(par2, par3, par4, par5, par6, par7, par1Entity);
 //        GlStateManager.pushMatrix();

@@ -1,11 +1,15 @@
 package mods.hinasch.unsaga;
 
+import mods.hinasch.lib.config.EventConfigChanged;
+import mods.hinasch.lib.core.HSLibEvents;
 import mods.hinasch.lib.util.HSLibs;
 import mods.hinasch.unsaga.ability.AbilityLearningEvent;
 import mods.hinasch.unsaga.ability.specialmove.action.StatePropertySpecialMove;
 import mods.hinasch.unsaga.core.event.EventOnBed;
 import mods.hinasch.unsaga.core.event.EventToolTipUnsaga;
+import mods.hinasch.unsaga.core.event.UnsagaMobDrops;
 import mods.hinasch.unsaga.core.event.foodstats.EventReplaceFoodStats;
+import mods.hinasch.unsaga.core.event.livingupdate.LivingUpdateLPRestoreEvent;
 import mods.hinasch.unsaga.lp.event.LPEvents;
 import mods.hinasch.unsaga.skillpanel.WorldSaveDataSkillPanel;
 import mods.hinasch.unsaga.status.AdditionalStatus;
@@ -28,8 +32,9 @@ public class UnsagaModEvents {
 		LPEvents.register();
 		AdditionalStatus.register();
 		AdditionalStatusEvents.register();
-
+		(new UnsagaMobDrops()).init();
 		StatePropertySpecialMove.register();
+		EventConfigChanged.instance().addConfigHandler(UnsagaMod.MODID, UnsagaMod.configHandler);
 //		HSLib.core().events.livingHurt.getEventsMiddle().add(new ILivingHurtEvent(){
 //
 //			@Override
@@ -65,6 +70,7 @@ public class UnsagaModEvents {
 		HSLibs.registerEvent(new EventReplaceFoodStats());
 		HSLibs.registerEvent(new UnsagaVillagerInteraction());
 		HSLibs.registerEvent(new WorldSaveDataSkillPanel.SkillPanelSyncEvent());
+		HSLibEvents.livingUpdate.getEvents().add(new LivingUpdateLPRestoreEvent());
 
 	}
 }

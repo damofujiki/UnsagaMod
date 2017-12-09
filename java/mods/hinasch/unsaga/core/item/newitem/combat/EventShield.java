@@ -9,7 +9,7 @@ import mods.hinasch.unsaga.UnsagaMod;
 import mods.hinasch.unsaga.ability.AbilityAPI;
 import mods.hinasch.unsaga.damage.DamageSourceUnsaga;
 import mods.hinasch.unsaga.material.UnsagaMaterial;
-import mods.hinasch.unsaga.material.UnsagaMaterialTool;
+import mods.hinasch.unsaga.material.UnsagaMaterialCapability;
 import mods.hinasch.unsaga.skillpanel.SkillPanelAPI;
 import mods.hinasch.unsaga.skillpanel.SkillPanelRegistry;
 import mods.hinasch.unsaga.util.LivingHurtEventUnsagaBase;
@@ -52,8 +52,8 @@ public class EventShield {
 		@Override
 		public DamageSource process(LivingHurtEvent e, DamageSourceUnsaga dsu) {
 			ItemStack shield = e.getEntityLiving().getActiveItemStack();
-			if(UnsagaMaterialTool.adapter.hasCapability(shield)){
-				UnsagaMaterial m = UnsagaMaterialTool.adapter.getCapability(shield).getMaterial();
+			if(UnsagaMaterialCapability.adapter.hasCapability(shield)){
+				UnsagaMaterial m = UnsagaMaterialCapability.adapter.getCapability(shield).getMaterial();
 				if(!dsu.isUnblockable()){
 
 					float reduce = e.getAmount() * ((float)m.getShieldPower() * 0.01F);

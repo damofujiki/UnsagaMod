@@ -11,13 +11,27 @@ import net.minecraft.util.EnumActionResult;
 
 public abstract class ActionBase<T extends IActionPerformer> implements ISpecialActionBase<T>{
 
+	/** アクションリスト、順に起動する。最後に返したリサルトが帰ってくる*/
 	protected List<IAction<T>> actionList = Lists.newArrayList();
 
 
 
+	boolean isBenefical = false;
+
+
+
+	public boolean isBenefical() {
+		return isBenefical;
+	}
+
+	public ISpecialActionBase<T> setBenefical(boolean isBenefical) {
+		this.isBenefical = isBenefical;
+		return this;
+	}
 
 	@Override
 	public EnumActionResult perform(T context) {
+		UnsagaMod.logger.trace(this.getClass().getName(), context.getWorld());
 		EnumActionResult result = EnumActionResult.PASS;
 		for(IAction<T> act:this.actionList){
 			result = act.apply(context);

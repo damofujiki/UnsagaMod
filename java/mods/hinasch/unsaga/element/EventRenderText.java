@@ -50,7 +50,7 @@ public class EventRenderText extends Gui{
                 			int x =offsetx+ (16+margin)*type.getMeta();
                 			float elm = table.get(type);
                 			String str = String.valueOf(elm);
-                			this.drawString(ClientHelper.getFontRendererFromMCInstance(), str, x, offsety + 16 + 2, 0xffffff);
+                			this.drawString(ClientHelper.fontRenderer(), str, x, offsety + 16 + 2, 0xffffff);
                 		}
         			}
         		}

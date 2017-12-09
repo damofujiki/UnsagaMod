@@ -25,7 +25,8 @@ import mods.hinasch.unsaga.chest.TrapChest;
 import mods.hinasch.unsaga.chest.TrapChestRegistry;
 import mods.hinasch.unsaga.core.client.gui.GuiChest;
 import mods.hinasch.unsaga.core.net.packet.PacketGuiButtonUnsaga;
-import mods.hinasch.unsaga.core.net.packet.newpacket.PacketSyncSkillPanel;
+import mods.hinasch.unsaga.core.net.packet.PacketSyncSkillPanel;
+import mods.hinasch.unsaga.core.stats.UnsagaAchievementRegistry;
 import mods.hinasch.unsaga.init.UnsagaGui;
 import mods.hinasch.unsaga.skillpanel.SkillPanel;
 import mods.hinasch.unsaga.skillpanel.SkillPanelAPI;
@@ -92,6 +93,8 @@ public class ContainerChestUnsaga extends ContainerBase{
 		if(WorldHelper.isServer(this.ep.getEntityWorld())){
 			UnsagaMod.packetDispatcher.sendTo(PacketSyncSkillPanel.create(openPlayer),(EntityPlayerMP) this.openPlayer);
 		}
+
+		this.ep.addStat(UnsagaAchievementRegistry.instance().firstChest);
 
 
 	}

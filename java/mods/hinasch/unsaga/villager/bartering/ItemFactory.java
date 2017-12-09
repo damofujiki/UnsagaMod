@@ -21,6 +21,7 @@ import mods.hinasch.unsaga.material.SuitableLists;
 import mods.hinasch.unsaga.material.UnsagaMaterial;
 import mods.hinasch.unsaga.material.UnsagaMaterials;
 import mods.hinasch.unsaga.util.ToolCategory;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.WeightedRandom;
 
@@ -69,6 +70,9 @@ public class ItemFactory {
 				//生素材の場合
 				if(chosenCategory==ToolCategory.RAW_MATERIAL){
 					stack = MaterialItemAssociatedRegistry.instance().getAssociatedStack(chosenMaterial);
+					if(stack==null){
+						stack = new ItemStack(Items.FEATHER);
+					}
 				}else{
 					if(SuitableLists.instance().getSuitableList(chosenCategory)!=null){
 						//出来損ない武器になってしまう場合、確率で他の適合する素材になる
@@ -143,7 +147,10 @@ public class ItemFactory {
 		public List<ItemStack> createMerchandises(int amount,int generateLevel,Collection<ToolCategory> availables,Set<UnsagaMaterial> strictMaterials){
 			List<ItemStack> stacks = super.createMerchandises(amount, generateLevel, availables, strictMaterials);
 			stacks.forEach(in ->{
-				MerchandiseCapability.adapter.getCapability(in).setMerchandise(true);
+				if(MerchandiseCapability.adapter.hasCapability(in)){
+					MerchandiseCapability.adapter.getCapability(in).setMerchandise(true);
+				}
+
 			});
 
 			return stacks;

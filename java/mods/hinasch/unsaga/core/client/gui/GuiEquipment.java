@@ -10,6 +10,7 @@ import mods.hinasch.lib.client.GuiContainerBase;
 import mods.hinasch.lib.core.HSLib;
 import mods.hinasch.lib.item.ItemUtil;
 import mods.hinasch.lib.misc.XY;
+import mods.hinasch.lib.network.PacketSendGuiInfoToClient;
 import mods.hinasch.lib.util.HSLibs;
 import mods.hinasch.lib.world.EnvironmentalManager;
 import mods.hinasch.lib.world.EnvironmentalManager.EnvironmentalCondition;
@@ -24,12 +25,15 @@ import mods.hinasch.unsaga.status.UnsagaXPCapability;
 import mods.hinasch.unsaga.util.UnsagaTextFormatting;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
 public class GuiEquipment extends GuiContainerBase{
 
 	protected EntityPlayer player;
 	protected World world;
+	boolean hasSync = false;
+	boolean hasUnlockedDechiphering = false;
 
 	public static final int BUTTON_OPEN_SKILLS = 1;
 	public static final int BUTTON_OPEN_BLEND = 2;
@@ -101,24 +105,24 @@ public class GuiEquipment extends GuiContainerBase{
 		//			fontRendererObj.drawString("Spawn Point:"+this.player.getBedLocation(world.provider.getDimension()),8,165,0xffffff);
 		//		}
 
-//		fontRendererObj.drawString(HSLibs.translateKey("condition.environment")+":"+this.getBiomeEnv(world,pos),8,72,0x404040);
+		//		fontRendererObj.drawString(HSLibs.translateKey("condition.environment")+":"+this.getBiomeEnv(world,pos),8,72,0x404040);
 
 
 	}
 
 	@Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks)
-    {
-    	super.drawScreen(mouseX, mouseY, partialTicks);
-    	UnsagaXPCapability.displayAdditionalXP(player, fontRendererObj,
-    			EnumSet.of(UnsagaXPCapability.Type.DECIPHER,UnsagaXPCapability.Type.SKILL),
-    			this.getWindowStartX() + 150,this.getWindowStartY() + 46,0);
-//    	if(HSLib.configHandler.isDebug()){
-//    		this.drawHoveringText(Lists.newArrayList(String.valueOf(mouseX - this.getWindowsStartX()),String.valueOf(mouseY - this.getWindowsStartY())), mouseX, mouseY);
-//    	}
+	public void drawScreen(int mouseX, int mouseY, float partialTicks)
+	{
+		super.drawScreen(mouseX, mouseY, partialTicks);
+		UnsagaXPCapability.displayAdditionalXP(player, fontRendererObj,
+				EnumSet.of(UnsagaXPCapability.Type.DECIPHER,UnsagaXPCapability.Type.SKILL),
+				this.getWindowStartX() + 150,this.getWindowStartY() + 46,0);
+		//    	if(HSLib.configHandler.isDebug()){
+		//    		this.drawHoveringText(Lists.newArrayList(String.valueOf(mouseX - this.getWindowsStartX()),String.valueOf(mouseY - this.getWindowsStartY())), mouseX, mouseY);
+		//    	}
 
 
-    }
+	}
 	protected String getBiomeEnv(World world,XYZPos pos){
 
 		EnvironmentalCondition status = EnvironmentalManager.getCondition(world, pos, world.getBiome(pos),player);
@@ -126,7 +130,7 @@ public class GuiEquipment extends GuiContainerBase{
 		if(HSLib.configHandler.isDebug()){
 			debug = "%s/HealTime:%d/Temp:%.2f/Humid:%.2f";
 			debug = String.format(debug, status.getType().getName(),HealTimerCalculator.calcHealTimer(player),status.getTemp(),status.getHumid());
-//			debug = "/HealTimer:"+HealTimerCalculator.calcHealTimer(player)+"/Temp:"+status.getTemp()+"/Humid:"+status.getHumid();
+			//			debug = "/HealTimer:"+HealTimerCalculator.calcHealTimer(player)+"/Temp:"+status.getTemp()+"/Humid:"+status.getHumid();
 		}
 		return HSLibs.translateKey(status.getType().getName())+debug;
 
@@ -156,12 +160,29 @@ public class GuiEquipment extends GuiContainerBase{
 			}
 		}
 		if(icon.id==DECIPHERING_POINT){
-			list.add(HSLibs.translateKey("gui.unsaga.status.decipheringPoint"));
+			if(this.hasSync){
+				list.add(HSLibs.translateKey("gui.unsaga.status.decipheringPoint"));
+				if(!this.hasUnlockedDechiphering){
+					list.add(UnsagaTextFormatting.SIGNIFICANT+"Get Magic Tablet To Unlock This");
+				}
+			}else{
+				this.hasSync = true;
+				HSLib.core().getPacketDispatcher().sendToServer(PacketSendGuiInfoToClient.request());
+			}
+
+
+
 		}
 		if(icon.id==SKILL_POINT){
 			list.add(HSLibs.translateKey("gui.unsaga.status.skillPoint"));
 		}
 		return list;
+	}
+
+	@Override
+	public void onPacketFromServer(NBTTagCompound message){
+		this.hasUnlockedDechiphering = message.getBoolean("isUnlockDecipher");
+//		super.onPacketFromServer(message);
 	}
 	public EnvironmentalCondition getCondition(){
 		XYZPos pos = XYZPos.createFrom(player);
@@ -189,7 +210,7 @@ public class GuiEquipment extends GuiContainerBase{
 			if(gui instanceof GuiEquipment){
 				GuiEquipment eqGui = (GuiEquipment) gui;
 				EnvironmentalCondition status = eqGui.getCondition();
-//				UnsagaMod.logger.trace("tes", status.getType());
+				//				UnsagaMod.logger.trace("tes", status.getType());
 				return new XY(u+16*status.getType().getIconNumber(),v);
 			}
 			return new XY(0,168);
@@ -210,4 +231,6 @@ public class GuiEquipment extends GuiContainerBase{
 		}
 
 	}
+
+
 }

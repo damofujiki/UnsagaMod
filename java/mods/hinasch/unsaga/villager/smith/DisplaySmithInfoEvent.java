@@ -7,7 +7,7 @@ import mods.hinasch.unsaga.core.client.gui.GuiSmithUnsaga;
 import mods.hinasch.unsaga.material.MaterialItemAssociatedRegistry;
 import mods.hinasch.unsaga.material.SuitableLists;
 import mods.hinasch.unsaga.material.UnsagaMaterial;
-import mods.hinasch.unsaga.material.UnsagaMaterialTool;
+import mods.hinasch.unsaga.material.UnsagaMaterialCapability;
 import mods.hinasch.unsaga.util.ToolCategory;
 import mods.hinasch.unsaga.util.UnsagaTextFormatting;
 import net.minecraft.item.ItemStack;
@@ -31,9 +31,12 @@ public class DisplaySmithInfoEvent {
 				if(MaterialItemAssociatedRegistry.instance().getMaterialFromStack(stack).isPresent()){
 					material = MaterialItemAssociatedRegistry.instance().getMaterialFromStack(stack).get();
 				}
-				if(UnsagaMaterialTool.adapter.hasCapability(stack)){
+				if(SmithMaterialRegistry.instance().find(stack).isPresent()){
+					material = SmithMaterialRegistry.instance().find(stack).get().getMaterial();
+				}
+				if(UnsagaMaterialCapability.adapter.hasCapability(stack)){
 
-					material = UnsagaMaterialTool.adapter.getCapability(stack).getMaterial();
+					material = UnsagaMaterialCapability.adapter.getCapability(stack).getMaterial();
 
 				}
 

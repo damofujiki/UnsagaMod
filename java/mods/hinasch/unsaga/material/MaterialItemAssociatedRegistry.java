@@ -4,6 +4,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalDouble;
 
+import javax.annotation.Nullable;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
@@ -49,6 +51,7 @@ public class MaterialItemAssociatedRegistry {
 		addAssociation(materials.iron, new ItemStack(Items.IRON_INGOT,1),0.5F);
 		addAssociation(materials.ironOre, new ItemStack(Blocks.IRON_ORE,1),0.5F);
 		addAssociation(materials.diamond, new ItemStack(Items.DIAMOND,1),0.5F);
+
 	}
 
 	protected void registerOthers(){
@@ -78,11 +81,11 @@ public class MaterialItemAssociatedRegistry {
 	public Optional<UnsagaMaterial> getMaterialFromStack(ItemStack is){
 		return this.materialAssociatedItems.entrySet().stream().filter(in -> in.getValue().isItemEqual(is)).map(in -> in.getKey()).findFirst();
 	}
-	public ItemStack getAssociatedStack(UnsagaMaterial m){
+	public @Nullable ItemStack getAssociatedStack(UnsagaMaterial m){
 		if(this.materialAssociatedItems.containsKey(m)){
 			return this.materialAssociatedItems.get(m);
 		}
-		return new ItemStack(Items.FEATHER,1);
+		return null;
 	}
 	protected void validate(){
 		UnsagaMod.core.materialsNew.merchandiseMaterial.stream().forEach(in ->{

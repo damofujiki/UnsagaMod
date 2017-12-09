@@ -8,7 +8,7 @@ import com.google.common.collect.Sets;
 
 import mods.hinasch.lib.entity.EntityThrowableItem;
 import mods.hinasch.lib.util.VecUtil;
-import mods.hinasch.unsaga.core.client.render.projectile.IRotation;
+import mods.hinasch.unsaga.core.client.IRotation;
 import mods.hinasch.unsaga.core.entity.IItemStackable;
 import mods.hinasch.unsaga.damage.DamageSourceUnsaga;
 import mods.hinasch.unsaga.damage.DamageTypeUnsaga.General;

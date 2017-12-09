@@ -4,6 +4,7 @@ import java.util.function.Function;
 
 import mods.hinasch.lib.core.HSLib;
 import mods.hinasch.lib.sync.AsyncUpdateEvent;
+import mods.hinasch.unsaga.UnsagaMod;
 import mods.hinasch.unsaga.common.specialaction.ActionBase.IAction;
 import mods.hinasch.unsaga.common.specialaction.IActionPerformer.TargetType;
 import net.minecraft.util.EnumActionResult;
@@ -15,11 +16,12 @@ public class ActionAsyncEvent<T extends IActionPerformer> implements IAction<T>{
 
 	@Override
 	public EnumActionResult apply(T context) {
+		UnsagaMod.logger.trace("magic", context.getWorld());
 		if(context.getTargetType()==TargetType.POSITION){
 			if(context.getTargetCoordinate().isPresent()){
 				AsyncUpdateEvent event = this.eventGetter.apply(context);
 				if(event!=null){
-					HSLib.core().events.scannerEventPool.addEvent(event);
+					HSLib.core().addAsyncEvent(event.getSender(), event);
 				}
 
 				return EnumActionResult.SUCCESS;
@@ -27,8 +29,9 @@ public class ActionAsyncEvent<T extends IActionPerformer> implements IAction<T>{
 
 		}else{
 			AsyncUpdateEvent event = this.eventGetter.apply(context);
+
 			if(event!=null){
-				HSLib.core().events.scannerEventPool.addEvent(event);
+				HSLib.core().addAsyncEvent(event.getSender(), event);
 			}
 
 			return EnumActionResult.SUCCESS;
@@ -38,9 +41,13 @@ public class ActionAsyncEvent<T extends IActionPerformer> implements IAction<T>{
 		return EnumActionResult.PASS;
 	}
 
-	public ActionAsyncEvent setEventFactory(Function<T,AsyncUpdateEvent> factory){
+	public ActionAsyncEvent setEventFactory(AsyncEventFactory<T> factory){
 		this.eventGetter = factory;
 		return this;
 	}
 
+
+	public static interface AsyncEventFactory<V> extends Function<V,AsyncUpdateEvent>{
+
+	}
 }

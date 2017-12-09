@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -37,7 +39,8 @@ public class StatePropertyPotion extends StateProperty{
 		public Optional<XYZPos> stoppedPos = Optional.empty();
 		public Set<EntityAITasks.EntityAITaskEntry> backup = Sets.newHashSet();
 		public EntityAIBase addedTask;
-		public boolean hasAddedFearTask = false;
+		boolean hasAddedFearTask = false;
+		boolean hasInitStoppedPos = false;
 
 		public boolean isHasAddedFearTask() {
 			return hasAddedFearTask;
@@ -45,6 +48,14 @@ public class StatePropertyPotion extends StateProperty{
 
 		public void setHasAddedFearTask(boolean hasAddedFearTask) {
 			this.hasAddedFearTask = hasAddedFearTask;
+		}
+
+		public void setHasInitFreezePos(boolean b){
+			this.hasInitStoppedPos = b;
+		}
+
+		public boolean hasInitFreezePos(){
+			return this.hasInitStoppedPos;
 		}
 
 		protected void backUpTask(EntityCreature c){
@@ -75,7 +86,7 @@ public class StatePropertyPotion extends StateProperty{
 		public Optional<XYZPos> getStoppedPos(){
 			return this.stoppedPos;
 		}
-		public void setStoppedPos(XYZPos pos){
+		public void setStoppedPos(@Nullable XYZPos pos){
 			if(pos!=null){
 				this.stoppedPos = Optional.of(pos);
 			}else{
@@ -87,11 +98,16 @@ public class StatePropertyPotion extends StateProperty{
 			if(this.stoppedPos.isPresent()){
 				this.stoppedPos.get().writeToNBT(tag);
 			}
+			tag.setBoolean("hasInitFreezePos", hasInitStoppedPos);
 			return tag;
 		}
 
 		public NBTTagCompound readNBT(NBTTagCompound tag){
 			this.setStoppedPos(XYZPos.readFromNBT(tag));
+			if(tag.hasKey("hasInitFreezePos")){
+				this.setHasInitFreezePos(tag.getBoolean("hasInitFreezePos"));
+			}
+
 			return tag;
 		}
 	}

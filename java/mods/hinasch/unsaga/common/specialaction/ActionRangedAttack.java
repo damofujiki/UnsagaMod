@@ -3,7 +3,6 @@ package mods.hinasch.unsaga.common.specialaction;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 import javax.annotation.Nullable;
@@ -11,6 +10,7 @@ import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 
 import mods.hinasch.lib.entity.RangedHelper;
+import mods.hinasch.lib.entity.RangedHelper.RangedSelector;
 import mods.hinasch.unsaga.ability.specialmove.SpecialMoveInvoker;
 import mods.hinasch.unsaga.common.specialaction.ActionBase.IAction;
 import mods.hinasch.unsaga.damage.DamageSourceUnsaga;
@@ -25,8 +25,8 @@ public class ActionRangedAttack<T extends IActionPerformer> implements IAction<T
 
 	boolean isAttack = true;
 	Function<T,List<AxisAlignedBB>> boundingBoxMaker;
-	BiPredicate<RangedHelper<T>,EntityLivingBase> entitySelector = (self,target)->true;
-	BiConsumer<RangedHelper<T>,EntityLivingBase> subConsumer = (self,target)->{};
+	RangedSelector<T,EntityLivingBase> entitySelector = (self,target)->true;
+	SubConsumer<T> subConsumer = (self,target)->{};
 	ActionStatusEffect<T> debuffSetter;
 	final EnumSet<General> damageType;
 	EnumSet<Sub> subDamageType = EnumSet.noneOf(Sub.class);
@@ -72,7 +72,7 @@ public class ActionRangedAttack<T extends IActionPerformer> implements IAction<T
 		return this;
 	}
 
-	public ActionRangedAttack<T> setSubBehavior(BiConsumer<RangedHelper<T>,EntityLivingBase> selector){
+	public ActionRangedAttack<T> setSubBehavior(SubConsumer<T> selector){
 		this.subConsumer = selector;
 		return this;
 	}
@@ -81,7 +81,7 @@ public class ActionRangedAttack<T extends IActionPerformer> implements IAction<T
 		this.subDamageType = EnumSet.copyOf(Lists.newArrayList(subs));
 		return this;
 	}
-	public ActionRangedAttack<T> setEntitySelector(BiPredicate<RangedHelper<T>,EntityLivingBase> selector){
+	public ActionRangedAttack<T> setEntitySelector(RangedSelector<T,EntityLivingBase> selector){
 		this.entitySelector = selector;
 		return this;
 	}
@@ -139,6 +139,9 @@ public class ActionRangedAttack<T extends IActionPerformer> implements IAction<T
 
 	}
 
+	public static interface SubConsumer<T> extends BiConsumer<RangedHelper<T>,EntityLivingBase>{
+
+	}
 	public static class PlayerBoundingBox<V extends IActionPerformer> implements Function<V,List<AxisAlignedBB>> {
 
 		final double range;

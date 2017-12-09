@@ -1,17 +1,20 @@
 package mods.hinasch.unsaga.villager.bartering;
 
 import java.util.List;
+import java.util.OptionalInt;
 import java.util.Set;
 
 import javax.annotation.Nullable;
 
 import mods.hinasch.lib.item.ItemUtil.ItemStackList;
 import mods.hinasch.lib.misc.Triplet;
+import mods.hinasch.unsaga.UnsagaMod;
 import mods.hinasch.unsaga.material.UnsagaMaterial;
 import mods.hinasch.unsaga.util.ToolCategory;
 import mods.hinasch.unsaga.villager.UnsagaVillagerCapability;
 import mods.hinasch.unsaga.villager.bartering.ItemFactory.MerchandiseFactory;
 import net.minecraft.entity.passive.EntityVillager;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.village.Village;
@@ -50,14 +53,35 @@ public class MerchantBehavior {
 		}
 	}
 
-	private void checkDistributionLevelUp(){
+	private void syncDistributionLevel(){
+		OptionalInt optMaxDistLevel = this.world.getEntitiesWithinAABB(EntityVillager.class, this.villager.getEntityBoundingBox().expandXyz(30.0D)).stream().filter(in-> UnsagaVillagerCapability.adapter.hasCapability(in))
+				.mapToInt(in -> UnsagaVillagerCapability.adapter.getCapability(in).getDistributionLevel()).max();
+
+		int current = UnsagaVillagerCapability.adapter.getCapability(villager).getDistributionLevel();
+
+		if(optMaxDistLevel.isPresent()){
+			if(current<optMaxDistLevel.getAsInt()){
+				UnsagaVillagerCapability.adapter.getCapability(villager).setDistributionLevel(optMaxDistLevel.getAsInt());
+			}
+		}
+	}
+	private void checkDistributionLevelUp(EntityPlayer ep){
 		if(UnsagaVillagerCapability.adapter.hasCapability(villager)){
 			int threshold = BarteringUtil.calcNextTransactionThreshold(UnsagaVillagerCapability.adapter.getCapability(villager).getDistributionLevel());
 			if(UnsagaVillagerCapability.adapter.getCapability(villager).getTransactionPoint()>=threshold){
 				int base = UnsagaVillagerCapability.adapter.getCapability(villager).getDistributionLevel();
 				UnsagaVillagerCapability.adapter.getCapability(villager).setDistributionLevel(base+1);
 				UnsagaVillagerCapability.adapter.getCapability(villager).setTransactionPoint(0);
+
+				if(UnsagaVillagerCapability.adapter.getCapability(villager).getDistributionLevel()>=5){
+					ep.addStat(UnsagaMod.core.achievements.bartering2);
+				}
+				if(UnsagaVillagerCapability.adapter.getCapability(villager).getDistributionLevel()>=10){
+					ep.addStat(UnsagaMod.core.achievements.bartering3);
+				}
 			}
+
+			this.syncDistributionLevel();
 		}
 	}
 	public boolean hasDisplayedSecrets(){
@@ -77,13 +101,13 @@ public class MerchantBehavior {
 	 * 生成レベル２：(店レベル +流通レベル*4)/10・・・商品の半分<br>
 	 * 生成レベル３：生成レベル２に＋２したもの・・・目利き<br>
 	 */
-	public void updateMerchandises(){
+	public void updateMerchandises(EntityPlayer ep){
 
 
 
 		if(UnsagaVillagerCapability.adapter.hasCapability(villager)){
 
-			this.checkDistributionLevelUp();
+			this.checkDistributionLevelUp(ep);
 			UnsagaVillagerCapability.adapter.getCapability(villager).setStockedTime(this.world.getTotalWorldTime());
 			int distLV = UnsagaVillagerCapability.adapter.getCapability(villager).getDistributionLevel();
 			Triplet<Integer,Integer,Integer> generateLevel = this.getGenerateLevels(distLV);

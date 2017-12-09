@@ -12,6 +12,7 @@ import mods.hinasch.lib.iface.IRequireInitializing;
 import mods.hinasch.lib.network.PacketSyncCapability;
 import mods.hinasch.lib.util.HSLibs;
 import mods.hinasch.lib.util.UtilNBT;
+import mods.hinasch.lib.world.WorldHelper;
 import mods.hinasch.lib.world.XYZPos;
 import mods.hinasch.unsaga.UnsagaMod;
 import mods.hinasch.unsaga.core.event.foodstats.HealTimerCalculator;
@@ -20,6 +21,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
@@ -329,38 +331,47 @@ public class LifePoint {
 		}
 		@Override
 		public void onUpdate(EntityLivingBase liv){
+			if(WorldHelper.isClient(liv.getEntityWorld())){
+				return;
+			}
 			if(liv instanceof EntityPlayer){
-				EntityPlayer ep = (EntityPlayer) liv;
-				if(ep.getFoodStats().getSaturationLevel()>0.0F && ep.getFoodStats().getFoodLevel()>=20){
-					this.incrHealTimer();
-					if(this.getHealTimer() >=10){
-//		                float f = Math.min(ep.getFoodStats().getSaturationLevel(), 4.0F);
-//		                ep.heal(f / 4.0F);
-//		                ep.getFoodStats().addExhaustion(f);
-//		                this.setHealTimer(0);
-//		                UnsagaMod.logger.trace(this.getClass().getName(), "healed");
-					}
-				}else if(ep.getFoodStats().getFoodLevel()>=18){
-					this.incrHealTimer();
-	                UnsagaMod.logger.trace(this.getClass().getName(), "healed",this.getHealTimer());
-					int healThreshold = HealTimerCalculator.calcHealTimer(ep);
-					if(this.getHealTimer()>=healThreshold){
-		                ep.heal(1.0F);
-		                ep.getFoodStats().addExhaustion(4.0F);
-		                this.setHealTimer(0);
-
-					}
-				}
+				this.playerNaturalHeal((EntityPlayer) liv);
 			}else{
-				this.incrHealTimer();
-				int healThreshold = HealTimerCalculator.calcHealTimer(liv);
-				if(this.getHealTimer()>=healThreshold){
-					liv.heal(1.0F);
-					this.setHealTimer(0);
+				if(UnsagaMod.configHandler.isEnabledLifePointSystem()){
+					this.incrHealTimer();
+					int healThreshold = HealTimerCalculator.calcHealTimer(liv);
+					if(this.getHealTimer()>=healThreshold){
+						liv.heal(1.0F);
+						this.setHealTimer(0);
+					}
 				}
+
 			}
 		}
 
+		private void playerNaturalHeal(EntityPlayer ep){
+			int healThreshold = HealTimerCalculator.calcHealTimer(ep);
+			if(ep.getFoodStats().getSaturationLevel()>0.0F && ep.getFoodStats().getFoodLevel()>=20 && ep.shouldHeal()){
+				this.incrHealTimer();
+				if(this.getHealTimer() >=MathHelper.clamp_int(healThreshold-50, 10, 65535)){
+	                float f = Math.min(ep.getFoodStats().getSaturationLevel(), 4.0F);
+	                ep.heal(f / 4.0F);
+	                ep.getFoodStats().addExhaustion(f);
+	                this.setHealTimer(0);
+	                UnsagaMod.logger.trace(this.getClass().getName(), "healed");
+				}
+			}else if(ep.getFoodStats().getFoodLevel()>=18 && ep.shouldHeal()){
+				this.incrHealTimer();
+                UnsagaMod.logger.trace(this.getClass().getName(), "healed",this.getHealTimer());
+
+				if(this.getHealTimer()>=healThreshold){
+	                ep.heal(1.0F);
+	                ep.getFoodStats().addExhaustion(4.0F);
+	                this.setHealTimer(0);
+
+				}
+			}
+		}
 //		public void onupd(EntityLivingBase living) {
 //			if(living.getHealth()>=living.getMaxHealth() && this.getLifePoint()<this.getMaxLifePoint()){
 //				this.lifeRestoreTimer ++;

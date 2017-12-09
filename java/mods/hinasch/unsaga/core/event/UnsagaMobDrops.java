@@ -1,15 +1,18 @@
 package mods.hinasch.unsaga.core.event;
 
+import java.util.function.Function;
+
 import mods.hinasch.lib.core.HSLib;
 import mods.hinasch.lib.item.CustomDropEvent;
 import mods.hinasch.lib.item.CustomDropEvent.DropItemStack;
 import mods.hinasch.unsaga.UnsagaMod;
 import mods.hinasch.unsaga.core.entity.mob.EntityRuffleTree;
+import mods.hinasch.unsaga.core.entity.mob.EntitySignalTree;
 import mods.hinasch.unsaga.core.entity.mob.EntityTreasureSlime;
 import mods.hinasch.unsaga.core.entity.passive.EntityUnsagaChestNew;
 import mods.hinasch.unsaga.core.potion.UnsagaPotions;
 import mods.hinasch.unsaga.material.RawMaterialItemRegistry;
-import mods.hinasch.unsagamagic.spell.TabletRegistry;
+import mods.hinasch.unsagamagic.spell.tablet.TabletRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityEnderman;
@@ -18,12 +21,14 @@ import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.monster.EntityWitch;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 
 public class UnsagaMobDrops {
-	protected CustomDropEvent dropTablet = new CustomDropEvent(){
+	protected CustomDropEvent<ItemStack> dropTablet = new CustomDropEvent<ItemStack>(){
+
 
 		@Override
 		public boolean canDrop(DamageSource source,EntityLivingBase entityDrops,int looting){
@@ -43,6 +48,13 @@ public class UnsagaMobDrops {
 //			}
 			return false;
 		}
+		@Override
+		public Droppable<ItemStack> getDroppable(LivingDropsEvent e){
+
+			DropItemStack drop = new DropItemStack(TabletRegistry.getRandomTabletByWeight(e.getEntityLiving().getRNG()).getStack(1));
+			return drop;
+		}
+
 		@Override
 		public int getDropValue(DamageSource source,EntityLivingBase entityDrops,int looting){
 			int prob = 1;
@@ -75,23 +87,26 @@ public class UnsagaMobDrops {
 			}
 			return prob + (10*looting);
 		}
-		@Override
-		public ItemStack getItemStack(LivingDropsEvent e){
-			return TabletRegistry.getRandomTablet(e.getEntityLiving().getRNG());
-			//return TabletHelper.getRandomMagicTablet(e.entityLiving.getRNG());
-		}
+
 	};
 
 
-	protected CustomDropEvent dropChest = new CustomDropEvent(){
-		public boolean canDrop(EntityLivingBase entityDrops,int looting){
+	protected CustomDropEvent<Entity> dropChest = new CustomDropEvent<Entity>(){
+		public boolean canDrop(DamageSource souce,EntityLivingBase entityDrops,int looting){
 			if(entityDrops instanceof IMob){
 				return true;
 			}
 			return false;
 		}
 
-		public int getDropValue(EntityLivingBase entityDrops,int looting){
+		@Override
+		public Droppable<Entity> getDroppable(LivingDropsEvent e){
+
+			DropEntity drop = new DropEntity(new EntityUnsagaChestNew(e.getEntityLiving().getEntityWorld()));
+
+			return drop;
+		}
+		public int getDropValue(DamageSource souce,EntityLivingBase entityDrops,int looting){
 			int prob = 20;
 			if(entityDrops instanceof EntitySlime){
 				switch(this.getSlimeSize(entityDrops)){
@@ -120,13 +135,10 @@ public class UnsagaMobDrops {
 			prob = 20;
 			return prob + (10*looting);
 		}
-		@Override
-		public Entity getEntity(LivingDropsEvent e){
-			return new EntityUnsagaChestNew(e.getEntityLiving().getEntityWorld());
-		}
+
 	};
 
-	protected CustomDropEvent dropChitin = new CustomDropEvent(new DropItemStack(RawMaterialItemRegistry.instance().chitin.getItemStack(1))){
+	protected CustomDropEvent<ItemStack> dropChitin = new CustomDropEvent<ItemStack>(new DropItemStack(RawMaterialItemRegistry.instance().chitin.getItemStack(1))){
 		@Override
 		public boolean canDrop(DamageSource source,EntityLivingBase entityDrops,int looting){
 
@@ -138,7 +150,7 @@ public class UnsagaMobDrops {
 			return 30 + (10*looting);
 		}
 	};
-	protected CustomDropEvent dropNugget = new CustomDropEvent(){
+	protected CustomDropEvent<ItemStack> dropNugget = new CustomDropEvent<ItemStack>(new DropItemStack(new ItemStack(Items.GOLD_NUGGET,1))){
 		@Override
 		public boolean canDrop(DamageSource source,EntityLivingBase entityDrops,int looting){
 			EntityLivingBase living = (EntityLivingBase) source.getEntity();
@@ -155,30 +167,39 @@ public class UnsagaMobDrops {
 
 
 	};
-	protected CustomDropEvent dropMush = new CustomDropEvent(){
+	protected CustomDropEvent<ItemStack> dropMush = new CustomDropEvent<ItemStack>(){
 		@Override
 		public boolean canDrop(DamageSource source,EntityLivingBase entityDrops,int looting){
 			if(entityDrops instanceof EntityRuffleTree){
 				return true;
 
 			}
+			if(entityDrops instanceof EntitySignalTree){
+				return true;
 
+			}
 			return false;
 		}
+
+		@Override
+		public Droppable<ItemStack> getDroppable(LivingDropsEvent e){
+			Function<LivingDropsEvent,ItemStack> func = in ->{
+				if(e.getEntityLiving().getRNG().nextInt(2)==0){
+					return new ItemStack(Blocks.RED_MUSHROOM);
+				}
+				return new ItemStack(Blocks.BROWN_MUSHROOM);
+			};
+			ItemStack is = func.apply(e);
+			DropItemStack drop = new DropItemStack(is);
+			return drop;
+		}
+
 
 		@Override
 		public int getDropValue(DamageSource source,EntityLivingBase entityDrops,int looting){
 			return 100;
 		}
 
-
-		@Override
-		public ItemStack getItemStack(LivingDropsEvent e){
-			if(e.getEntityLiving().getRNG().nextInt(2)==0){
-				return new ItemStack(Blocks.RED_MUSHROOM);
-			}
-			return new ItemStack(Blocks.BROWN_MUSHROOM);
-		}
 	};
 	public void init(){
 		HSLib.core().addMobDrop(dropTablet.setLogger(UnsagaMod.logger,"TabletDrop"));

@@ -210,7 +210,7 @@ public class GuiChest extends GuiContainerBase{
 
 	}
 
-	public static class IconTrap extends Icon{
+	public static class IconTrap extends Icon<GuiChest>{
 
 		final TrapChest trap;
 		public IconTrap(int id, int x, int y, int u, int v, boolean hover,TrapChest trap) {
@@ -219,9 +219,12 @@ public class GuiChest extends GuiContainerBase{
 			// TODO 自動生成されたコンストラクター・スタブ
 		}
 
-		public boolean isVisible(GuiContainerBase gui){
+		public boolean isVisible(GuiChest gui){
 			if(gui instanceof GuiChest){
-				return ((GuiChest) gui).theChest.getTraps().contains(trap);
+
+				IChestCapability capa = gui.theChest;
+				if(capa.hasAnalyzed() || gui.openPlayer.isCreative())
+				return capa.getTraps().contains(trap);
 			}
 			return false;
 		}

@@ -27,6 +27,7 @@ import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 
+@Deprecated
 public class LPLogicManager {
 
 	public static class EventContainer{

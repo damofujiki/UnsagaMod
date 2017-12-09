@@ -1,17 +1,13 @@
 package mods.hinasch.unsaga.init;
 
-import java.util.Map;
+import java.util.function.Function;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import mods.hinasch.lib.config.ConfigBase;
 import mods.hinasch.lib.config.PropertyCustomNew;
-import mods.hinasch.lib.config.SplittedStringWrapper;
-import mods.hinasch.lib.iface.IParser;
+import mods.hinasch.lib.util.HSLibs;
 import mods.hinasch.lib.world.XYZPos;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class UnsagaConfigHandler extends ConfigBase{
 
@@ -23,47 +19,36 @@ public class UnsagaConfigHandler extends ConfigBase{
 		public boolean enableRuby = true;
 		public boolean enableSerpentine = true;
 	}
-
-	boolean enableAlwaysSparkling = false;
+//	boolean enableAlwaysSparkling = false;
 	PropertyCustomNew prop;
+//	boolean enableOreGeneration = true;
+
 	boolean enableLP = true;
 	boolean enableRenderNearMonsterLP = false;
-	boolean enableOreGeneration = true;
-
-	public void enableAlwaysSparkling(boolean par1){
-		this.enableAlwaysSparkling = par1;
-	}
-
-	public boolean isAlwaysSparkling(){
-		return this.enableAlwaysSparkling;
-	}
-
-
-	int skillXPMultiply = 1;
-
-	int decipheringXPMultiply = 1;
-
 	boolean enableChestGeneration =  true;
+	boolean enableHighProbBirthUnsagaVillagers = false;
+	boolean isForceVillagerToChangeProfessionUnsaga = false;
 	OreSetting oreSetting = new OreSetting();
 
 	int chestGenerationWeight = 3;
-
-
 	int defaultPlayerLP = 8;
+	int skillXPMultiply = 1;
+	int decipheringXPMultiply = 1;
+	int spawnDensityUnsagaMonster = 10;
+//	Map<String,Integer> materialRenderColorOverrides = Maps.newHashMap();
 
-	Map<String,Integer> materialRenderColorOverrides = Maps.newHashMap();
+
 	double defaultTargettingRange = 20.0D;
 	double defaultTargettingRangeVertical = 10.0D;
 
-	XYZPos renderLPOffset = new XYZPos(0,0,0);
 
+	XYZPos renderLPOffset = new XYZPos(0,0,0);
 	XYZPos renderDebuffOffset = new XYZPos(0,0,0);
 
-
-	IParser<XYZPos,int[]> parseXYZ = new IParser<XYZPos,int[]>(){
+	Function<int[],XYZPos> parseXYZ = new Function<int[],XYZPos>(){
 
 		@Override
-		public XYZPos parse(int[] in) {
+		public XYZPos apply(int[] in) {
 			if(in.length>=3){
 				return new XYZPos(in[0],in[1],in[2]);
 
@@ -72,43 +57,57 @@ public class UnsagaConfigHandler extends ConfigBase{
 		}
 	};
 
+//	public void enableAlwaysSparkling(boolean par1){
+//		this.enableAlwaysSparkling = par1;
+//	}
 
 
-	public int getChestGenerationWeight() {
-		return chestGenerationWeight;
+	public int getDensityMonsterSpawn(){
+		return this.spawnDensityUnsagaMonster;
 	}
-
-
 	public int getDecipheringXPMultiply() {
 		return decipheringXPMultiply;
 	}
 
+
+
+//	public int getChestGenerationWeight() {
+//		return chestGenerationWeight;
+//	}
+
+
 	public int getDefaultPlayerLifePoint(){
 		return this.defaultPlayerLP;
 	}
+
 	public double getDefaultTargettingRange() {
 		return defaultTargettingRange;
 	}
-
 	public double getDefaultTargettingRangeVertical() {
 		return defaultTargettingRangeVertical;
 	}
 
-	@SideOnly(Side.CLIENT)
-	public Map<String, Integer> getMaterialRenderColorOverrides() {
-		return materialRenderColorOverrides;
-	}
+//	@SideOnly(Side.CLIENT)
+//	public Map<String, Integer> getMaterialRenderColorOverrides() {
+//		return materialRenderColorOverrides;
+//	}
 	public OreSetting getOreSetting() {
 		return oreSetting;
 	}
 
-	public XYZPos getRenderDebuffOffset() {
-		return renderDebuffOffset;
+	public boolean isForceVillagerToChangeProfession(){
+		return this.isForceVillagerToChangeProfessionUnsaga;
 	}
-
+	public boolean isEnableHighProbBirthUnsagaVillagers(){
+		return this.enableHighProbBirthUnsagaVillagers;
+	}
 	public XYZPos getRenderLPOffset() {
 		return renderLPOffset;
 	}
+
+//	public XYZPos getRenderDebuffOffset() {
+//		return renderDebuffOffset;
+//	}
 
 	public int getSkillXPMultiply() {
 		return skillXPMultiply;
@@ -118,42 +117,50 @@ public class UnsagaConfigHandler extends ConfigBase{
 	public void init() {
 		// TODO 自動生成されたメソッド・スタブ
 
-		prop = PropertyCustomNew.newInstance();
-		prop.add(0,"enable.LPSystem", "Set True To Enable Life Point(LP) System.", true);
-		prop.add(1,"default.LP.player", "Default LP of Player.", 6);
-		prop.add(2,"offset.playerLP","offset of rendering player LP.(x,y)", Lists.newArrayList(0,0),Integer.class);
-		prop.add(3,"offset.playerDebuffs", "offset of rendering debuff icons.(x,y)", Lists.newArrayList(0,0),Integer.class);
-		prop.add(4,"default.targettingRange", "default targetting range of player.(horizontal,vertical)",Lists.newArrayList(20.0D,10.0D),Double.class);
-		prop.add(5,"enable.render.nearMonsterLP", "set true to enable render monster's LP near.", false);
-		prop.add(6, "overrides.materialRenderColor", "custom material render colors.(name:color)", Lists.newArrayList("damascus:0x726250"),String.class);
-		prop.add(7,"enable.generation.ores", "set true to allow generation of ores.", true);
-		prop.add(8, "enable.generation.chests", "set true to allow generation of chets.", true);
-		prop.add(9, "weight.generation.chest", "chest generation weight.(1-10)",3 );
-		prop.add(10, "enable.generation.copper", "set true to allow generation of copper ores.", true);
-		prop.add(11, "enable.generation.lead", "set true to allow generation of lead ores.", true);
-		prop.add(12, "enable.generation.silver", "set true to allow generation of silver ores.", true);
-		prop.add(13, "enable.generation.sapphire", "set true to allow generation of sapphire ores.", true);
-		prop.add(14, "enable.generation.ruby", "set true to allow generation of ruby ores.", true);
-		prop.add(15, "enable.generation.serpentine", "set true to allow generation of serpentine stones.", true);
-		prop.add(16, "xp.skill.multiply", "multiply skill point xp by this.", 1);
-		prop.add(17, "xp.deciphering.multiply", "multiply deciphering point xp by this.", 1);
+		prop = PropertyCustomNew.create();
+		prop.add(0,"enable.LPSystem", HSLibs.translateKey("unsaga.config.enable.LPSystem.info"), true);
+		prop.add(1,"default.LP.player", HSLibs.translateKey("unsaga.config.default.LP.player.info"), 6);
+		prop.add(2,"offset.playerLP",HSLibs.translateKey("unsaga.config.offset.playerLP.info"), Lists.newArrayList(0,0),Integer.class);
+//		prop.add(3,"offset.playerDebuffs", "offset of rendering debuff icons.(x,y)", Lists.newArrayList(0,0),Integer.class);
+		prop.add(3,"default.targettingRange", HSLibs.translateKey("unsaga.config.default.targettingRange.info"),Lists.newArrayList(20.0D,10.0D),Double.class);
+		prop.add(4,"enable.render.nearMonsterLP", HSLibs.translateKey("unsaga.config.enable.render.nearMonsterLP.info"), false);
+//		prop.add(6, "overrides.materialRenderColor", "custom material render colors.(name:color)", Lists.newArrayList("damascus:0x726250"),String.class);
+//		prop.add(7,"enable.generation.ores", "set true to allow generation of ores.", true);
+//		prop.add(8, "enable.generation.chests", "set true to allow generation of chets.", true);
+//		prop.add(9, "weight.generation.chest", "chest generation weight.(1-10)",3 );
+//		prop.add(10, "enable.generation.copper", "set true to allow generation of copper ores.", true);
+//		prop.add(11, "enable.generation.lead", "set true to allow generation of lead ores.", true);
+//		prop.add(12, "enable.generation.silver", "set true to allow generation of silver ores.", true);
+//		prop.add(13, "enable.generation.sapphire", "set true to allow generation of sapphire ores.", true);
+//		prop.add(14, "enable.generation.ruby", "set true to allow generation of ruby ores.", true);
+//		prop.add(15, "enable.generation.serpentine", "set true to allow generation of serpentine stones.", true);
+		prop.add(5, "xp.skill.multiply", HSLibs.translateKey("unsaga.config.xp.skill.multiply.info"), 1);
+		prop.add(6, "xp.deciphering.multiply", HSLibs.translateKey("unsaga.config.xp.deciphering.multiply.info"), 1);
+		prop.add(7, "enable.villager.unsagaVillagersBirthHighProb", HSLibs.translateKey("unsaga.config.enable.villager.unsagaVillagersBirthHighProb.info"), false);
+		prop.add(8, "enable.villager.forceToChangeVillagerProfession", HSLibs.translateKey("unsaga.config.enable.villager.forceToChangeVillagerProfession.info"), false);
+		prop.add(9, "density.spawn.additionalMonster", HSLibs.translateKey("unsaga.config.density.spawn.additionalMonster"), 10);
+
 		prop.adapt(this.configFile);
 
 
 	}
 
-	public boolean isEnableChestGeneration() {
-		return enableChestGeneration;
-	}
+//	public boolean isAlwaysSparkling(){
+//		return this.enableAlwaysSparkling;
+//	}
+
+//	public boolean isEnableChestGeneration() {
+//		return enableChestGeneration;
+//	}
 
 	public boolean isEnabledLifePointSystem(){
 		return this.enableLP;
 	}
 
-	public boolean isEnableOreGeneration() {
-		return enableOreGeneration;
-	}
-
+//	public boolean isEnableOreGeneration() {
+//		return enableOreGeneration;
+//	}
+//
 	public boolean isEnableRenderNearMonsterLP() {
 		return enableRenderNearMonsterLP;
 	}
@@ -165,39 +172,26 @@ public class UnsagaConfigHandler extends ConfigBase{
 
 		enableLP = prop.getAdaptedProperties().get(0).getBoolean();
 		defaultPlayerLP = prop.getAdaptedProperties().get(1).getInt();
-		this.renderLPOffset = parseXYZ.parse(prop.getAdaptedProperties().get(2).getIntList());
-		renderDebuffOffset = parseXYZ.parse(prop.getAdaptedProperties().get(3).getIntList());
-		defaultTargettingRange = prop.getAdaptedProperties().get(4).getDoubleList()[0];
-		defaultTargettingRangeVertical = prop.getAdaptedProperties().get(4).getDoubleList()[1];
-		this.enableRenderNearMonsterLP = prop.getAdaptedProperties().get(5).getBoolean();
-		this.enableChestGeneration = prop.getAdaptedProperties().get(8).getBoolean();
-		this.enableOreGeneration = prop.getAdaptedProperties().get(7).getBoolean();
-		this.chestGenerationWeight = prop.getAdaptedProperties().get(9).getInt();
-		String[] strs = prop.getAdaptedProperties().get(6).getStringList();
-		SplittedStringWrapper<String,Integer> splitters = new SplittedStringWrapper<String,Integer>("materialRenderColor",strs,2,":"){
-
-			@Override
-			public String parseKey(String[] str) throws Exception {
-				// TODO 自動生成されたメソッド・スタブ
-				return str[0];
-			}
-
-			@Override
-			public Integer parseValue(String[] str) throws Exception {
-				// TODO 自動生成されたメソッド・スタブ
-				return Integer.decode(str[1]);
-			}
-		};
-
-		this.materialRenderColorOverrides = splitters.parse().get();
+		this.renderLPOffset = parseXYZ.apply(prop.getAdaptedProperties().get(2).getIntList());
 
 
-		this.oreSetting.enableCopper = prop.getAdaptedProperties().get(10).getBoolean();
-		this.oreSetting.enableLead = prop.getAdaptedProperties().get(11).getBoolean();
-		this.oreSetting.enableSilver = prop.getAdaptedProperties().get(12).getBoolean();
-		this.oreSetting.enableSapphire = prop.getAdaptedProperties().get(13).getBoolean();
-		this.oreSetting.enableRuby = prop.getAdaptedProperties().get(14).getBoolean();
-		this.oreSetting.enableSerpentine = prop.getAdaptedProperties().get(15).getBoolean();
+		defaultTargettingRange = prop.getAdaptedProperties().get(3).getDoubleList()[0];
+		defaultTargettingRangeVertical = prop.getAdaptedProperties().get(3).getDoubleList()[1];
+		this.enableRenderNearMonsterLP = prop.getAdaptedProperties().get(4).getBoolean();
+		this.skillXPMultiply = prop.getAdaptedProperties().get(5).getInt();
+		this.decipheringXPMultiply = prop.getAdaptedProperties().get(6).getInt();
+		this.enableHighProbBirthUnsagaVillagers = prop.getAdaptedProperties().get(7).getBoolean();
+		this.isForceVillagerToChangeProfessionUnsaga = prop.getAdaptedProperties().get(8).getBoolean();
+		this.spawnDensityUnsagaMonster = prop.getAdaptedProperties().get(9).getInt();
+//		this.materialRenderColorOverrides = splitters.parse().get();
+
+//
+//		this.oreSetting.enableCopper = prop.getAdaptedProperties().get(10).getBoolean();
+//		this.oreSetting.enableLead = prop.getAdaptedProperties().get(11).getBoolean();
+//		this.oreSetting.enableSilver = prop.getAdaptedProperties().get(12).getBoolean();
+//		this.oreSetting.enableSapphire = prop.getAdaptedProperties().get(13).getBoolean();
+//		this.oreSetting.enableRuby = prop.getAdaptedProperties().get(14).getBoolean();
+//		this.oreSetting.enableSerpentine = prop.getAdaptedProperties().get(15).getBoolean();
 
 
 //		if(UnsagaMod.materials.isMaterialLoaded()){

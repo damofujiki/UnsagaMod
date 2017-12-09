@@ -10,7 +10,7 @@ import mods.hinasch.unsaga.ability.specialmove.SpecialMove;
 import mods.hinasch.unsaga.ability.specialmove.SpecialMoveRegistry;
 import mods.hinasch.unsaga.material.IUnsagaMaterialSelector;
 import mods.hinasch.unsaga.material.UnsagaMaterial;
-import mods.hinasch.unsaga.material.UnsagaMaterialTool;
+import mods.hinasch.unsaga.material.UnsagaMaterialCapability;
 import mods.hinasch.unsaga.material.UnsagaMaterials;
 import mods.hinasch.unsaga.material.UnsagaWeightType;
 import mods.hinasch.unsaga.util.ToolCategory;
@@ -229,15 +229,18 @@ public class AbilityAssociateRegistry {
 
 		a.blockBreath.addAssociation(ToolCategory.SHIELD, m.dragonScale);
 		a.blockBlast.addAssociation(ToolCategory.SHIELD, m.sivaQueen);
+
+
+
 	}
 
 	public List<IAbility> getAbilityList(ItemStack is){
-		if(is!=null && UnsagaMaterialTool.adapter.hasCapability(is) && AbilityCapability.adapter.hasCapability(is)){
+		if(is!=null && UnsagaMaterialCapability.adapter.hasCapability(is) && AbilityCapability.adapter.hasCapability(is)){
 			IUnsagaMaterialSelector intf = ((IUnsagaMaterialSelector)is.getItem());
 			if(!intf.getCategory().isWeapon()){
-				return this.getAbilityList(intf.getCategory(), UnsagaMaterialTool.adapter.getCapability(is).getMaterial());
+				return this.getAbilityList(intf.getCategory(), UnsagaMaterialCapability.adapter.getCapability(is).getMaterial());
 			}else{
-				UnsagaWeightType type = UnsagaWeightType.fromWeight(UnsagaMaterialTool.adapter.getCapability(is).getWeight());
+				UnsagaWeightType type = UnsagaWeightType.fromWeight(UnsagaMaterialCapability.adapter.getCapability(is).getWeight());
 				return this.getSpecialArts(intf.getCategory(), type);
 			}
 		}
@@ -255,7 +258,7 @@ public class AbilityAssociateRegistry {
 		abilityAssociationMap.put(key, list);
 		return;
 	}
-	protected void addAssciation(ToolCategory category,UnsagaMaterials.Category cate,Ability ab){
+	protected void addAssociation(ToolCategory category,UnsagaMaterials.Category cate,Ability ab){
 		cate.getChildMaterials().stream().forEach(m -> this.addAssciation(category, m, ab));
 	}
 

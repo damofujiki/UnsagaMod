@@ -1,9 +1,11 @@
 package mods.hinasch.unsaga.core.entity.ai;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import mods.hinasch.lib.entity.RangedHelper;
 import mods.hinasch.lib.util.HSLibs;
 import mods.hinasch.unsaga.UnsagaMod;
 import mods.hinasch.unsaga.common.specialaction.IActionPerformer.TargetType;
@@ -17,7 +19,6 @@ import mods.hinasch.unsagamagic.spell.action.SpellCaster;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
 public class EntityAISpell extends EntityAIBase{
@@ -32,13 +33,16 @@ public class EntityAISpell extends EntityAIBase{
 	protected int maxRangedAttackTime;
     //索敵範囲
 	protected float search;
+	@Deprecated
     protected float attackPowerFromRange;
-	protected int cooling = 0;
+	protected int cooling;
 
 	//謎
     private int field_96561_g = 60;
 
-	public EntityAISpell(ISpellAI host,List spellList,double moveSpeed,int interval,float search){
+    final int chance;
+
+	public EntityAISpell(ISpellAI host,List<SpellAIData> spellList,double moveSpeed,int interval,float search,int chance){
 		this.rangedAttackTime = -1;
 		this.spellList = spellList;
 		this.rangedList = new ArrayList();
@@ -48,10 +52,17 @@ public class EntityAISpell extends EntityAIBase{
 		this.maxRangedAttackTime = interval;
 		this.attackPowerFromRange = search;
 		this.search = search * search;
+		this.chance = chance;
+		this.setMutexBits(4);
 	}
 	@Override
 	public boolean shouldExecute() {
-		//Unsaga.debug("spell",this.entityHost.getAttackTarget());
+//		int rnd = this.entityHost.getRNG().nextInt(chance);
+//		UnsagaMod.logger.trace(this.getClass().getName(), rnd);
+//		if(rnd==0){
+//			return false;
+//		}
+
         EntityLivingBase entitylivingbase = this.entityHost.getAttackTarget();
         if(this.entityInvoker.canCastSpell()){
             if (entitylivingbase == null)
@@ -60,8 +71,11 @@ public class EntityAISpell extends EntityAIBase{
             }
             else
             {
-                this.attackTarget = entitylivingbase;
-                return true;
+
+                    this.attackTarget = entitylivingbase;
+                    return true;
+
+
             }
         }
 
@@ -116,45 +130,36 @@ public class EntityAISpell extends EntityAIBase{
             this.cooling = 0;
         }
 
-        if (d0 <= (double)this.search && this.cooling >= 20)
-        {
-            this.entityHost.getNavigator().clearPathEntity();
-        }
-        else
-        {
-            this.entityHost.getNavigator().tryMoveToEntityLiving(this.attackTarget, this.entityMoveSpeed);
-        }
+//        if (d0 <= (double)this.search && this.cooling >= 20)
+//        {
+//            this.entityHost.getNavigator().clearPathEntity();
+//        }
+//        else
+//        {
+//            this.entityHost.getNavigator().tryMoveToEntityLiving(this.attackTarget, this.entityMoveSpeed);
+//        }
 
         this.entityHost.getLookHelper().setLookPositionWithEntity(this.attackTarget, 30.0F, 30.0F);
-        float f;
-
+//        float f;
+//    	UnsagaMod.logger.trace(this.getClass().getName(), this.rangedAttackTime);
         if (--this.rangedAttackTime == 0)
         {
+
             if (d0 > (double)this.search || !flag)
             {
                 return;
             }
 
-            f = MathHelper.sqrt_double(d0) / this.attackPowerFromRange;
-            float f1 = f;
 
-            if (f < 0.1F)
-            {
-                f1 = 0.1F;
-            }
+            this.executeSpell(this.attackTarget);
+            this.rangedAttackTime = this.maxRangedAttackTime;
 
-            if (f1 > 1.0F)
-            {
-                f1 = 1.0F;
-            }
 
-            this.executeSpell(this.attackTarget, f1);
-            this.rangedAttackTime = MathHelper.floor_float(f * (float)(this.maxRangedAttackTime - this.field_96561_g) + (float)this.field_96561_g);
         }
         else if (this.rangedAttackTime < 0)
         {
-            f = MathHelper.sqrt_double(d0) / this.attackPowerFromRange;
-            this.rangedAttackTime = MathHelper.floor_float(f * (float)(this.maxRangedAttackTime - this.field_96561_g) + (float)this.field_96561_g);
+//            f = MathHelper.sqrt_double(d0) / this.attackPowerFromRange;
+            this.rangedAttackTime = this.maxRangedAttackTime;
         }
     }
 
@@ -173,14 +178,19 @@ public class EntityAISpell extends EntityAIBase{
 //    private StateCast getCastingState(){
 //    	return (StateCast) EntityStateCapability.adapter.getCapability(entityHost).getState(StateRegistry.instance().stateSpell);
 //    }
-    public void executeSpell(EntityLivingBase target,float f1){
+
+    public List<SpellAIData> getSpellList(){
+    	return this.spellList;
+    }
+
+    public void executeSpell(EntityLivingBase target){
     	UnsagaMod.logger.trace(this.getClass().getName(), "called");
     	if(StatePropertySpellCast.getStateCast(entityHost).getCastingTime()>0){
     		return;
     	}
 
     	final double rangeToTarget = this.entityHost.getDistanceSqToEntity(target);
-    	this.rangedList = this.spellList.stream().filter(p ->p.maxDistance>=rangeToTarget && p.minDistance<=rangeToTarget)
+    	this.rangedList = this.getSpellList().stream().filter(p ->p.maxDistance>=rangeToTarget && p.minDistance<=rangeToTarget)
     			.collect(Collectors.toList());
 
     	UnsagaMod.logger.trace("spellList",this.spellList,"distance:",rangeToTarget,"Spell Ranged:",this.rangedList);
@@ -188,8 +198,11 @@ public class EntityAISpell extends EntityAIBase{
 
     		int rn = this.rangedList.size()<=1? 0: this.entityHost.getRNG().nextInt(this.rangedList.size());
     		Spell spell = this.rangedList.get(rn).spell;
+    		int castingTime = this.rangedList.get(rn).castTime;
     		if(spell!=null && target!=null){
-        		this.cast(target, spell);
+    			UnsagaMod.logger.trace("distance:", rangeToTarget);
+
+        		this.cast(target, spell,castingTime);
     		}
 
 //    		this.entityInvoker.setReadyCast(spell, target);
@@ -209,16 +222,32 @@ public class EntityAISpell extends EntityAIBase{
 
     }
 
-	public void cast(EntityLivingBase target,Spell spell){
-		World world = this.entityHost.getEntityWorld();
-		SpellCaster caster = SpellCaster.ofEnemy(world, this.entityHost, spell);
-		caster.setTargetType(caster.isBenefical() ? TargetType.OWNER : TargetType.TARGET);
-		TargetHolderCapability.adapter.getCapability(entityHost).updateTarget(target);
-		StateCast state = (StateCast) EntityStateCapability.adapter.getCapability(this.entityHost).getState(StateRegistry.instance().stateSpell);
-		state.setCastingSpell(caster);
-		state.setCastingTime(this.entityInvoker.getCastingTime(spell, caster.isBenefical()));
-		caster.broadCastMessage(HSLibs.translateKey("msg.unsaga.enemy.cast.start",entityHost.getName(),spell.getLocalized()));
-		StatePropertySpellCast.sendSyncMobCastToClient(this.entityHost, target, spell, spell.getBaseCastingTime());
+	public void cast(EntityLivingBase target,Spell spell,int castingTime){
+
+		if(spell!=null){
+			World world = this.entityHost.getEntityWorld();
+			SpellCaster caster = SpellCaster.ofEnemy(world, this.entityHost, spell);
+			EntityLivingBase beneficalTarget = this.entityHost;
+			if(caster.isBenefical()){
+
+				List<EntityLivingBase> list = world.getEntitiesWithinAABB(EntityLivingBase.class, this.entityHost.getEntityBoundingBox().expandXyz(20.0D),RangedHelper.getTargetSelectorFromEntityType(entityHost,true));
+				if(!list.isEmpty()){
+					Collections.shuffle(list);
+					beneficalTarget = list.get(0);
+				}
+
+			}
+
+			caster.setTargetType(TargetType.TARGET);
+			TargetHolderCapability.adapter.getCapability(entityHost).updateTarget(caster.isBenefical() ? beneficalTarget : target);
+			StateCast state = (StateCast) EntityStateCapability.adapter.getCapability(this.entityHost).getState(StateRegistry.instance().stateSpell);
+			state.setCastingSpell(caster);
+			state.setCastingTime(castingTime);
+			UnsagaMod.logger.trace("isBenefical:", caster.isBenefical());
+			caster.broadCastMessage(HSLibs.translateKey("msg.unsaga.enemy.cast.start",entityHost.getName(),spell.getLocalized()));
+			StatePropertySpellCast.sendSyncMobCastToClient(this.entityHost, target, spell, castingTime);
+		}
+
 	}
 
     public static class SpellAIData{

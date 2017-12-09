@@ -1,12 +1,15 @@
 package mods.hinasch.unsaga.core.inventory.container;
 
+import mods.hinasch.lib.capability.EquipmentCacheCapability;
 import mods.hinasch.lib.container.ContainerBase;
 import mods.hinasch.lib.container.inventory.InventoryBase;
 import mods.hinasch.lib.container.inventory.InventoryHandler;
 import mods.hinasch.lib.entity.RangedHelper;
 import mods.hinasch.lib.item.ItemUtil;
 import mods.hinasch.lib.network.PacketGuiButtonBaseNew;
+import mods.hinasch.lib.network.PacketSendGuiInfoToClient;
 import mods.hinasch.lib.util.HSLibs;
+import mods.hinasch.lib.util.UtilNBT;
 import mods.hinasch.lib.world.XYZPos;
 import mods.hinasch.unsaga.UnsagaMod;
 import mods.hinasch.unsaga.UnsagaModCore;
@@ -20,6 +23,7 @@ import mods.hinasch.unsaga.core.net.packet.PacketGuiButtonUnsaga;
 import mods.hinasch.unsaga.init.UnsagaGui;
 import mods.hinasch.unsaga.status.UnsagaXPCapability;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
@@ -128,6 +132,13 @@ public class ContainerEquipment extends ContainerBase{
 	}
 
 	@Override
+    public void onCraftMatrixChanged(IInventory inventoryIn)
+    {
+        super.onCraftMatrixChanged(inventoryIn);
+        EquipmentCacheCapability.onEquipChanged(this.ep);
+    }
+
+	@Override
 	public void onPacketData() {
 
 
@@ -227,4 +238,16 @@ public class ContainerEquipment extends ContainerBase{
 	//		}
 	//
 	//	}
+
+
+	@Override
+	public PacketSendGuiInfoToClient getSyncPacketToClient(EntityPlayer ep){
+		boolean hasStat = false;
+		if(ep instanceof EntityPlayerMP){
+			hasStat = ((EntityPlayerMP)ep).getStatFile().hasAchievementUnlocked(UnsagaMod.core.achievements.getTablet);
+		}
+		NBTTagCompound nbt = UtilNBT.compound();
+		nbt.setBoolean("isUnlockDecipher", hasStat);
+		return PacketSendGuiInfoToClient.create(nbt);
+	}
 }

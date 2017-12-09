@@ -147,7 +147,7 @@ public abstract class ItemWeaponUnsaga extends ItemSword implements IUnsagaMater
 	}
 	@Override
 	public int getMaxAbilitySize(){
-		return 2;
+		return 4;
 	}
 
 	@Override

@@ -3,39 +3,25 @@ package mods.hinasch.unsaga.minsaga;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
-import java.util.UUID;
 import java.util.stream.Collectors;
-
-import com.google.common.collect.Lists;
 
 import joptsimple.internal.Strings;
 import mods.hinasch.lib.client.ClientHelper;
 import mods.hinasch.lib.core.HSLib;
 import mods.hinasch.lib.core.HSLibEvents;
-import mods.hinasch.lib.entity.ModifierHelper;
-import mods.hinasch.lib.item.ItemUtil;
-import mods.hinasch.lib.misc.ObjectCounter;
 import mods.hinasch.lib.util.HSLibs;
-import mods.hinasch.lib.util.Statics;
 import mods.hinasch.unsaga.core.client.gui.GuiSmithMinsaga;
 import mods.hinasch.unsaga.core.event.EventToolTipUnsaga;
 import mods.hinasch.unsaga.core.event.EventToolTipUnsaga.ComponentDisplayInfo;
-import mods.hinasch.unsaga.damage.DamageSourceUnsaga;
 import mods.hinasch.unsaga.minsaga.ForgingCapability.ForgeAttribute;
 import mods.hinasch.unsaga.minsaga.ForgingCapability.IMinsagaForge;
 import mods.hinasch.unsaga.skillpanel.EventSaveDamage;
-import mods.hinasch.unsaga.status.AdditionalStatus;
-import mods.hinasch.unsaga.util.LivingHurtEventUnsagaBase;
 import mods.hinasch.unsaga.util.UnsagaTextFormatting;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
 
 
@@ -46,97 +32,63 @@ public class MinsagaForgingEvent {
 		WEAPON,ARMOR;
 	}
 
-	public static abstract class HurtEventMinsaga extends LivingHurtEventUnsagaBase{
-
-		Type type;
-
-		@Override
-		public boolean apply(LivingHurtEvent e, DamageSourceUnsaga dsu) {
-			if(type==Type.WEAPON){
-				if(e.getSource().getEntity() instanceof EntityLivingBase){
-					EntityLivingBase attacker = (EntityLivingBase) e.getSource().getEntity();
-					ItemStack held = attacker.getHeldItemMainhand();
-					if(ItemUtil.isItemStackPresent(held)){
-						return ForgingCapability.adapter.hasCapability(held);
-					}
-				}
-			}
-			if(type==Type.ARMOR){
-				return Lists.newArrayList(e.getEntityLiving().getArmorInventoryList()).stream()
-						.anyMatch(in -> ItemUtil.isItemStackPresent(in) && ForgingCapability.adapter.hasCapability(in));
-			}
-			return false;
-		}
-
-		public abstract DamageSource process(LivingHurtEvent e, DamageSourceUnsaga dsu,Type type,List<ItemStack> stacks);
-
-		@Override
-		public DamageSource process(LivingHurtEvent e, DamageSourceUnsaga dsu) {
-			if(type==Type.WEAPON){
-				EntityLivingBase attacker = (EntityLivingBase) e.getSource().getEntity();
-				return this.process(e, dsu,type, Lists.newArrayList(attacker.getHeldItemMainhand()));
-			}
-			if(type==Type.ARMOR){
-				List<ItemStack> armors = Lists.newArrayList(e.getEntityLiving().getArmorInventoryList()).stream()
-						.filter(in -> ItemUtil.isItemStackPresent(in) && ForgingCapability.adapter.hasCapability(in))
-						.collect(Collectors.toList());
-				return this.process(e, dsu,type, armors);
-			}
-			return dsu;
-		}
-
-		@Override
-		public String getName() {
-			// TODO 自動生成されたメソッド・スタブ
-			return "minsaga hurt event";
-		}
-
-	}
-
-
-	public static final UUID MINSAGA = UUID.fromString("46b2abe7-06fd-462c-871e-8a2cde17c2d1");
-	public static final UUID MINSAGA2 = UUID.fromString("a4b3fffd-4e10-4c3a-bc39-0cbf8b7a49b3");
-	public static final UUID MINSAGA3 = UUID.fromString("1b43a63e-710f-4986-aad3-19ff856f8c12");
-	public static final UUID MINSAGA4 = UUID.fromString("b1d1240c-d90e-422c-9a04-2480bf71bd60");
-	public static void onEquipChanged(EntityLivingBase el){
-		if(ItemUtil.isItemStackPresent(el.getHeldItemMainhand())){
-			ItemStack held = el.getHeldItemMainhand();
-			if(ForgingCapability.adapter.hasCapability(held)){
-				double attack = ForgingCapability.adapter.getCapability(held).getAttackModifier();
-				AttributeModifier attackModfier = new AttributeModifier(MINSAGA, "minsaga.forging", attack, Statics.OPERATION_INCREMENT);
-				ModifierHelper.refleshModifier(el, SharedMonsterAttributes.ATTACK_DAMAGE, attackModfier);
-			}
-		}
+//	public static abstract class HurtEventMinsaga extends LivingHurtEventUnsagaBase{
+//
+//		Type type;
+//
+//		@Override
+//		public boolean apply(LivingHurtEvent e, DamageSourceUnsaga dsu) {
+//			switch(type){
+//			case ARMOR:
+//				return ItemUtil.getArmorInventoryList(e.getEntityLiving()).stream()
+//						.anyMatch(in -> ItemUtil.isItemStackPresent(in) && ForgingCapability.adapter.hasCapability(in));
+//			case WEAPON:
+//				if(e.getSource().getEntity() instanceof EntityLivingBase){
+//					EntityLivingBase attacker = (EntityLivingBase) e.getSource().getEntity();
+//					ItemStack held = attacker.getHeldItemMainhand();
+//					if(ItemUtil.isItemStackPresent(held)){
+//						return ForgingCapability.adapter.hasCapability(held);
+//					}
+//				}
+//				break;
+//			default:
+//				break;
+//
+//			}
+//			return false;
+//		}
+//
+//		public abstract DamageSource process(LivingHurtEvent e, DamageSourceUnsaga dsu,Type type,List<ItemStack> stacks);
+//
+//		@Override
+//		public DamageSource process(LivingHurtEvent e, DamageSourceUnsaga dsu) {
+//			switch(type){
+//			case ARMOR:
+//				List<ItemStack> armors = Lists.newArrayList(e.getEntityLiving().getArmorInventoryList()).stream()
+//				.filter(in -> ItemUtil.isItemStackPresent(in) && ForgingCapability.adapter.hasCapability(in))
+//				.collect(Collectors.toList());
+//		return this.process(e, dsu,type, armors);
+//			case WEAPON:
+//				EntityLivingBase attacker = (EntityLivingBase) e.getSource().getEntity();
+//				return this.process(e, dsu,type, Lists.newArrayList(attacker.getHeldItemMainhand()));
+//			default:
+//				break;
+//
+//			}
+//			return dsu;
+//		}
+//
+//		@Override
+//		public String getName() {
+//			// TODO 自動生成されたメソッド・スタブ
+//			return "minsaga hurt event";
+//		}
+//
+//	}
 
 
-		double amountMelee = MinsagaUtil.getForgedArmors(el).stream().mapToDouble(in -> ForgingCapability.adapter.getCapability(in).getArmorModifier().melee()).sum();
-		double amountMagic  = MinsagaUtil.getForgedArmors(el).stream().mapToDouble(in -> ForgingCapability.adapter.getCapability(in).getArmorModifier().magic()).sum();
-		AttributeModifier meleeArmorModifier = new AttributeModifier(MINSAGA, "minsaga.forging", amountMelee, Statics.OPERATION_INCREMENT);
-		ModifierHelper.refleshModifier(el, SharedMonsterAttributes.ARMOR, meleeArmorModifier);
-		AttributeModifier magicArmorModifier = new AttributeModifier(MINSAGA, "minsaga.forging", amountMagic, Statics.OPERATION_INCREMENT);
-		ModifierHelper.refleshModifier(el, AdditionalStatus.MENTAL, magicArmorModifier);
-
-		List<MinsagaForging.Ability> abilities = MinsagaUtil.getAbilities(el);
-		ObjectCounter<MinsagaForging.Ability> counter = new ObjectCounter();
-		abilities.stream().forEach(in ->{
-			counter.add(in);
-		});
-		if(el instanceof EntityPlayer){
-			double amountLuck = counter.get(MinsagaForging.Ability.LOOT) * 1.0D;
-			AttributeModifier luckModifier = new AttributeModifier(MINSAGA2, "minsaga.forging", amountLuck, Statics.OPERATION_INCREMENT);
-			ModifierHelper.refleshModifier(el, SharedMonsterAttributes.LUCK, luckModifier);
-		}
-
-
-//		double amountAbyss = counter.get(MinsagaForging.Ability.ABYSS) * 1.0D;
-//		AttributeModifier abyssModifier = new AttributeModifier(MINSAGA3, "minsaga.forging", amountAbyss, Statics.OPERATION_INCREMENT);
-//		ModifierHelper.refleshModifier(el, AdditionalStatus.ENTITY_ELEMENTS.get(FiveElements.Type.FORBIDDEN), abyssModifier);
-
-		double amountQuickSilver = counter.get(MinsagaForging.Ability.QUICKSILVER) * 0.5D;
-		AttributeModifier quickSilverModifier = new AttributeModifier(MINSAGA4, "minsaga.forging", amountQuickSilver, Statics.OPERATION_INCREMENT);
-		ModifierHelper.refleshModifier(el, AdditionalStatus.INTELLIGENCE, quickSilverModifier);
-	}
 	public static void registerEvents(){
+		HSLibs.registerEvent(new EventRefleshMinsagaForged());
 		EventToolTipUnsaga.list.add(new ComponentDisplayInfo(6,
 				(is,ep,dispList,par4)->is!=null && ForgingCapability.adapter.hasCapability(is) && ForgingCapability.adapter.getCapability(is).isForged()){
 
@@ -153,16 +105,22 @@ public class MinsagaForgingEvent {
 				}).collect(Collectors.joining("/"));
 				dispList.add(forgedMaterials);
 				ForgeAttribute current = capa.getCurrentForge();
-				if(current!=null){
-					dispList.add(current.getFittingProgress()+"/"+current.getMaxFittingProgress());
+				if(GuiScreen.isShiftKeyDown()){
+					if(current!=null){
+						dispList.add(current.getFittingProgress()+"/"+current.getMaxFittingProgress());
+					}
+					if(capa.isForged()){
+						dispList.addAll(MinsagaUtil.getModifierStrings(capa,OptionalInt.empty()));
+						dispList.add(capa.getAbilities().stream().map(in -> in.getName()).collect(Collectors.joining("/")));
+					}
+				}else{
+					dispList.add("[ShiftKey]Customized Tool Info");
 				}
-				if(capa.isForged()){
-					dispList.addAll(MinsagaUtil.getModifierStrings(capa,OptionalInt.empty()));
-					dispList.add(capa.getAbilities().stream().map(in -> in.getName()).collect(Collectors.joining("/")));
-				}
+
 			}
 
 		});
+
 
 		EventToolTipUnsaga.list.add(new ComponentDisplayInfo(7,(is,ep,dispList,par4)->{
 			if(ClientHelper.getCurrentGui() instanceof GuiSmithMinsaga){
@@ -259,7 +217,7 @@ public class MinsagaForgingEvent {
 
 		HSLib.core().events.livingHurt.getEventsMiddle().add(new EventFittingProgress());
 
-		HSLibs.registerEvent(new EventOnHurtByForged());
+		HSLibs.registerEvent(new EventApplyForgedAbility());
 		HSLibs.registerEvent(new EventHarvestPlus());
 		HSLibs.registerEvent(new EventItemUseFinished());
 		/**

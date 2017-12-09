@@ -126,7 +126,13 @@ public class MaterialTransformRegistry {
 		}
 		WeightedRandomTrans w = WeightedRandom.getRandomItem(rand, list);
 		UnsagaMaterial transformed = w.mate;
+
+
 		return transformed;
+	}
+
+	public List<MaterialTransform> getList(){
+		return this.list;
 	}
 	public static class MaterialTransform{
 
@@ -142,6 +148,9 @@ public class MaterialTransformRegistry {
 			return transformed;
 		}
 
+		public WILDCARD wildcard(){
+			return this.wildcard;
+		}
 		public float getProb() {
 			return prob;
 		}

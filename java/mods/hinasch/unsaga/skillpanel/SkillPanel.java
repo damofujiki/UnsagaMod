@@ -81,7 +81,7 @@ public class SkillPanel extends PropertyElementBase implements Comparable<SkillP
 	}
 
 	public String getLocalized(){
-		return HSLibs.translateKey("skillPanel."+this.getName()+".name");
+		return HSLibs.translateKey("skillPanel."+this.getPropertyName()+".name");
 	}
 
 	@Override

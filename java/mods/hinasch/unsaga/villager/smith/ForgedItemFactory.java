@@ -17,10 +17,12 @@ import mods.hinasch.unsaga.ability.AbilityRegistry;
 import mods.hinasch.unsaga.ability.IAbility;
 import mods.hinasch.unsaga.common.ComponentUnsagaWeapon;
 import mods.hinasch.unsaga.core.inventory.container.ContainerSmithUnsaga;
+import mods.hinasch.unsaga.core.stats.UnsagaAchievementRegistry;
 import mods.hinasch.unsaga.init.UnsagaItemRegistry;
 import mods.hinasch.unsaga.material.MaterialItemAssociatedRegistry;
 import mods.hinasch.unsaga.material.UnsagaMaterial;
-import mods.hinasch.unsaga.material.UnsagaMaterialTool;
+import mods.hinasch.unsaga.material.UnsagaMaterialCapability;
+import mods.hinasch.unsaga.material.UnsagaMaterials;
 import mods.hinasch.unsaga.util.ToolCategory;
 import mods.hinasch.unsaga.villager.bartering.BarteringMaterialCategory;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -177,6 +179,15 @@ public class ForgedItemFactory {
 //		Optional<LinkedList<IAbility>> forgedAbility = Optional.empty();
 		public ForgingProcess decideForgedMaterial(){
 			this.forgedMaterial = Optional.of(MaterialTransformRegistry.instance().getTransformedOrNot(this.parent.rand, baseMaterial, this.subMaterial));
+			if(this.forgedMaterial.get()==UnsagaMaterials.instance().steel1){
+				this.parent.parent.ep.addStat(UnsagaAchievementRegistry.instance().steel);
+			}
+			if(this.forgedMaterial.get()==UnsagaMaterials.instance().steel2){
+				this.parent.parent.ep.addStat(UnsagaAchievementRegistry.instance().steel2);
+			}
+			if(this.forgedMaterial.get()==UnsagaMaterials.instance().damascus){
+				this.parent.parent.ep.addStat(UnsagaAchievementRegistry.instance().damascus);
+			}
 			return this;
 		}
 
@@ -200,8 +211,8 @@ public class ForgedItemFactory {
 		}
 
 		public int getWeight(UnsagaMaterial base,ItemStack stack){
-			if(UnsagaMaterialTool.adapter.hasCapability(stack)){
-				return UnsagaMaterialTool.adapter.getCapability(stack).getWeight();
+			if(UnsagaMaterialCapability.adapter.hasCapability(stack)){
+				return UnsagaMaterialCapability.adapter.getCapability(stack).getWeight();
 			}
 			return base.weight;
 		}
@@ -308,7 +319,7 @@ public class ForgedItemFactory {
 							result = ForgeResult.VERY_GOOD;
 					}
 				}
-				UnsagaMaterialTool.adapter.getCapability(forged).setWeight(weight);
+				UnsagaMaterialCapability.adapter.getCapability(forged).setWeight(weight);
 				this.refleshWeightModifier(forged);
 				this.transformAbility(forged);
 				this.forgedStack = Optional.of(forged);
@@ -333,8 +344,8 @@ public class ForgedItemFactory {
 		 */
 		public void refleshWeightModifier(ItemStack is){
 			Multimap<String, AttributeModifier> multimap = is.getAttributeModifiers(EntityEquipmentSlot.MAINHAND);
-            if(UnsagaMaterialTool.adapter.hasCapability(is)){
-            	int weight = UnsagaMaterialTool.adapter.getCapability(is).getWeight();
+            if(UnsagaMaterialCapability.adapter.hasCapability(is)){
+            	int weight = UnsagaMaterialCapability.adapter.getCapability(is).getWeight();
             	if(weight>=0){
             		double mod = ComponentUnsagaWeapon.getSpeedModifierFromWeight(weight);
                 	multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getAttributeUnlocalizedName(), new AttributeModifier(ComponentUnsagaWeapon.WEIGHT_EFFECTED_SPEED, "Weapon modifier", mod, 0));

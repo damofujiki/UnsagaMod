@@ -64,7 +64,7 @@ public class BarteringMaterialCategory {
 		this.add(Type.BESTIAL, m.carnelian,m.opal,m.ravenite,m.topaz,m.lazuli,m.serpentine);
 		this.add(Type.ORE, m.copperOre,m.quartz,m.meteorite,m.ironOre,m.debris1,m.debris2);
 		this.add(Type.JEWEL, m.silver,m.obsidian,m.ruby,m.sapphire,m.diamond);
-		this.add(Type.METAL, m.copper,m.lead,m.iron,m.meteoricIron,m.steel1,m.steel2);
+		this.add(Type.METAL, m.copper,m.lead,m.iron,m.meteoricIron,m.steel1,m.steel2,m.gold,m.osmium);
 		this.add(Type.METAL_PRECIOUS,m.faerieSilver,m.damascus);
 		this.add(Type.RARE, m.sivaQueen);
 		this.add(Type.UNKNOWN, m.dummy);

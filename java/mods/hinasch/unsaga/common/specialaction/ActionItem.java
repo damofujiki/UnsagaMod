@@ -7,8 +7,10 @@ import java.util.function.Predicate;
 import mods.hinasch.lib.util.HSLibs;
 import mods.hinasch.lib.world.XYZPos;
 import mods.hinasch.unsaga.common.specialaction.ActionBase.IAction;
-import mods.hinasch.unsagamagic.enchant.UnsagaEnchantment;
+import mods.hinasch.unsagamagic.enchant.EnchantmentProperty;
 import mods.hinasch.unsagamagic.enchant.UnsagaEnchantmentCapability;
+import mods.hinasch.unsagamagic.enchant.UnsagaEnchantmentCapability.EnchantmentState;
+import mods.hinasch.unsagamagic.enchant.UnsagaEnchantmentEvent;
 import mods.hinasch.unsagamagic.spell.action.SpellCaster;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -72,25 +74,31 @@ public class ActionItem<T extends IActionPerformer> implements IAction<T>{
 	public static class SpellActionBless extends ActionItem<SpellCaster>{
 
 
-		final UnsagaEnchantment enchant;
+		final EnchantmentProperty enchant;
 		final ItemPredicate predicate;
 
-		public SpellActionBless(UnsagaEnchantment enchant,ItemPredicate predicate){
+		public SpellActionBless(EnchantmentProperty enchant,ItemPredicate predicate){
 			this.enchant = enchant;
 			this.predicate = predicate;
 			this.function = new BiFunction<SpellCaster,ItemStack,EnumActionResult>(){
 
 				@Override
 				public EnumActionResult apply(SpellCaster context, ItemStack target) {
-					if(UnsagaEnchantmentCapability.adapter.hasCapability(target) && isItemApplicable(target)){
+					if(UnsagaEnchantmentCapability.hasCapability(target) && isItemApplicable(target)){
 						context.playSound(XYZPos.createFrom(context.getPerformer()), SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, false);
 						Map<Enchantment,Integer> map = EnchantmentHelper.getEnchantments(target);
 						int duration = (int)(context.getActionProperty().getDuration() * context.getAmplify());
 						int amp = MathHelper.clamp_int((int)context.getAmplify(), 1, 3);
 
-						map.put(enchant.getEnchantment(), (int)context.getAmplify());
-						EnchantmentHelper.setEnchantments(map, target);
-						UnsagaEnchantmentCapability.adapter.getCapability(target).setEnchantmentRemaining(enchant, duration);
+
+						long expireTime = (int) context.getWorld().getTotalWorldTime() + 30*(duration+3);
+						EnchantmentState state = new EnchantmentState(expireTime,amp);
+						UnsagaEnchantmentCapability.adapter.getCapability(target).setEnchantment(enchant, state);
+						UnsagaEnchantmentEvent.refleshApplyEnchantment(context.getPerformer());
+//						EnchantmentProperty prop = enchant.get(amp-1);
+//						map.put(prop.getEnchantment(), expireTime);
+//						EnchantmentHelper.setEnchantments(map, target);
+//						UnsagaEnchantmentCapability.adapter.getCapability(target).setEnchantmentRemaining(enchant, duration);
 
 
 

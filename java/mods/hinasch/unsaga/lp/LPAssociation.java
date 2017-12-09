@@ -6,13 +6,14 @@ import java.util.function.Predicate;
 
 import com.google.common.collect.Maps;
 
+import mods.hinasch.lib.item.ItemUtil;
 import mods.hinasch.unsaga.core.item.newitem.combat.ItemAxeUnsaga;
 import mods.hinasch.unsaga.core.item.newitem.combat.ItemKnifeUnsaga;
 import mods.hinasch.unsaga.core.item.newitem.combat.ItemSpearUnsaga;
 import mods.hinasch.unsaga.core.item.newitem.combat.ItemStaffUnsaga;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemAxe;
-import net.minecraft.item.ItemBow;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
@@ -36,7 +37,7 @@ public class LPAssociation {
 		map.put(item -> item instanceof ItemAxe, new LPAttribute(0.6F,1));
 		map.put(item -> item instanceof ItemKnifeUnsaga, new LPAttribute(0.8F,1));
 		map.put(item -> item instanceof ItemSpearUnsaga, new LPAttribute(0.7F,1));
-		map.put(item -> item instanceof ItemBow, new LPAttribute(0.8F,1));
+//		map.put(item -> item instanceof ItemBow, new LPAttribute(0.8F,1));
 		map.put(item -> item instanceof ItemPickaxe, new LPAttribute(0.4F,1));
 
 		map2.put(ds -> ds.getEntity()==null && ds==DamageSource.magic, new LPAttribute(0.0f,0));
@@ -51,7 +52,7 @@ public class LPAssociation {
 		map2.put(ds -> ds==DamageSource.fallingBlock, new LPAttribute(0.1f,1));
 		map2.put(ds -> ds==DamageSource.wither, new LPAttribute(0.1f,1));
 		map2.put(ds -> ds.isExplosion() , new LPAttribute(1.5f,2));
-
+		map2.put(ds -> (ds.getEntity() instanceof EntityPlayer) && ItemUtil.isItemStackNull(((EntityPlayer)ds.getEntity()).getHeldItemMainhand()) , new LPAttribute(0,0));
 	}
 
 	public Optional<LPAttribute> getData(ItemStack is){

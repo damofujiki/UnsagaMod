@@ -21,11 +21,12 @@ import mods.hinasch.unsaga.core.client.gui.GuiSmithUnsaga;
 import mods.hinasch.unsaga.core.inventory.InventorySmithUnsaga;
 import mods.hinasch.unsaga.core.inventory.slot.SlotSmith;
 import mods.hinasch.unsaga.core.net.packet.PacketGuiButtonUnsaga;
+import mods.hinasch.unsaga.core.stats.UnsagaAchievementRegistry;
 import mods.hinasch.unsaga.init.UnsagaGui;
 import mods.hinasch.unsaga.material.MaterialItemAssociatedRegistry;
 import mods.hinasch.unsaga.material.SuitableLists;
 import mods.hinasch.unsaga.material.UnsagaMaterial;
-import mods.hinasch.unsaga.material.UnsagaMaterialTool;
+import mods.hinasch.unsaga.material.UnsagaMaterialCapability;
 import mods.hinasch.unsaga.util.ToolCategory;
 import mods.hinasch.unsaga.villager.UnsagaVillagerCapability;
 import mods.hinasch.unsaga.villager.smith.BlackSmithType;
@@ -52,7 +53,7 @@ public class ContainerSmithUnsaga extends ContainerBase{
 
 //	protected ForgingFactory forgingFactory;
 	final protected IMerchant theMerchant;
-	final protected EntityPlayer ep;
+	public final EntityPlayer ep;
 	final protected World worldobj;
 	final protected InventorySmithUnsaga inventorySmith;
 	final protected IInventory invPlayer;
@@ -94,6 +95,8 @@ public class ContainerSmithUnsaga extends ContainerBase{
 		if(this.theMerchant!=null){
 			this.theMerchant.setCustomer(ep);
 		}
+
+
 
 
 		if(this.theMerchant instanceof EntityVillager){
@@ -191,8 +194,8 @@ public class ContainerSmithUnsaga extends ContainerBase{
 	 */
 	public Optional<UnsagaMaterial> getMaterialOrNot(ItemStack base){
 		UnsagaMaterial mate = null;
-		if(UnsagaMaterialTool.adapter.hasCapability(base)){
-			mate = UnsagaMaterialTool.adapter.getCapability(base).getMaterial();
+		if(UnsagaMaterialCapability.adapter.hasCapability(base)){
+			mate = UnsagaMaterialCapability.adapter.getCapability(base).getMaterial();
 		}
 		if(MaterialItemAssociatedRegistry.instance().getMaterialFromStack(base).isPresent()){
 			mate =  MaterialItemAssociatedRegistry.instance().getMaterialFromStack(base).get();
@@ -269,6 +272,7 @@ public class ContainerSmithUnsaga extends ContainerBase{
 				ForgeResult result =  forging.decideForgedDurability().decideForgedMaterial()
 						.decideForgedWeight().bakeForgedStack();
 				if(forging.getForgedStack().isPresent()){
+					ep.addStat(UnsagaAchievementRegistry.instance().firstSmith);
 					if(WorldHelper.isServer(worldobj)){
 						if(ep instanceof EntityPlayerMP){
 							HSLib.core().getPacketDispatcher().sendTo(PacketSound.atPos(result.getResultSound(), XYZPos.createFrom(ep)), (EntityPlayerMP) this.ep);

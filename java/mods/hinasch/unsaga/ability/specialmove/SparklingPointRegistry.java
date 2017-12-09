@@ -37,15 +37,15 @@ public class SparklingPointRegistry {
 	public double getSparklingPoint(EntityLivingBase entity){
 		OptionalDouble rt = this.map.entrySet().stream().filter(in -> in.getKey().test(entity))
 				.mapToDouble(in -> (double)in.getValue()).findFirst();
-		return rt.isPresent() ? rt.getAsDouble() : 0.1D;
+		return rt.isPresent() ? rt.getAsDouble() : 0.15D;
 	}
 	public void register(){
-		this.map.put(in -> in instanceof EntityEnderman, 0.3F);
-		this.map.put(in -> in instanceof EntityPigZombie, 0.3F);
+		this.map.put(in -> in instanceof EntityEnderman, 0.35F);
+		this.map.put(in -> in instanceof EntityPigZombie, 0.35F);
 		this.map.put(in -> in instanceof EntityWitch, 0.25F);
 		this.map.put(in -> in instanceof EntityShulker, 0.25F);
 		this.map.put(in -> in instanceof EntityGuardian, 0.25F);
-		this.map.put(in -> in instanceof EntityBlaze, 0.2F);
+		this.map.put(in -> in instanceof EntityBlaze, 0.25F);
 		this.map.put(in -> in instanceof EntityGhast, 0.25F);
 		this.map.put(in -> {
 			if(in instanceof EntitySlime){

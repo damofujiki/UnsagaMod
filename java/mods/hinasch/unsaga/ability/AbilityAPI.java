@@ -12,7 +12,7 @@ import mods.hinasch.lib.util.HSLibs;
 import mods.hinasch.unsaga.ability.specialmove.SpecialMove;
 import mods.hinasch.unsaga.core.inventory.AccessorySlotCapability;
 import mods.hinasch.unsaga.material.UnsagaMaterial;
-import mods.hinasch.unsaga.material.UnsagaMaterialTool;
+import mods.hinasch.unsaga.material.UnsagaMaterialCapability;
 import mods.hinasch.unsaga.util.ToolCategory;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.IAttribute;
@@ -105,7 +105,7 @@ public class AbilityAPI {
 	}
 
 	public static boolean hasWeaponSpecialArt(ItemStack is){
-		if(AbilityCapability.adapter.hasCapability(is) && UnsagaMaterialTool.adapter.hasCapability(is)){
+		if(AbilityCapability.adapter.hasCapability(is) && UnsagaMaterialCapability.adapter.hasCapability(is)){
 			if(AbilityCapability.adapter.getCapability(is).getLearnedAbilities().stream().anyMatch(in -> in instanceof SpecialMove)){
 				return true;
 			}
@@ -113,12 +113,12 @@ public class AbilityAPI {
 		return false;
 	}
 	public static Optional<IAbility> learnRandomAbility(Random rand,ItemStack is){
-		if(AbilityCapability.adapter.hasCapability(is) && UnsagaMaterialTool.adapter.hasCapability(is)){
+		if(AbilityCapability.adapter.hasCapability(is) && UnsagaMaterialCapability.adapter.hasCapability(is)){
 			if(!existLearnableAbility(is)){
 				return Optional.empty();
 			}
 			ToolCategory cate = ToolCategory.getCategoryFromItem(is.getItem());
-			UnsagaMaterial mate = UnsagaMaterialTool.adapter.getCapability(is).getMaterial();
+			UnsagaMaterial mate = UnsagaMaterialCapability.adapter.getCapability(is).getMaterial();
 			List<IAbility> list = AbilityAssociateRegistry.instance().getAbilityList(is);
 			if(cate.isWeapon()){
 				list = AbilityAssociateRegistry.instance().getAbilityList(is);
@@ -130,6 +130,7 @@ public class AbilityAPI {
 
 			if(!list.isEmpty()){
 				IAbility learnAbility = HSLibs.randomPick(rand, list);
+
 				AbilityCapability.adapter.getCapability(is).addAbility(learnAbility);
 				return Optional.of(learnAbility);
 			}
@@ -171,6 +172,7 @@ public class AbilityAPI {
 		.collect(Collectors.toList());
 	}
 
+	/** パッシブアビリティ(Ability not SpecialMove)を取得する*/
 	public static List<Ability> getEffectiveAllPassiveAbilities(EntityLivingBase el){
 		return getEffectiveAllAbilities(el).stream().filter(in -> in instanceof Ability).map(in ->(Ability)in).collect(Collectors.toList());
 	}
