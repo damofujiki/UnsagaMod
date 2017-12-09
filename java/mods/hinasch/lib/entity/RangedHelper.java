@@ -11,6 +11,7 @@ import com.google.common.collect.Sets;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
@@ -21,7 +22,7 @@ public class RangedHelper<T> {
 	final World world;
 	final Entity origin;
 	T parent;
-	BiPredicate<RangedHelper<T>,EntityLivingBase> selector = (self,target) -> true;
+	RangedSelector<T,EntityLivingBase> selector = (self,target) -> true;
 	BiConsumer<RangedHelper<T>,EntityLivingBase> consumer = (self,target)->{};
 	boolean ignoreSelf = true;
 	boolean flag = false;
@@ -59,6 +60,8 @@ public class RangedHelper<T> {
 	public List<AxisAlignedBB> getBounding(){
 		return this.boundings;
 	}
+
+
 	public RangedHelper<T> setParent(T parent){
 		this.parent = parent;
 		return this;
@@ -76,17 +79,22 @@ public class RangedHelper<T> {
 		Set<EntityLivingBase> list = Sets.newHashSet();
 
 		for(AxisAlignedBB bb:this.boundings){
+
+
 			this.world.getEntitiesWithinAABB(EntityLivingBase.class, bb).forEach(in->{
-				if(ignoreSelf){
-					if(in!=origin && this.selector.test(this, in)){
-						list.add(in);
-					}
-				}else{
-					if(this.selector.test(this, in)){
-						list.add(in);
+
+					if(ignoreSelf){
+						if(in!=origin && this.selector.test(this, in)){
+							list.add(in);
+						}
+					}else{
+						if(this.selector.test(this, in)){
+							list.add(in);
+						}
+
 					}
 
-				}
+
 
 			});
 		}
@@ -110,7 +118,7 @@ public class RangedHelper<T> {
 	public void setFlag(boolean par1){
 		this.flag = par1;
 	}
-	public RangedHelper<T> setSelector(BiPredicate<RangedHelper<T>,EntityLivingBase> selector){
+	public RangedHelper<T> setSelector(RangedSelector<T,EntityLivingBase> selector){
 		this.selector = selector;
 		return this;
 	}
@@ -119,14 +127,28 @@ public class RangedHelper<T> {
 		return this;
 	}
 
+	public Entity getOrigin(){
+		return this.origin;
+	}
 	/** 軸となるエンティティによってセレクターを自動設定する。*/
 	public RangedHelper<T> setSelectorFromOrigin(){
 		this.setSelector((self,target)->{
-			if(self.origin instanceof EntityPlayer){
-				return IMob.MOB_SELECTOR.apply(target);
-			}
-			return !IMob.MOB_SELECTOR.apply(target);
+			return getTargetSelectorFromEntityType(origin).apply(target);
 		});
 		return this;
+	}
+
+	public static com.google.common.base.Predicate<Entity> getTargetSelectorFromEntityType(Entity owner,boolean reverse){
+		if(owner instanceof EntityPlayer || owner instanceof EntityTameable){
+			return reverse ? in -> !IMob.MOB_SELECTOR.apply(in) : in -> IMob.MOB_SELECTOR.apply(in);
+		}
+		return reverse ? in -> IMob.MOB_SELECTOR.apply(in) : in -> !IMob.MOB_SELECTOR.apply(in);
+
+	}
+	public static com.google.common.base.Predicate<Entity> getTargetSelectorFromEntityType(Entity owner){
+		return getTargetSelectorFromEntityType(owner,false);
+	}
+	public static interface RangedSelector<V,K> extends BiPredicate<RangedHelper<V>,K>{
+
 	}
 }

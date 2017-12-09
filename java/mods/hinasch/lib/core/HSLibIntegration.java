@@ -9,6 +9,7 @@ import com.google.common.collect.Maps;
 import com.mojang.realmsclient.util.Pair;
 
 import mods.hinasch.lib.capability.CapabilityAdapterFactory;
+import mods.hinasch.lib.capability.LivingAsyncCapability;
 import mods.hinasch.lib.client.ITextMenuAdapter;
 import mods.hinasch.lib.debuff.DebuffBase;
 import mods.hinasch.lib.debuff.capability.ICustomDebuff;
@@ -25,6 +26,8 @@ import mods.hinasch.lib.network.PacketSyncCapability;
 import mods.hinasch.lib.network.PacketSyncDebuffNew;
 import mods.hinasch.lib.network.textmenu.PacketGuiButtonHSLib;
 import mods.hinasch.lib.particle.PacketParticle;
+import mods.hinasch.lib.sync.AsyncUpdateEvent;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.RegistryNamespaced;
 import net.minecraftforge.common.capabilities.Capability;
@@ -53,6 +56,15 @@ public class HSLibIntegration {
 
 	public static Map<Integer,IModBase> guis = Maps.newHashMap();
 
+	public static void addAsyncEvent(EntityLivingBase entity,AsyncUpdateEvent e){
+//		UnsagaMod.logger.trace("event", entity);
+		if(e.getSender()!=null){
+			LivingAsyncCapability.addEvent(entity, e);
+		}else{
+			HSLib.core().events.scannerEventPool.addEvent(e);
+		}
+
+	}
 
 	public static AbstractDispatcherAdapter packetParticle = new AbstractDispatcherAdapter<PacketParticle>(){
 
@@ -76,6 +88,8 @@ public class HSLibIntegration {
 	public static SimpleNetworkWrapper getPacketDispatcher(){
 		return packetDispatcher;
 	}
+
+	@Deprecated
 	public static AbstractDispatcherAdapter<PacketParticle> getParticlePacketSender(){
 		return packetParticle;
 	}
@@ -91,8 +105,10 @@ public class HSLibIntegration {
 	public static void initDropEvents(){
 		events.drop.init();
 	}
+
+	@Deprecated
 	public static void registerDebuff(DebuffBase base){
-		HSLib.logger.get().info("registering debuff "+base.getName());
+		HSLib.logger.get().info("registering debuff "+base.getPropertyName());
 		debuffRegistry.register(base.getID(),base.getKey(), base);
 	}
 

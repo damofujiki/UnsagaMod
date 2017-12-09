@@ -27,14 +27,14 @@ public class PacketSyncDebuffNew implements IMessage{
 					switch(message.getType()){
 					case END:
 						if(entity instanceof EntityLivingBase){
-							HSLib.logger.trace(message.getDebuff().getName()+" is expired.(sync)");
+							HSLib.logger.trace(message.getDebuff().getPropertyName()+" is expired.(sync)");
 							DebuffHelper.removeDebuff((EntityLivingBase) entity, message.getDebuff());
 						}
 						break;
 					case START:
 						if(message.getData()!=null){
 							if(entity instanceof EntityLivingBase){
-								HSLib.logger.trace(message.getDebuff().getName()+" is start.(sync)");
+								HSLib.logger.trace(message.getDebuff().getPropertyName()+" is start.(sync)");
 								DebuffEffectBase debuffEffect;
 								try{
 									debuffEffect = message.getDebuff().initLivingDebuff(message.getData());

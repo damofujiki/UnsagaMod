@@ -6,6 +6,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import mods.hinasch.lib.iface.ILivingUpdateEvent;
 import mods.hinasch.lib.misc.LogWrapper;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class AsyncEventPool extends ILivingUpdateEvent{
 
@@ -31,12 +32,16 @@ public class AsyncEventPool extends ILivingUpdateEvent{
 
 
 
-		this.eventList.offer(e);
+		if(!this.eventList.contains(e)){
+			this.eventList.offer(e);
+		}
+
 
 
 	}
 
 
+	@SubscribeEvent
 	@Override
 	public void update(LivingUpdateEvent e) {
 
@@ -44,12 +49,17 @@ public class AsyncEventPool extends ILivingUpdateEvent{
 			if(!this.eventList.isEmpty()){
 
 				AsyncUpdateEvent ev = this.eventList.poll();
+//				UnsagaMod.logger.trace("ev", ev.sender,e.getEntityLiving());
 				if(ev!=null && !ev.hasFinished()){
-					ev.loop();
+//					if(e.getEntityLiving()==ev.sender){
+						ev.loop();
+//					}
+
 					this.eventList.offer(ev);
 				}
 
 				if(ev!=null && ev.hasFinished()){
+//					UnsagaMod.logger.trace(getName(), ev.identifyName+" is expired.");
 					ev.onExpire();
 				}
 
@@ -62,4 +72,19 @@ public class AsyncEventPool extends ILivingUpdateEvent{
 		// TODO 自動生成されたメソッド・スタブ
 		return "Scanner Pool LivingUpdate";
 	}
+
+//	public static class AsyncEventThread extends Thread{
+//
+//		World world;
+//
+//		public AsyncEventThread(World world){
+//			if(world!=null){
+//				UnsagaMod.logger.trace(world, params);
+//			}
+//		}
+//		@Override
+//		public void run(){
+//
+//		}
+//	}
 }

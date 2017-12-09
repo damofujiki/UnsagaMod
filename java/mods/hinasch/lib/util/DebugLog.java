@@ -1,4 +1,4 @@
-package mods.hinasch.lib;
+package mods.hinasch.lib.util;
 
 import java.util.Collection;
 

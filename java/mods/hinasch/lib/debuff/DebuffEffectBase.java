@@ -63,7 +63,7 @@ public class DebuffEffectBase implements INBTWritable{
 	 * @param living
 	 */
 	public void updateRemainingByTick(EntityLivingBase living){
-		HSLib.logger.trace(this.debuff.getName()+" remain:"+this.remain);
+		HSLib.logger.trace(this.debuff.getPropertyName()+" remain:"+this.remain);
 		this.remain -= 1;
 		if(this.remain<=0){
 			this.remain = 0;
@@ -120,7 +120,7 @@ public class DebuffEffectBase implements INBTWritable{
 			output = null;
 		}
 
-		HSLib.logger.trace("restroreing... buildFromNBT "+debuff.getName());
+		HSLib.logger.trace("restroreing... buildFromNBT "+debuff.getPropertyName());
 //		Unsaga.debug(output.debuff.name+"復元");
 		return output;
 
@@ -144,7 +144,7 @@ public class DebuffEffectBase implements INBTWritable{
 
 	//TODO : このへん要改変
 	public void onExpiredEvent(EntityLivingBase living) {
-		HSLib.logger.trace(this.debuff.getName()+" is expired.");
+		HSLib.logger.trace(this.debuff.getPropertyName()+" is expired.");
 		if(!this.debuff.attributeModifier.isEmpty()){
 			for(Pair<IAttribute,AttributeModifier> entry:this.debuff.attributeModifier){
 				IAttributeInstance entityAttribute = living.getEntityAttribute(entry.first());

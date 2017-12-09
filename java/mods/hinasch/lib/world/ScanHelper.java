@@ -14,7 +14,6 @@ import java.util.stream.StreamSupport;
 import com.google.common.base.Function;
 
 import mods.hinasch.lib.core.HSLib;
-import mods.hinasch.lib.iface.BiConsumer;
 import mods.hinasch.lib.iface.IIntSerializable;
 import mods.hinasch.lib.misc.Tuple;
 import mods.hinasch.lib.util.HSLibs;
@@ -60,6 +59,10 @@ public class ScanHelper implements Iterator<ScanHelper>{
 	}
 	public static ScanHelper create(XYZPos start,XYZPos end){
 		return new ScanHelper(start,end);
+	}
+
+	public static ScanHelper create(BlockPos start,BlockPos end){
+		return new ScanHelper(new XYZPos(start),new XYZPos(end));
 	}
 	public static ScanHelper create(XYZPos start,XYZPos end,int mode){
 		return new ScanHelper(start,end,mode);
@@ -178,7 +181,7 @@ public class ScanHelper implements Iterator<ScanHelper>{
 
 	}
 
-	public  <T> void asStream(BiConsumer<ScanHelper,T> consumer,T par2){
+	public  <T> void asStream(java.util.function.BiConsumer<ScanHelper,T> consumer,T par2){
 		for(;this.hasNext();this.next()){
 			consumer.accept(this,par2);
 		}

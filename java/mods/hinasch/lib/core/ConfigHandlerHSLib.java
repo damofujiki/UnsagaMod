@@ -21,7 +21,7 @@ public class ConfigHandlerHSLib extends ConfigBase{
 	public void init() {
 		// TODO 自動生成されたメソッド・スタブ
 
-		props = PropertyCustomNew.newInstance();
+		props = PropertyCustomNew.create();
 		props.add(0,"isDebug", "Set Debug Flag True.", false);
 		props.add(1, "enableOreGeneration", "set true to allow ore generation.", true);
 		props.add(2, "enableAllowOreGenerationOverworld", "set true to allow ore generation in overworld.", true);

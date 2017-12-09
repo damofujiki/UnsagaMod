@@ -2,6 +2,7 @@ package mods.hinasch.lib.entity;
 
 import java.util.UUID;
 
+import mods.hinasch.unsaga.UnsagaMod;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttribute;
@@ -20,6 +21,14 @@ public class ModifierHelper {
 	 */
 	public static AttributeModifier getNewAttributeModifier(UUID uuid,String name,double amount,int operation){
 		return new AttributeModifier(uuid,name,amount,operation);
+	}
+
+	public static void dumpModifiers(IAttribute attribute,EntityLivingBase living){
+		if(living.getEntityAttribute(attribute)!=null){
+			for(AttributeModifier mod:living.getEntityAttribute(attribute).getModifiers()){
+				UnsagaMod.logger.trace(attribute.getAttributeUnlocalizedName(), mod);
+			}
+		}
 	}
 	/**
 	 * 正常でない？

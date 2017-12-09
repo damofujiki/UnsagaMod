@@ -20,6 +20,11 @@ public abstract class BlockItemRegistry<V> extends RegistrySimple<ResourceLocati
 	public String getUnlocalizedNamePrefix() {
 		return unlocalizedNamePrefix;
 	}
+
+	/**
+	 * item.は不要
+	 * @param unlocalizedNamePrefix
+	 */
 	public void setUnlocalizedNamePrefix(String unlocalizedNamePrefix) {
 		this.unlocalizedNamePrefix = unlocalizedNamePrefix;
 	}

@@ -22,7 +22,7 @@ public abstract class PropertyRegistryItem<T extends ItemProperty> extends Prope
 
 
 	public List<String> getNameList(){
-		return this.getProperties().stream().sorted().map(in -> in.getName()).collect(Collectors.toList());
+		return this.getProperties().stream().sorted().map(in -> in.getPropertyName()).collect(Collectors.toList());
 	}
 
 }

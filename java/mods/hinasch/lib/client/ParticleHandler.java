@@ -1,6 +1,6 @@
 package mods.hinasch.lib.client;
 
-import mods.hinasch.lib.DebugLog;
+import mods.hinasch.lib.util.DebugLog;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;

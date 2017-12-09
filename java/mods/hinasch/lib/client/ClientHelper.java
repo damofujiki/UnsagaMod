@@ -106,7 +106,7 @@ public class ClientHelper {
 	}
 
 
-	public static FontRenderer getFontRendererFromMCInstance(){
+	public static FontRenderer fontRenderer(){
 
 		return getMC().fontRendererObj;
 	}

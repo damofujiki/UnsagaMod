@@ -18,22 +18,36 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 
-public class RenderHelper {
+public class RenderHelperHS {
 
 	FontRenderer fontRenderer;
 	RenderManager renderManager;
 
-	protected RenderHelper(FontRenderer f,RenderManager r){
+	protected RenderHelperHS(FontRenderer f,RenderManager r){
 
 		this.fontRenderer = f;
 		this.renderManager = r;
 	}
 
-	public static RenderHelper create(FontRenderer f,RenderManager r){
-		return new RenderHelper(f, r);
+	public static RenderHelperHS create(FontRenderer f,RenderManager r){
+		return new RenderHelperHS(f, r);
 	}
 
 
+	public static void drawTexturedRect(float x,float y,float textureX,float textureY,float width,float height){
+        float f = 0.00390625F;
+        float f1 = 0.00390625F;
+        Tessellator tessellator = Tessellator.getInstance();
+        VertexBuffer vertexbuffer = tessellator.getBuffer();
+        vertexbuffer.begin(7, DefaultVertexFormats.POSITION_TEX);
+        vertexbuffer.pos((double)(x + 0), (double)(y + height), 100).tex((double)((float)(textureX + 0) * 0.00390625F), (double)((float)(textureY + height) * 0.00390625F)).endVertex();
+        vertexbuffer.pos((double)(x + width), (double)(y + height), 100).tex((double)((float)(textureX + width) * 0.00390625F), (double)((float)(textureY + height) * 0.00390625F)).endVertex();
+        vertexbuffer.pos((double)(x + width), (double)(y + 0), 100).tex((double)((float)(textureX + width) * 0.00390625F), (double)((float)(textureY + 0) * 0.00390625F)).endVertex();
+        vertexbuffer.pos((double)(x + 0), (double)(y + 0), 100).tex((double)((float)(textureX + 0) * 0.00390625F), (double)((float)(textureY + 0) * 0.00390625F)).endVertex();
+        tessellator.draw();
+
+		GlStateManager.color(1, 1, 1, 1);
+	}
     public static void drawRect(int left, int top, int right, int bottom, int color,int alpha)
     {
         if (left < right)

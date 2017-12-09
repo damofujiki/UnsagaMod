@@ -12,6 +12,10 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
+/**
+ * Client側からリクエストし、ContainerのgetSyncPacketToClientで受け取る。
+ * そこから情報を送信し、GuiのonPacketFromServerで受け取る。
+ */
 public class PacketSendGuiInfoToClient implements IMessage{
 
 	NBTTagCompound comp;

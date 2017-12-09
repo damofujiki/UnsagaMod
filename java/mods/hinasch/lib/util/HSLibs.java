@@ -27,11 +27,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import io.netty.buffer.ByteBuf;
-import mods.hinasch.lib.DebugLog;
 import mods.hinasch.lib.client.IGuiAttribute;
 import mods.hinasch.lib.core.HSLib;
 import mods.hinasch.lib.iface.IIntSerializable;
 import mods.hinasch.lib.misc.Tuple;
+import mods.hinasch.lib.misc.XY;
 import mods.hinasch.lib.network.PacketOpenGui;
 import mods.hinasch.lib.world.XYZPos;
 import net.minecraft.block.Block;
@@ -347,6 +347,13 @@ public class HSLibs {
 			return Predicates.or(compareTameable,compareHorse,isSameTeam).apply(new PairCompare(owner, livingToCompare));
 		}
 
+		return false;
+	}
+
+	public static boolean isXYIn(XY xy,XY start,XY end){
+		if(start.getX()<=xy.getX() && start.getY()<=xy.getY() && end.getX()>=xy.getX() && end.getY()>=xy.getY()){
+			return true;
+		}
 		return false;
 	}
 	public static <T> boolean listContains(Collection<T> c,T... elements){

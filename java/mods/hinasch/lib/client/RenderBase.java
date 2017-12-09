@@ -1,7 +1,7 @@
 package mods.hinasch.lib.client;
 
 import mods.hinasch.lib.entity.EntityThrowableItem;
-import mods.hinasch.unsaga.core.client.render.projectile.IRotation;
+import mods.hinasch.unsaga.core.client.IRotation;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;

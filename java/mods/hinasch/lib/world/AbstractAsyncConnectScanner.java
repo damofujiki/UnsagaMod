@@ -9,14 +9,13 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import mods.hinasch.lib.sync.SafeUpdateEventByInterval;
-import mods.hinasch.unsaga.UnsagaMod;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public abstract class AbstractConnectScanner extends SafeUpdateEventByInterval{
+public abstract class AbstractAsyncConnectScanner extends SafeUpdateEventByInterval{
 
 
 	protected Set<BlockPos> scheduledBreakPool = Sets.newConcurrentHashSet();
@@ -41,7 +40,7 @@ public abstract class AbstractConnectScanner extends SafeUpdateEventByInterval{
 	 */
 	public boolean finish = false;
 
-	public AbstractConnectScanner(World world,Set<IBlockState> compareBlock,BlockPos startpoint,int length,EntityLivingBase sender){
+	public AbstractAsyncConnectScanner(World world,Set<IBlockState> compareBlock,BlockPos startpoint,int length,EntityLivingBase sender){
 		super(sender,"connectedScanner");
 		this.baseBlocks = ImmutableSet.copyOf(compareBlock);
 		this.nextCheckPos.add(startpoint);
@@ -86,7 +85,7 @@ public abstract class AbstractConnectScanner extends SafeUpdateEventByInterval{
 		if(this.iterator.hasNext()){
 
 			BlockPos breakPos = this.iterator.next();
-			UnsagaMod.logger.trace("ite", breakPos);
+//			UnsagaMod.logger.trace("ite", breakPos);
 			IBlockState state = this.world.getBlockState(breakPos);
 			if(state.getBlock()!=Blocks.AIR){
 				this.onCheckScheduledPos(world, state, breakPos);

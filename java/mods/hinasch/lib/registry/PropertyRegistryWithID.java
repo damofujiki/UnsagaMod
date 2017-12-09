@@ -20,7 +20,7 @@ public abstract class PropertyRegistryWithID<T extends PropertyElementWithID> ex
     public void register(int id, ResourceLocation key, T value)
     {
         super.register(id, key, value);
-        HSLib.logger.trace("registering...", value.getName()+" to ID"+String.valueOf(id));
+        HSLib.logger.trace("registering...", value.getPropertyName()+" to ID"+String.valueOf(id));
     }
 	public T get(String name){
 		return this.getObject(new ResourceLocation(name));

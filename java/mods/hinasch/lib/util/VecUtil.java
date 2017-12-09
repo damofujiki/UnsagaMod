@@ -16,7 +16,7 @@ import net.minecraft.world.World;
 public class VecUtil {
 
 
-	public static void knockback(EntityLivingBase base,EntityLivingBase target,double velocity,double yVel){
+	public static void knockback(Entity base,EntityLivingBase target,double velocity,double yVel){
 		Vec3d vec = target.getPositionVector().subtract(base.getPositionVector()).normalize().scale(velocity);
 		target.addVelocity(vec.xCoord, yVel, vec.zCoord);
 	}
@@ -42,8 +42,9 @@ public class VecUtil {
 	public static Vec3d getShake(Vec3d motion,Random rand,int upDownMin,int upDownMax,int leftRightMin,int leftRightMax){
 
 
-		Vec3d rt = motion.rotateYaw(rand.nextInt(leftRightMax)-leftRightMin);
-		rt = motion.rotatePitch(rand.nextInt(upDownMax)-upDownMin);
+
+		Vec3d rt = motion.rotateYaw((float) Math.toRadians(rand.nextInt(leftRightMax)-leftRightMin));
+		rt = motion.rotatePitch((float) Math.toRadians(rand.nextInt(upDownMax)-upDownMin));
 
 
 		return rt;
@@ -51,7 +52,7 @@ public class VecUtil {
 	public static Vec3d getShakeYaw(Vec3d motion,Random rand,int leftRightMin,int leftRightMax){
 
 
-		Vec3d rt = motion.rotateYaw(rand.nextInt(leftRightMax)-leftRightMin);
+		Vec3d rt = motion.rotateYaw((float) Math.toRadians(rand.nextInt(leftRightMax)-leftRightMin));
 
 		return rt;
 	}

@@ -26,7 +26,7 @@ public abstract class PropertyRegistry<T extends IPropertyElement> extends Regis
     public void register(ResourceLocation key, T value)
     {
         super.putObject(key, value);
-        HSLib.logger.trace("registering...", value.getName()+" to "+this.toString());
+        HSLib.logger.trace("registering...", value.getPropertyName()+" to "+this.toString());
     }
 	public T get(String name){
 		return this.getObject(new ResourceLocation(name));

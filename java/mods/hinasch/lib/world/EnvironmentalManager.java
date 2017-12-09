@@ -10,8 +10,10 @@ import mods.hinasch.lib.core.HSLib;
 import mods.hinasch.lib.world.EnvironmentalManager.EnvironmentalCondition.Type;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 
@@ -142,7 +144,7 @@ public class EnvironmentalManager {
 		}
 		List biomeList = BiomeHelper.getBiomeTypeList(biome);
 
-		float temp = biome.getFloatTemperature(pos);
+		float temp = biome.getFloatTemperature(pos) * 1.2F;
 		float humid = biome.getRainfall();
 		//boolean isNight = world.getBlockLightValue(pos.x,pos.y, pos.z) < 7;
 		List<XYZPos> list = WorldHelper.findNear(w, pos, 5, 3,(world,posIn,scan)->{
@@ -160,15 +162,42 @@ public class EnvironmentalManager {
 			}
 			return false;
 		});
-		if(list.size()>=1){
-			if(list.size()>=2){
-				temp += 0.5F;
-			}else{
-				temp += 0.3F;
+		float addtemp = (float)ScannerNew.create().base(pos).range(5, 3, 3).ready()
+		.stream().mapToDouble(in ->{
+			if(!w.isAirBlock(in)){
+				IBlockState state = w.getBlockState(in);
+				if(hotBlocks.contains(state.getBlock())){
+					return 0.2F;
+				}
+				if(state.getMaterial()==Material.LAVA){
+					return 0.2F;
+				}
+				if(state.getMaterial()==Material.FIRE){
+					return 0.2F;
+				}
+				if(state.getMaterial()==Material.WATER){
+					return -0.1F;
+				}
+				if(state.getMaterial()==Material.SNOW){
+					return -0.1F;
+				}
 			}
+			return 0;
+		}).sum();
 
+		temp += MathHelper.clamp_float(addtemp, -0.5F, 0.5F);
+//		if(list.size()>=1){
+//			if(list.size()>=2){
+//				temp += 0.5F;
+//			}else{
+//				temp += 0.3F;
+//			}
+//
+//		}
+
+		if(living.isInWater()){
+			temp -= 0.2F;
 		}
-
 		if(!w.canBlockSeeSky(pos)){
 			temp -= 0.1F;
 		}
@@ -222,6 +251,10 @@ public class EnvironmentalManager {
 //		if(w.isAABBInMaterial(HSLibs.getBounding(pos, 3.0D, 3.0D), Material.lava)){
 //			return new EnvironmentalCondition(true,Type.HOT);
 //		}
+		return getConditionFromTempHumid(temp,humid);
+	}
+
+	public static EnvironmentalCondition getConditionFromTempHumid(float temp,float humid){
 		if(temp>=2.0F){
 			return new EnvironmentalCondition(true,Type.HOT,temp,humid);
 		}

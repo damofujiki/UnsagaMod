@@ -33,7 +33,7 @@ public class PropertyCustomNew {
 
 	}
 
-	public static PropertyCustomNew newInstance(){
+	public static PropertyCustomNew create(){
 		return new PropertyCustomNew();
 	}
 	protected PropertyCustomNew(){

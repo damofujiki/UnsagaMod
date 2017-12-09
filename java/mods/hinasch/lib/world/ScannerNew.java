@@ -34,7 +34,7 @@ public class ScannerNew {
 	}
 	/**
 	 * xrange 2だと
-	 * 左に２、右に２をとって始点含めて５ブロックとなる。
+	 * 左に２、右に２をとって始点含めて総範囲５ブロックとなる。
 	 * */
 	public ScannerNew range(int xrange,int yrange,int zrange){
 		this.start = this.base.add(-xrange, -yrange, -zrange);

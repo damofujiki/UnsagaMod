@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mods.hinasch.lib.iface.LivingHurtEventBase;
-import mods.hinasch.unsaga.UnsagaMod;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -72,19 +71,19 @@ public class EventLivingHurt {
 
 		DamageSource ds = e.getSource();
 		for(LivingHurtEventBase ev:this.eventsPre){
-			UnsagaMod.logger.trace("EventPre", ev.getName(),ds);
+//			UnsagaMod.logger.trace("EventPre", ev.getName(),ds);
 			if(ev.apply(e, ds)){
 				ds = ev.process(e, ds);
 			}
 		}
 		for(LivingHurtEventBase ev:this.eventsMain){
-			UnsagaMod.logger.trace("EventMain", ev.getName(),ds);
+//			UnsagaMod.logger.trace("EventMain", ev.getName(),ds);
 			if(ev.apply(e, ds)){
 				ds = ev.process(e, ds);
 			}
 		}
 		for(LivingHurtEventBase ev:this.eventsPost){
-			UnsagaMod.logger.trace("EventPost", ev.getName(),ds);
+//			UnsagaMod.logger.trace("EventPost", ev.getName(),ds);
 			if(ev.apply(e, ds)){
 				ds = ev.process(e, ds);
 			}

@@ -3,10 +3,10 @@ package mods.hinasch.lib.item;
 import java.util.Collection;
 import java.util.Random;
 
+import mods.hinasch.lib.core.HSLib;
 import mods.hinasch.lib.misc.LogWrapper;
 import mods.hinasch.lib.world.WorldHelper;
 import mods.hinasch.lib.world.XYZPos;
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntitySlime;
@@ -17,7 +17,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 
-public class CustomDropEvent<T> {
+public abstract class CustomDropEvent<T> {
 
 	/** EntiytもしくはItemStack,Block*/
 	public Droppable<T> droppable;
@@ -32,30 +32,26 @@ public class CustomDropEvent<T> {
 		this.droppable = t;
 	}
 
-	public boolean canDrop(DamageSource source,EntityLivingBase entityDrops,int looting){
-		return false;
-	}
+	public abstract boolean canDrop(DamageSource source,EntityLivingBase entityDrops,int looting);
 
-	public int getDropValue(DamageSource source,EntityLivingBase entityDrops,int looting){
-		return 0;
-	}
+	public abstract int getDropValue(DamageSource source,EntityLivingBase entityDrops,int looting);
 
 	public Droppable<T> getDroppable(LivingDropsEvent e){
 
 		return this.droppable;
 	}
 
-	public Entity getEntity(LivingDropsEvent e){
-		return null;
-	}
-
-	public ItemStack getItemStack(LivingDropsEvent e){
-		return null;
-	}
-
-	public Block getBlock(LivingDropsEvent e){
-		return null;
-	}
+//	public Entity getEntity(LivingDropsEvent e){
+//		return null;
+//	}
+//
+//	public ItemStack getItemStack(LivingDropsEvent e){
+//		return null;
+//	}
+//
+//	public Block getBlock(LivingDropsEvent e){
+//		return null;
+//	}
 	public void drop(LivingDropsEvent e){
 		EntityLivingBase entityDropped = e.getEntityLiving();
 		Random rand = entityDropped.getRNG();
@@ -102,9 +98,10 @@ public class CustomDropEvent<T> {
 
 		if(drops!=null && e.getSource().getEntity() instanceof EntityLivingBase && isKilledByPlayer((EntityLivingBase) e.getSource().getEntity())){
 
+//			UnsagaMod.logger.trace("drop", prob);
 			drops.stream().filter(dropEvent -> dropEvent.canDrop(e.getSource(), entityToDrop, e.getLootingLevel()))
 			.filter(dropEvent ->dropEvent.getDropValue(e.getSource(), entityToDrop, e.getLootingLevel())>prob)
-			.forEach(dropEvent -> dropEvent.drop(e));
+			.peek(in -> HSLib.logger.trace("drop", in)).forEach(dropEvent -> dropEvent.drop(e));
 		}
 	}
 
@@ -120,6 +117,7 @@ public class CustomDropEvent<T> {
 		}
 		return false;
 	}
+
 
 	public static abstract class Droppable<T>{
 

@@ -12,11 +12,11 @@ import java.util.stream.Stream;
 
 import com.mojang.realmsclient.util.Pair;
 
-import mods.hinasch.lib.DebugLog;
 import mods.hinasch.lib.misc.FileObject;
 import mods.hinasch.lib.sync.SafeAirBlockSetter;
 import mods.hinasch.lib.sync.SafeExplode;
 import mods.hinasch.lib.sync.SafeSpawner;
+import mods.hinasch.lib.util.DebugLog;
 import mods.hinasch.lib.util.HSLibs;
 import mods.hinasch.lib.world.ScanHelper.ScanConsumer;
 import net.minecraft.block.Block;
@@ -382,11 +382,11 @@ public class WorldHelper {
 		return new EntityItem(world,pos.dx,pos.dy,pos.dz,itemStack);
 	}
 	public static boolean isClient(World world){
-		return world.isRemote;
+		return world!=null && world.isRemote;
 	}
 
 	public static boolean  isServer(World world){
-		return !world.isRemote;
+		return world!=null && !world.isRemote;
 	}
 
 	/**

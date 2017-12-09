@@ -8,7 +8,6 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 
 import mods.hinasch.lib.world.WorldHelper;
-import mods.hinasch.unsaga.UnsagaMod;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
@@ -197,7 +196,7 @@ public abstract class EntityThrowableItem extends EntityThrowableBase{
 	@Override
 	public void onUpdate(){
 		super.onUpdate();
-		UnsagaMod.logger.trace(this.getClass().getName(), "called");
+//		UnsagaMod.logger.trace(this.getClass().getName(), "called");
 		if(this.getEntityStatus()==EntityThrowableItem.DEAD){
 			this.transformToEntityItem();
 		}

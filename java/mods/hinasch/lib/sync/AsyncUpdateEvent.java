@@ -4,12 +4,12 @@ import net.minecraft.entity.EntityLivingBase;
 
 public abstract class AsyncUpdateEvent {
 
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((identifyName == null) ? 0 : identifyName.hashCode());
-		result = prime * result + ((sender == null) ? 0 : sender.hashCode());
 		return result;
 	}
 
@@ -27,15 +27,11 @@ public abstract class AsyncUpdateEvent {
 				return false;
 		} else if (!identifyName.equals(other.identifyName))
 			return false;
-		if (sender == null) {
-			if (other.sender != null)
-				return false;
-		} else if (!sender.equals(other.sender))
-			return false;
 		return true;
 	}
 	String identifyName;
-	protected EntityLivingBase sender;
+
+	final protected EntityLivingBase sender;
 
 	public AsyncUpdateEvent(EntityLivingBase sender,String identifyName){
 		this.identifyName = identifyName;

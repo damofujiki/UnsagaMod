@@ -1,6 +1,6 @@
 package mods.hinasch.lib.container.inventory;
 
-import mods.hinasch.lib.capability.CapabilityInventory;
+import mods.hinasch.lib.capability.InventoryCapability;
 import mods.hinasch.lib.core.HSLib;
 import mods.hinasch.lib.iface.ILockable;
 import net.minecraft.entity.player.EntityPlayer;
@@ -59,8 +59,8 @@ public abstract class AbstractInventoryBinder<T> extends InventoryBase{
 		@Override
 		public void saveToNBT(ItemStack binder){
 
-			if(CapabilityInventory.adapter.hasCapability(binderObject)){
-				CapabilityInventory.adapter.getCapability(binderObject).setStacks(theInventory.toArray());
+			if(InventoryCapability.adapter.hasCapability(binderObject)){
+				InventoryCapability.adapter.getCapability(binderObject).setStacks(theInventory.toArray());
 			}
 			//				ItemUtil.saveItemStacksToItemNBT((ItemStack) binder,theInventory);
 
@@ -70,8 +70,8 @@ public abstract class AbstractInventoryBinder<T> extends InventoryBase{
 		public void loadFromNBT() {
 			ItemStack[] maps = null;
 
-			if(CapabilityInventory.adapter.hasCapability((ItemStack) binderObject)){
-				maps = CapabilityInventory.adapter.getCapability((ItemStack) binderObject).getStacks();
+			if(InventoryCapability.adapter.hasCapability((ItemStack) binderObject)){
+				maps = InventoryCapability.adapter.getCapability((ItemStack) binderObject).getStacks();
 
 			}
 
@@ -119,9 +119,9 @@ public abstract class AbstractInventoryBinder<T> extends InventoryBase{
 		@Override
 		public void saveToNBT(TileEntity binder){
 
-			if(CapabilityInventory.adapterTE.hasCapability(binderObject)){
+			if(InventoryCapability.adapterTE.hasCapability(binderObject)){
 				HSLib.logger.trace("save", binder);
-				CapabilityInventory.adapterTE.getCapability(binderObject).setStacks(theInventory.toArray());
+				InventoryCapability.adapterTE.getCapability(binderObject).setStacks(theInventory.toArray());
 			}
 			//				ItemUtil.saveItemStacksToItemNBT((ItemStack) binder,theInventory);
 
@@ -134,9 +134,9 @@ public abstract class AbstractInventoryBinder<T> extends InventoryBase{
 
 
 
-			if(CapabilityInventory.adapterTE.hasCapability(binderObject)){
+			if(InventoryCapability.adapterTE.hasCapability(binderObject)){
 				HSLib.logger.trace("save", binderObject);
-				maps = CapabilityInventory.adapterTE.getCapability(binderObject).getStacks();
+				maps = InventoryCapability.adapterTE.getCapability(binderObject).getStacks();
 			}
 
 			if(maps!=null){

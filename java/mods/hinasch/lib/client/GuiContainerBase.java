@@ -13,7 +13,6 @@ import com.google.common.collect.Lists;
 import mods.hinasch.lib.container.ContainerBase;
 import mods.hinasch.lib.core.HSLib;
 import mods.hinasch.lib.misc.XY;
-import mods.hinasch.unsaga.UnsagaMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiButton;
@@ -281,9 +280,9 @@ public class GuiContainerBase extends GuiContainer{
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException
 	{
 		super.mouseClicked(mouseX, mouseY, mouseButton);
-		UnsagaMod.logger.trace("click", "clicked");
+//		UnsagaMod.logger.trace("click", "clicked");
 		for(Icon icon:this.iconList){
-			UnsagaMod.logger.trace("click", mouseX - this.getWindowStartX(),mouseY - this.getWindowStartY(),icon.x,icon.y);
+//			UnsagaMod.logger.trace("click", mouseX - this.getWindowStartX(),mouseY - this.getWindowStartY(),icon.x,icon.y);
 			if(icon instanceof  IconButton && this.isMouseInBox(mouseX- this.getWindowStartX(), mouseY- this.getWindowStartY(), icon.x, icon.y, icon.x+16, icon.y+16)){
 				if(icon instanceof IconButtonDisableable){
 					if(!icon.isVisible(this)){

@@ -6,6 +6,7 @@ import java.util.OptionalInt;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.BiPredicate;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import com.google.common.base.Optional;
@@ -14,9 +15,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
 import com.google.common.collect.Sets;
 
-import mods.hinasch.lib.DebugLog;
-import mods.hinasch.lib.iface.Consumer;
+//import mods.hinasch.lib.iface.Consumer;
 import mods.hinasch.lib.item.ItemUtil;
+import mods.hinasch.lib.util.DebugLog;
 import mods.hinasch.lib.util.HSLibs;
 import mods.hinasch.lib.world.WorldHelper;
 import mods.hinasch.lib.world.XYZPos;

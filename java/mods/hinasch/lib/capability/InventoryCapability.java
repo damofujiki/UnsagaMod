@@ -20,7 +20,7 @@ import net.minecraftforge.common.capabilities.Capability.IStorage;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 
-public class CapabilityInventory {
+public class InventoryCapability {
 
 	public static Map<Predicate<AttachCapabilitiesEvent.Item>,Integer> predicates = Maps.newHashMap();
 	public static Map<Predicate<AttachCapabilitiesEvent.TileEntity>,Integer> predicatesTE = Maps.newHashMap();

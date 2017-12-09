@@ -1,6 +1,7 @@
 package mods.hinasch.lib.core;
 
-import mods.hinasch.lib.capability.CapabilityInventory;
+import mods.hinasch.lib.capability.InventoryCapability;
+import mods.hinasch.lib.capability.LivingAsyncCapability;
 import mods.hinasch.lib.capability.VillagerHelper;
 import mods.hinasch.lib.client.SoundQueueManager;
 import mods.hinasch.lib.config.EventConfigChanged;
@@ -53,9 +54,10 @@ public class CommonProxy extends ProxyBase implements IGuiHandler{
 		HSLibs.registerEvent(events.livingUpdate);
 
 		HSLibs.registerEvent(events.getDropEvent());
-		events.livingUpdate.getEvents().add(HSLib.core().events.scannerEventPool);
+//		events.livingUpdate.getEvents().add(HSLib.core().events.scannerEventPool);
+		LivingAsyncCapability.registerEvents();
 		events.livingUpdate.getEvents().add(new EventLivingUpdateDebuff());
-		CapabilityInventory.registerEvents();
+		InventoryCapability.registerEvents();
 //		if(event.getSide().isClient()){
 //			HSLibs.registerEvent(new PlaySFXEvent());
 //		}

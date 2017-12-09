@@ -9,10 +9,6 @@ import mods.hinasch.lib.util.HSLibs;
 import mods.hinasch.lib.util.VecUtil;
 import mods.hinasch.lib.world.WorldHelper;
 import mods.hinasch.lib.world.XYZPos;
-import mods.hinasch.unsaga.UnsagaMod;
-import mods.hinasch.unsaga.core.client.particle.CustomFXShockWave;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.Particle;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -23,15 +19,15 @@ public class ParticleHelper {
 //		world.spawnParticle(type, pos.dx, pos.dy, pos.dz, xSpeed, ySpeed, zSpeed, parameters);
 //	}
 
-	private static final CustomFXShockWave.Factory shockWaveFactory = new CustomFXShockWave.Factory();
-
-	public static void spawnShockWave(World w,XYZPos pos){
-		if(WorldHelper.isClient(w)){
-			Particle entityFX = shockWaveFactory.createParticle(0, w, pos.dx, pos.dy+0.5F, pos.dz, 0, 0, 0);
-			Minecraft.getMinecraft().effectRenderer.addEffect(entityFX);
-		}
-
-	}
+//	private static final CustomFXShockWave.Factory shockWaveFactory = new CustomFXShockWave.Factory();
+//
+//	public static void spawnShockWave(World w,XYZPos pos){
+//		if(WorldHelper.isClient(w)){
+//			Particle entityFX = shockWaveFactory.createParticle(0, w, pos.dx, pos.dy+0.5F, pos.dz, 0, 0, 0);
+//			Minecraft.getMinecraft().effectRenderer.addEffect(entityFX);
+//		}
+//
+//	}
 
 	public static class AsyncParticleEvent extends AsyncUpdateEvent{
 
@@ -79,7 +75,7 @@ public class ParticleHelper {
 				this.currentwave ++;
 			}
 
-			UnsagaMod.logger.trace("loop", this.currentwave);
+//			UnsagaMod.logger.trace("loop", this.currentwave);
 		}
 
 		public void loopMain(){
@@ -115,9 +111,13 @@ public class ParticleHelper {
 			if(this==WAVE){
 				if(WorldHelper.isClient(w)){
 					if(parameters.length>1){
-						HSLib.core().events.scannerEventPool.addEvent(new AsyncParticleEvent(w, type, pos, rand, parameters[1], density, 4, 0.8D,parameters));
+						AsyncUpdateEvent e = new AsyncParticleEvent(w, type, pos, rand, parameters[1], density, 4, 0.8D,parameters);
+						HSLib.core().addAsyncEvent(e.getSender(), e);
+//						HSLib.core().events.scannerEventPool.addEvent(new AsyncParticleEvent(w, type, pos, rand, parameters[1], density, 4, 0.8D,parameters));
 					}else{
-						HSLib.core().events.scannerEventPool.addEvent(new AsyncParticleEvent(w, type, pos, rand, 6, density, 4, 0.8D,parameters));
+						AsyncUpdateEvent e = new AsyncParticleEvent(w, type, pos, rand, 6, density, 4, 0.8D,parameters);
+						HSLib.core().addAsyncEvent(e.getSender(), e);
+//						HSLib.core().events.scannerEventPool.addEvent(new AsyncParticleEvent(w, type, pos, rand, 6, density, 4, 0.8D,parameters));
 					}
 
 				}
@@ -140,7 +140,7 @@ public class ParticleHelper {
 					w.spawnParticle(type, pos.dx, pos.dy, pos.dz, vecRot.xCoord, rand.nextFloat(), vecRot.zCoord,parameters);
 					break;
 				case FLOATING:
-					w.spawnParticle(type, pos.dx - 0.5F + rand.nextFloat(),pos.dy + 1.0F + rand.nextFloat(), pos.dz - 0.5F + rand.nextFloat(), dd, dd, dd,parameters);
+					w.spawnParticle(type, pos.dx - 0.5F + rand.nextFloat(),pos.dy + 1.0F + rand.nextFloat(), pos.dz - 0.5F + rand.nextFloat(), 0, dd, 0,parameters);
 					break;
 				case WAVE:
 				case FOUNTAIN:

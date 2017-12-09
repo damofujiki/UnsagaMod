@@ -1,4 +1,4 @@
-package mods.hinasch.lib;
+package mods.hinasch.lib.util;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;

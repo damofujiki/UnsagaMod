@@ -4,8 +4,8 @@ import defeatedcrow.hac.api.climate.ClimateAPI;
 import defeatedcrow.hac.api.climate.DCHeatTier;
 import defeatedcrow.hac.api.climate.DCHumidity;
 import defeatedcrow.hac.api.climate.IClimate;
+import mods.hinasch.lib.world.EnvironmentalManager;
 import mods.hinasch.lib.world.EnvironmentalManager.EnvironmentalCondition;
-import mods.hinasch.lib.world.EnvironmentalManager.EnvironmentalCondition.Type;
 import mods.hinasch.lib.world.XYZPos;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.world.World;
@@ -19,15 +19,18 @@ public class HSLibPluginHAC {
 		DCHumidity humid = climate.getHumidity();
 		float temp = (float)heatTier.getTemp() / 25.0F;
 		float hum = (float)humid.getID();
-		if(heatTier.getTemp()>=DCHeatTier.HOT.getTemp()){
-			return new EnvironmentalCondition(true,Type.HOT,temp,hum);
+		if(!w.canBlockSeeSky(pos)){
+			temp -= 0.1F;
 		}
-		if(heatTier.getTemp()<=DCHeatTier.COLD.getTemp()){
-			return new EnvironmentalCondition(true,Type.COLD,temp,hum);
+		if(w.getWorldInfo().getWorldTime()>13000){
+
+			temp -= 0.3F;
+
 		}
-		if(heatTier.getTemp()>=DCHeatTier.HOT.getTemp() && humid==DCHumidity.WET){
-			return new EnvironmentalCondition(true,Type.HUMID,temp,hum);
+		if(w.isRaining()){
+			hum += 0.5F;
+			temp -= 0.5F;
 		}
-		return EnvironmentalCondition.getSafeEnvironment(temp,hum);
+		return EnvironmentalManager.getConditionFromTempHumid(temp, hum);
 	}
 }

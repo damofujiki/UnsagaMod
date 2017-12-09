@@ -1,9 +1,5 @@
 package mods.hinasch.lib.entity;
 
-import mods.hinasch.lib.world.WorldHelper;
-import mods.hinasch.unsaga.UnsagaMod;
-import mods.hinasch.unsaga.core.entity.passive.EntityShadow;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIFollowParent;
 import net.minecraft.entity.ai.EntityAILookIdle;
@@ -30,20 +26,20 @@ public class EntitySuperPig extends EntityPig{
     public boolean attackEntityFrom(DamageSource source, float amount)
     {
 		if(this.worldObj.isRemote){
-			int a = UnsagaMod.proxy.getDebugPos().getX();
+//			int a = UnsagaMod.proxy.getDebugPos().getX();
 
 
 //			IBlockState state = Blocks.STONE.getDefaultState();
 //	    	ParticleHelper.MovingType.WAVE.spawnParticle(worldObj, XYZPos.createFrom(this)
 //	    			, EnumParticleTypes.BLOCK_DUST, rand, 10,1D,Block.getStateId(state));
 		}
-		if(source.getEntity() instanceof EntityPlayer){
-			EntityShadow shadow = new EntityShadow(this.getEntityWorld(),(EntityLivingBase) source.getEntity(),this,50);
-			shadow.setPositionAndRotation(this.posX, this.posY+2.0F, this.posZ,source.getEntity().rotationYaw,source.getEntity().rotationPitch);
-			if(WorldHelper.isServer(getEntityWorld())){
-				this.worldObj.spawnEntityInWorld(shadow);
-			}
-		}
+//		if(source.getEntity() instanceof EntityPlayer){
+//			EntityShadow shadow = new EntityShadow(this.getEntityWorld(),(EntityLivingBase) source.getEntity(),this,50);
+//			shadow.setPositionAndRotation(this.posX, this.posY+2.0F, this.posZ,source.getEntity().rotationYaw,source.getEntity().rotationPitch);
+//			if(WorldHelper.isServer(getEntityWorld())){
+//				this.worldObj.spawnEntityInWorld(shadow);
+//			}
+//		}
 
 		this.heal(100F);
 		return super.attackEntityFrom(source, amount);

@@ -199,7 +199,7 @@ public class SoundAndSFX {
 			if (blockdata.getBlock() != null && flag) {
 				blockdata.getBlock().onBlockDestroyedByPlayer(world, pos, blockdata);
 
-				if(!canDrop){
+				if(canDrop){
 					blockdata.getBlock().dropBlockAsItem(world, pos, blockdata,1);
 				}
 

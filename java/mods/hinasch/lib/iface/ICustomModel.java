@@ -7,15 +7,14 @@ import net.minecraft.item.ItemStack;
 
 public interface ICustomModel {
 
-	public final Inner customModelHelper = new Inner();
 
     public net.minecraft.client.model.ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot, net.minecraft.client.model.ModelBiped _default);
 
 
-    public static class Inner{
 
 
-        public ModelBiped getArmorModel(ModelBiped modelBiped,EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot)
+
+        default ModelBiped prepareArmorModel(ModelBiped modelBiped,EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot)
         {
         	modelBiped.bipedHead.showModel = armorSlot == EntityEquipmentSlot.HEAD;
         	modelBiped.bipedHeadwear.showModel = armorSlot ==EntityEquipmentSlot.HEAD;
@@ -29,6 +28,6 @@ public interface ICustomModel {
         	//modelBiped.setItemStack(itemStack);
             return modelBiped;
         }
-    };
+
 
 }

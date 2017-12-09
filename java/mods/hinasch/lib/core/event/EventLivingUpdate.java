@@ -31,7 +31,7 @@ public class EventLivingUpdate {
 		this.events.sort(null);
 	}
 	@SubscribeEvent
-	public void onLivingUpdata(LivingUpdateEvent e){
+	public void onLivingUpdate(LivingUpdateEvent e){
 
 		for(ILivingUpdateEvent ev:this.events){
 			ev.update(e);

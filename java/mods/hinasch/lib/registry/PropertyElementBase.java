@@ -14,10 +14,12 @@ public abstract class PropertyElementBase implements IPropertyElement{
 
 	}
 
-	public String getName(){
+	@Override
+	public String getPropertyName(){
 		return this.name;
 	}
 
+	@Override
 	public ResourceLocation getKey(){
 		return this.key;
 	}
@@ -55,7 +57,7 @@ public abstract class PropertyElementBase implements IPropertyElement{
 
 	@Override
 	public String toString(){
-		return this.getName();
+		return this.getPropertyName();
 	}
 
 

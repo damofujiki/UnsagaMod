@@ -6,15 +6,15 @@ import java.util.Map;
 import java.util.Random;
 import java.util.stream.Stream;
 
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.Lists;
 
 import mods.hinasch.lib.core.HSLib;
-import mods.hinasch.lib.iface.BiConsumer;
 import mods.hinasch.lib.util.UtilNBT;
 import mods.hinasch.lib.util.VecUtil;
 import mods.hinasch.lib.world.WorldHelper;
 import mods.hinasch.lib.world.XYZPos;
-import mods.hinasch.unsaga.UnsagaMod;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
@@ -171,12 +171,12 @@ public class ItemUtil {
 //					UnsagaMod.logger.trace(this.getClass().getName(), compound);
 				}
 			}
-			UnsagaMod.logger.trace(this.getClass().getName(), tagList);
+//			UnsagaMod.logger.trace(this.getClass().getName(), tagList);
 //			stream.setTag("items", tagList);
 		}
 
 		public static ItemStackList readFromNBT(NBTTagList tagList,int length){
-			UnsagaMod.logger.trace("itemstack load", tagList);
+//			UnsagaMod.logger.trace("itemstack load", tagList);
 //			NBTTagList tagList = comp.getTagList("items", UtilNBT.NBKEY_TAGLIST);
 			ItemStackList list = new ItemStackList(length);
 
@@ -185,7 +185,7 @@ public class ItemUtil {
 
 	            NBTTagCompound compound = (NBTTagCompound)tagList.getCompoundTagAt(i);
 	            int slot = compound.getByte("Slot") & 255;
-	            UnsagaMod.logger.trace("itemstack load", compound);
+//	            UnsagaMod.logger.trace("itemstack load", compound);
 
 	            if (slot >= 0 && slot < list.size())
 	            {
@@ -351,6 +351,12 @@ public class ItemUtil {
 
 	}
 
+	public static List<ItemStack> getHeldEquipmentList(EntityLivingBase el){
+		return Lists.newArrayList(el.getHeldEquipment());
+	}
+	public static List<ItemStack> getArmorInventoryList(EntityLivingBase el){
+		return Lists.newArrayList(el.getArmorInventoryList());
+	}
     public static void saveItemStacksToItemNBT(ItemStack binder,ItemStack[] maps){
     	UtilNBT.initNBTIfNotInit(binder);
     	NBTTagCompound nbt = binder.getTagCompound();
@@ -387,16 +393,22 @@ public class ItemUtil {
     	}
     }
 
-    @Deprecated
-    public static BiConsumer<ItemStack,EntityPlayer> getItemDropConsumer(){
-    	return new BiConsumer<ItemStack,EntityPlayer>(){
-
-			@Override
-			public void accept(ItemStack left, EntityPlayer right) {
-				ItemUtil.dropItem(left, right);
-
-			}};
+    public static @Nonnull ItemStack getNonnullStack(ItemStack is){
+    	if(is ==null){
+    		return EMPTY_STACK;
+    	}
+    	return is;
     }
+//    @Deprecated
+//    public static BiConsumer<ItemStack,EntityPlayer> getItemDropConsumer(){
+//    	return new BiConsumer<ItemStack,EntityPlayer>(){
+//
+//			@Override
+//			public void accept(ItemStack left, EntityPlayer right) {
+//				ItemUtil.dropItem(left, right);
+//
+//			}};
+//    }
 
 
 }

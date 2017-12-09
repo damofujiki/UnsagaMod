@@ -38,7 +38,7 @@ public abstract class ItemNoFunction extends Item{
 //		int var2 = MathHelper.clamp_int(par1ItemStack.getItemDamage(), 0, getItemProperties().getLength()-1);
 //		UnsagaMod.logger.trace(this.getClass().getName(), var2);
 		if(this.getItemProperties().getObjectById(par1ItemStack.getItemDamage())!=null){
-			return "item."+prefix+ "." + getItemProperties().getObjectById(par1ItemStack.getItemDamage()).getName();
+			return "item."+prefix+ "." + getItemProperties().getObjectById(par1ItemStack.getItemDamage()).getPropertyName();
 		}
 		return "null";
 	}
